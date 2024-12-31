@@ -215,7 +215,25 @@ document.addEventListener("DOMContentLoaded", () => {
     return threadId;
   };
 
-  const resetThreadId = () => {
+  async function resetThreadId () {
+    const threadId = localStorage.getItem("thread_id");
+    const token = localStorage.getItem("authToken");
+    if (!token) {
+      const email = "admin@cdot.in";
+      const password = "admin";
+      token  = await authenticateAndStoreToken(email, password);
+    }
+
+    const response = await fetch(
+      `http://192.168.109.222:8000/api/clear-chat-history?thread_id=${threadId}`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    localStorage.removeItem("authToken"); // Clear the token
     localStorage.removeItem("thread_id");
   };
 
@@ -654,6 +672,32 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   };
 
+  async function authenticateAndStoreToken(email, password) {
+    try {
+      const formData = new FormData();
+      formData.append("email", email);
+      formData.append("password", password);
+      const response = await fetch("http://192.168.109.222:8000/api/auth-token/", 
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
+  
+      if (response.ok) {
+        const data = await response.json();
+        const token = data.access_token;
+        localStorage.setItem("authToken", token); // Store token in localStorage
+        console.log("Token stored in localStorage:", token);
+        return token;
+      } else {
+        console.error("Failed to fetch token:", await response.text());
+      }
+    } catch (error) {
+      console.error("Error during authentication:", error);
+    }
+  }
+
   // Handle user query
   const handleUserQuery = async (query) => {
     userInput.disabled = true;
@@ -695,13 +739,18 @@ document.addEventListener("DOMContentLoaded", () => {
         //   document.querySelector(`#${typingMessageId}`).appendChild(typingIndicator);
 
         // const data = await response.json();
+        let token = localStorage.getItem("authToken");
+        if (!token) {
+          const email = "admin@cdot.in";
+          const password = "admin";
+          token  = await authenticateAndStoreToken(email, password);
+        }
         const response = await fetch(
           "http://192.168.109.222:8000/api/chatbot/",
           {
             method: "POST",
             headers: {
-              Authorization:
-                "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzM3ODYzNTYwLCJpYXQiOjE3MzUyNzE1NjAsImp0aSI6ImNkNzliOTFmN2U0NDQzNzI5N2FhMzNmYzRlNzliNzIyIiwidXNlcl9pZCI6MX0.FwtI2cWMSm1mffx42JJ2_8SOVPwQqDLFphvGKYZVjvY",
+              Authorization:`Bearer ${token}`,
               "Content-Type": "application/json",
             },
             body: JSON.stringify({
