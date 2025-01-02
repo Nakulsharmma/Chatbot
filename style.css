@@ -604,6 +604,7 @@ display: none;
 #chat-body {
   height: calc(100vh - 150px); /* Adjust for header and footer */
   padding-bottom: 20px;
+  box-sizing: border-box;
 }
 
 .chat-footer {
