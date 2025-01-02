@@ -611,7 +611,9 @@ display: none;
   width: 100%;
   z-index: 1000;
 }
-
+#chat-message{
+  max-height: 100% !important;
+}
 
 .input-section {
   padding: 10px 15px;
