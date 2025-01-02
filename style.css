@@ -602,7 +602,7 @@ display: none;
 }
 
 #chat-body {
-  height: calc(100vh - 200px); /* Adjusted for header and footer */
+  height: calc(100vh - 210px); /* Adjusted for header and footer */
   overflow-y: auto;
 }
 
