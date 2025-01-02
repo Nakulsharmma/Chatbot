@@ -6,6 +6,9 @@ document.addEventListener("DOMContentLoaded", () => {
   const chatDownIcon = document.querySelector(
     "#chat-icon img[alt='Chatbot down icon']"
   );
+  const minimizedownicon = document.querySelector(
+    "#minimize-btn img[alt='minimize down icon']"
+  );
   const optionsBtns = document.getElementById("close-btn");
   const userInput = document.getElementById("user-input");
   const sendBtn = document.getElementById("send-btn");
@@ -267,6 +270,8 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   chatDownIcon.addEventListener("click", () => toggleChatbotVisibility(false));
+  minimizedownicon.addEventListener("click", () => toggleChatbotVisibility(false));
+
 
   // Event listeners for the close buttons in chatbot header
   const exportBtn = document.getElementById("export-btn");
@@ -683,7 +688,7 @@ document.addEventListener("DOMContentLoaded", () => {
           body: formData,
         }
       );
-  
+
       if (response.ok) {
         const data = await response.json();
         const token = data.access_token;
