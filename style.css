@@ -602,8 +602,8 @@ display: none;
 }
 
 #chat-body {
-  height: calc(100vh - 220px); /* Adjusted for header and footer */
-  overflow-y: auto;
+  height: calc(100vh - 150px); /* Adjust for header and footer */
+  padding-bottom: 20px;
 }
 
 .chat-footer {
