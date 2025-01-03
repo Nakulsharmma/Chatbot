@@ -138,47 +138,69 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-
   const exportChat = () => {
     const { jsPDF } = window.jspdf; // Access jsPDF
     const doc = new jsPDF();
-    const marginLeft = 10; // Left margin
-    const marginRight = 10; // Right margin
+  
+    // Set general styles and margins
+    const marginLeft = 15;
+    const marginRight = 15;
+    const pageWidth = doc.internal.pageSize.width;
     const pageHeight = doc.internal.pageSize.height;
-    const maxLineWidth = doc.internal.pageSize.width - marginLeft - marginRight; // Max text width
-    let yPosition = 10; // Start position for text
-
+    const maxLineWidth = pageWidth - marginLeft - marginRight;
+    const lineHeight = 10; // Line height for text
+    const sectionSpacing = 5; // Extra spacing between chat messages
+    let yPosition = 20; // Start position for text
+  
+    // Title
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(14);
+    doc.text("Chat Export", pageWidth / 2, yPosition, { align: "center" });
+    yPosition += 15;
+  
     // Get chat history from localStorage
     const chatMessages = JSON.parse(localStorage.getItem("chatHistory")) || [];
-
-    chatMessages.forEach((msg) => {
+  
+    // Regular expression to remove unwanted symbols
+    const cleanText = (text) => text.replace(/[=*#$%]/g, "").trim();
+  
+    // Process and format each message
+    chatMessages.forEach((msg, index) => {
       const sender = msg.sender;
-      const message = msg.message;
-      const timestamp = msg.timestamp;
-
-      // Format the message
-      const formattedText = `[${timestamp}] ${sender}: ${message}`;
-
-      // Wrap text within maxLineWidth
-      const splitText = doc.splitTextToSize(formattedText, maxLineWidth);
-      const lineHeight = 10;
-
-      // Check for page overflow and add a new page if needed
-      if (yPosition + splitText.length * lineHeight > pageHeight) {
-        doc.addPage();
-        yPosition = 10; // Reset y position for new page
-      }
-
-      // Add text to the PDF
-      splitText.forEach((line) => {
+      const message = cleanText(msg.message); // Clean message content
+      const timestamp = new Date(msg.timestamp).toLocaleString();
+  
+      // Set sender and timestamp styles
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(12);
+      doc.setTextColor(40, 40, 40);
+  
+      const formattedHeader = `[${timestamp}] ${sender}:`;
+      doc.text(formattedHeader, marginLeft, yPosition);
+  
+      // Wrap and add the message text
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(11);
+      doc.setTextColor(60, 60, 60);
+  
+      const wrappedMessage = doc.splitTextToSize(message, maxLineWidth);
+      yPosition += lineHeight; // Space below header
+      wrappedMessage.forEach((line) => {
+        if (yPosition + lineHeight > pageHeight - 10) {
+          doc.addPage();
+          yPosition = 20;
+        }
         doc.text(line, marginLeft, yPosition);
-        yPosition += lineHeight; // Move to the next line
+        yPosition += lineHeight;
       });
+  
+      yPosition += sectionSpacing; // Add spacing between messages
     });
-
+  
     // Save the PDF
     doc.save("chat_export.pdf");
-  };
+  };  
+  
 
   chatbot.style.display = "none";
   chatDownIcon.style.display = "none";
@@ -245,22 +267,22 @@ document.addEventListener("DOMContentLoaded", () => {
     Consultancy:
       "C-DOT provides consultancy services for telecommunication technology.",
     "About us": "C-DOT is an R&D organization under the Government of India.",
-    "6 G": "6G is the future of wireless communication technology.",
+    // "6 G": "6G is the future of wireless communication technology.",
     "Wireless Technology":
       "Wireless technology enables communication without physical cables.",
     "PM-WANI": "PM-WANI is an initiative to provide Wi-Fi access across India.",
-    FAQs: "Check our FAQ section for common queries.",
-    "Event Gallery": "Explore the gallery for event photos and updates.",
+    // FAQs: "Check our FAQ section for common queries.",
+    "awards and achievements": "Explore the gallery for event photos and updates.",
   };
 
   const questionImages = {
-    "About us": "assests/events.svg",
-    Consultancy: "assests/consultancy.svg",
-    "6 G": "assests/wifi.svg",
-    "Wireless Technology": "assests/wireless.svg",
-    "PM-WANI": "assests/pm_wani.svg",
-    FAQs: "assests/Faq.svg",
-    "Event Gallery": "assests/gallery.svg",
+    "About us": "assests/img/events.svg",
+    Consultancy: "assests/img/consultancy.svg",
+    "6 G": "assests/img/wifi.svg",
+    "Wireless Technology": "assests/img/wireless.svg",
+    "PM-WANI": "assests/img/pm_wani.svg",
+    FAQs: "assests/img/Faq.svg",
+    "awards and achievements": "assests/img/gallery.svg",
   };
 
   // Event listeners for chat icons
@@ -448,16 +470,14 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   const parseMarkdown = (message) => {
-    message = message.replace(/^(#)\s*(.*)$/gm, "<h3>$2</h3>"); 
-    message = message.replace(/^(##)\s*(.*)$/gm, "<h4>$2</h4>"); 
-    message = message.replace(/^(###)\s*(.*)$/gm, "<h5>$2</h5>"); 
-    message = message.replace(/^(####)\s*(.*)$/gm, "<h6>$2</h6>"); 
-  
-    message = message.replace(/^\*\s*(.*)$/gm, "<ul><li>$1</li></ul>");
-  
-    message = message.replace(/\n/g, "<br>");
-  
-    return message;
+    if (typeof marked.marked === "function") {
+      return marked.marked(message);
+    } else if (typeof marked === "function") {
+      return marked(message);
+    } else {
+      console.error("Marked.js is not loaded correctly.");
+      return message; // Fallback to raw message
+    }
   };
 
   const appendMessage = (
@@ -542,20 +562,20 @@ document.addEventListener("DOMContentLoaded", () => {
       copyButton.className = "copy-button";
 
       const copyIcon = document.createElement("img");
-      copyIcon.src = "assests/copy.svg"; // Replace with the actual path to your image
+      copyIcon.src = "assests/img/copy.svg"; // Replace with the actual path to your image
       copyIcon.alt = "Copy";
       copyIcon.style.width = "16px"; // Set size of the icon
       copyIcon.style.height = "16px";
-      copyIcon.style.cursor = "pointer";
+      copyIcon.style.cursor = "pointer"
       copyButton.appendChild(copyIcon);
-      copyButton.onclick = () => copyMessage(message);
+      copyButton.onclick = () => copyMessage(message.replace(/[=*#@%&]/g, ""));
 
       // Add speaker button for bot messages
       const speakerButton = document.createElement("button");
       speakerButton.className = "speaker-button";
 
       const speakerIcon = document.createElement("img");
-      speakerIcon.src = "assests/Voice.svg"; // Replace with the actual path to your speaker icon
+      speakerIcon.src = "assests/img/Voice.svg"; // Replace with the actual path to your speaker icon
       speakerIcon.alt = "Speak";
       speakerIcon.style.width = "16px";
       speakerIcon.style.height = "16px";
@@ -569,24 +589,24 @@ document.addEventListener("DOMContentLoaded", () => {
         if (isSpeaking) {
           // If currently speaking, stop the speech and update the icon
           window.speechSynthesis.cancel();
-          speakerIcon.src = "assests/Voice.svg"; // Reset to speaker icon
+          speakerIcon.src = "assests/img/Voice.svg"; // Reset to speaker icon
           speakerIcon.alt = "Speak";
           isSpeaking = false;
         } else {
           // Create a new utterance and start speaking
-          currentUtterance = new SpeechSynthesisUtterance(message);
+          currentUtterance = new SpeechSynthesisUtterance(message.replace(/[=*#@%&]/g, ""));
           currentUtterance.lang = "en-US"; // Set language
           currentUtterance.rate = 1.5; // Adjust speech rate if needed
 
           currentUtterance.onend = () => {
             // When speech ends, reset the button state
-            speakerIcon.src = "assests/Voice.svg";
+            speakerIcon.src = "assests/img/Voice.svg";
             speakerIcon.alt = "Speak";
             isSpeaking = false;
           };
 
           window.speechSynthesis.speak(currentUtterance);
-          speakerIcon.src = "assests/mute.svg"; // Change to mute icon
+          speakerIcon.src = "assests/img/mute.svg"; // Change to mute icon
           speakerIcon.alt = "Mute";
           isSpeaking = true;
         }

@@ -227,31 +227,31 @@
     <div id="chatbot" style="display: none;">
         <div id="chat-header">
           <div class="logo-section">
-            <img src="assests/logo.png" alt="C-DOT Logo" class="logo" />
+            <img src="assests/img/logo.png" alt="C-DOT Logo" class="logo" />
             <span>C-DOT</span>
           </div>
           <div class="option">
             <button class="options-btn" id = "minimize-btn">
-              <img src="assests/Subtract.svg" alt="minimize down icon" class="logo"/>
+              <img src="assests/img/Subtract.svg" alt="minimize down icon" class="logo"/>
             </button>
             <button class="options-btn" id="export-btn">
-              <img src="assests/export.svg" alt="Close Chatbot" class="logo" />
+              <img src="assests/img/export.svg" alt="Close Chatbot" class="logo" />
               <span class="tooltip">Export Chat</span>
             </button>
             <button class="options-btn" id = "close-btn">
-              <img src="assests/close.svg" alt="Close Chatbot" class="logo" />
+              <img src="assests/img/close.svg" alt="Close Chatbot" class="logo" />
             </button>
           </div>
         </div>
         <div id="chat-body" class="chat-body">
           <div class="options-container">
             <div class="options">
-                <img src = "assests/cdot.svg" class="cover_img">
+                <img src = "assests/img/cdot.svg" class="cover_img">
                 <!-- Questions will be dynamically loaded here -->
             </div>
           </div>
           <div class="chat-footer">
-            <button id="toggle-options-btn" class="arrow-up"><img src="assests/ChevronUp.svg" alt="Up Arrow" /></button>
+            <button id="toggle-options-btn" class="arrow-up"><img src="assests/img/ChevronUp.svg" alt="Up Arrow" /></button>
             <div class="input-section">
               <div class="input-message">
                 <input
@@ -260,10 +260,10 @@
                   placeholder="Type your message here..."
                 />
                 <button id="send-btn">
-                  <img src="assests/send.svg" alt="Chatbot send button" class="logo" />
+                  <img src="assests/img/send.svg" alt="Chatbot send button" class="logo" />
                 </button>
                 <button id="mic-btn">
-                  <img src="assests/Microphone.svg" alt="Microphone Icon" class="logo" />
+                  <img src="assests/img/Microphone.svg" alt="Microphone Icon" class="logo" />
                 </button>
               </div>
             </div>
@@ -271,10 +271,11 @@
         </div>
     </div>     
     <div id="chat-icon">
-        <img src="assests/chat_icon.svg" alt="Chatbot Icon" class="logo" />
-        <img src="assests/chat_down_icon.svg" alt="Chatbot down icon" class="logo"  style="display: none;"/>
+        <img src="assests/img/chat_icon.svg" alt="Chatbot Icon" class="logo" />
+        <img src="assests/img/chat_down_icon.svg" alt="Chatbot down icon" class="logo"  style="display: none;"/>
     </div> 
+    <script src="assests/js/marked.min.js"></script>
+    <script src="assests/js/jspdf.min.js"></script> 
     <script src="script.js" defer></script>  
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>   
   </body>
 </html>
