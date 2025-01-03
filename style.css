@@ -636,6 +636,7 @@ code {
   height: calc(100vh - 150px - env(safe-area-inset-bottom)); /* Adjust for header and footer */
   padding-bottom: 20px;
   box-sizing: border-box;
+  overflow-y: auto;
 }
 
 .chat-footer {
