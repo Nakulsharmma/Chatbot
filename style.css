@@ -612,7 +612,7 @@ code {
 #chatbot {
   width: 100vw; /* Full width */
   height: 100vh; /* Full height */
-  top: calc(env(safe-area-inset-top)); /* Ensures it appears below the search bar */
+  /* top: calc(env(safe-area-inset-top)); Ensures it appears below the search bar */
   bottom: 0;
   right: 0;
   left: 0; /* Ensure it's fully visible on the left */
