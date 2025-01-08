@@ -627,9 +627,9 @@ code {
   display: inline;
 }
 
-.options-container {
+/* .options-container {
   margin-bottom: calc(60px - env(safe-area-inset-top)); /* Adds space above the chat footer */
-}
+} */
 
 #chat-header {
   padding: 15px 20px 15px 15px;
