@@ -628,6 +628,7 @@ code {
 }
 
 #chat-header {
+  top: calc(env(safe-area-inset-top)); 
   padding: 15px 20px 15px 15px;
   font-size: 16px;
 }
