@@ -628,7 +628,7 @@ code {
 }
 
 .options-container {
-  margin-bottom: 60px; /* Adds space above the chat footer */
+  margin-bottom: calc(60px - env(safe-area-inset-top)); /* Adds space above the chat footer */
 }
 
 #chat-header {
