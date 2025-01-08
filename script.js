@@ -845,4 +845,25 @@ document.addEventListener("DOMContentLoaded", () => {
   userInput.addEventListener("input", () => {
     userInput.value = userInput.value.replace(/[^a-zA-Z0-9\s.,?!]/g, "");
   });
+  function adjustChatBodyHeight() {
+    const chatBody = document.getElementById('chat-body');
+    const visualViewportHeight = window.visualViewport.height; // Get the actual height of the visible viewport
+  
+    // Check if the search bar (browser navbar) is visible or hidden
+    const isNavbarVisible = visualViewportHeight < window.innerHeight;
+  
+    if (isNavbarVisible) {
+      // Browser navbar is visible
+      chatBody.style.height = `calc(${visualViewportHeight}px - 210px - env(safe-area-inset-bottom))`;
+    } else {
+      // Browser navbar is hidden
+      chatBody.style.height = `calc(${visualViewportHeight}px - 150px - env(safe-area-inset-bottom))`;
+    }
+  }
+  
+  // Run on load
+  adjustChatBodyHeight();
+  
+  // Run whenever the viewport changes (browser navbar collapses or expands)
+  window.visualViewport.addEventListener('resize', adjustChatBodyHeight);  
 });
