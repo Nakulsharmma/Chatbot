@@ -479,6 +479,18 @@ document.addEventListener("DOMContentLoaded", () => {
       return message; // Fallback to raw message
     }
   };
+  function adjustChatbotHeight() {
+    const chatbot = document.getElementById("chatbot");
+    if (chatbot) {
+      const viewportHeight = window.innerHeight; // Dynamic height of visible viewport
+      chatbot.style.height = `${viewportHeight}px`; // Apply to the chatbot container
+    }
+  }
+  
+  // Adjust on load and resize
+  window.addEventListener("load", adjustChatbotHeight);
+  window.addEventListener("resize", adjustChatbotHeight);
+  
 
   const appendMessage = (
     sender,

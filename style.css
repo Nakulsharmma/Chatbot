@@ -644,9 +644,10 @@ code {
   bottom: 0;
   width: 100%;
   z-index: 1000;
+  padding-bottom: calc(20px + env(safe-area-inset-bottom)); /* Safe area */
 }
 #chat-message{
-  max-height: 100% !important;
+  max-height: calc(100% - 150px); /* Adjust for header and footer */
 }
 
 .input-section {
