@@ -648,7 +648,7 @@ code {
 }
 #chat-message{
   max-height: 100% !important;
-  margin-bottom: clac(60px - env(safe-area-insert-top));
+  margin-bottom: clac(60px - env(safe-area-insert-top)) !important;
 }
 
 .input-section {
