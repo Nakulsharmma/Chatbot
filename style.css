@@ -611,7 +611,7 @@ code {
 @media (max-width: 768px) {
 #chatbot {
   width: 100vw; /* Full width */
-  height: calc(100vh - env(safe-area-inset-top) - env(safe-area-inset-bottom)); /* Ensures it appears below the search bar */
+  height: calc(100vh - 150px - env(safe-area-inset-top) - env(safe-area-inset-bottom) - 50px); /* Adjust the 50px based on the height of the navbar/options container */
   bottom: 0;
   right: 0;
   left: 0; /* Ensure it's fully visible on the left */
