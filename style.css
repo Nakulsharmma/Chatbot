@@ -611,11 +611,11 @@ code {
 @media (max-width: 768px) {
 #chatbot {
   width: 100vw; /* Full width */
-  height: calc(100vh - 150px - env(safe-area-inset-top) - env(safe-area-inset-bottom) - 50px); /* Adjust the 50px based on the height of the navbar/options container */
+  height: 100vh; /* Full height */
+  top: calc(env(safe-area-inset-top)); /* Ensures it appears below the search bar */
   bottom: 0;
   right: 0;
   left: 0; /* Ensure it's fully visible on the left */
-  top:0;
   position: fixed; /* Fix it to the viewport */
   border-radius: 0;
   box-shadow: none;
@@ -627,17 +627,14 @@ code {
   display: inline;
 }
 
-/* .options-container {
-  margin-bottom: calc(60px - env(safe-area-inset-top)); /* Adds space above the chat footer */
-} */
-
 #chat-header {
   padding: 15px 20px 15px 15px;
   font-size: 16px;
 }
 
 #chat-body {
-  height: calc(100vh - 150px - env(safe-area-inset-top));
+  top: calc(env(safe-area-inset-top)); 
+  height: calc(100vh - 150px - env(safe-area-inset-top)) ; /* Adjust for header and footer */
   padding-bottom: 20px;
   box-sizing: border-box;
   overflow-y: auto;
