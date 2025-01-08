@@ -444,7 +444,7 @@ align-items: center;
 flex: 1; /* Makes the input take all available space */
 border: 1px solid #ccc;
 border-radius: 9px;
-padding: 10px 50px 10px 15px; /* Adds padding for the button */
+padding: 10px 60px 10px 15px; /* Adds padding for the button */
 font-size: 14px;
 outline: none;
 }
@@ -633,7 +633,7 @@ code {
 }
 
 #chat-body {
-  height: calc(100vh - 150px - env(safe-area-inset-bottom)); /* Adjust for header and footer */
+  height: calc(100vh - (150px - env(safe-area-inset-bottom))); /* Adjust for header and footer */
   padding-bottom: 20px;
   box-sizing: border-box;
   overflow-y: auto;
