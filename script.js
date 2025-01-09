@@ -805,9 +805,9 @@ document.addEventListener("DOMContentLoaded", () => {
           }
         }
 
-        // Check if the last word of the message is "NO"
-        const lastWord = streamingMessage.trim().split(" ").pop();
-        if (lastWord === "NO") {
+        const lines = streamingMessage.trim().split("\n");
+        const lastLine = lines[lines.length - 1].trim();
+        if (lastLine === "NO") {
           streamingMessage += "\n\nSomething went wrong. Please try again.";
         }
         //   const data = await response.text();
