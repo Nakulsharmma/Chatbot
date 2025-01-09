@@ -804,6 +804,12 @@ document.addEventListener("DOMContentLoaded", () => {
             scrollToBottom();
           }
         }
+
+        // Check if the last word of the message is "NO"
+        const lastWord = streamingMessage.trim().split(" ").pop();
+        if (lastWord === "NO") {
+          streamingMessage += "\n\nSomething went wrong. Please try again.";
+        }
         //   const data = await response.text();
         removeTemporaryMessage(streamingMessageId);
         appendMessage("Bot", streamingMessage, null, false, true);
