@@ -805,10 +805,9 @@ document.addEventListener("DOMContentLoaded", () => {
           }
         }
 
-        const lines = streamingMessage.trim().split("\n");
-        const lastLine = lines[lines.length - 1].trim();
-        if (lastLine === "NO") {
-          streamingMessage += "\n\nSomething went wrong. Please try again.";
+        const lastWord = streamingMessage.trim().split(/\s+/).pop();
+        if (lastWord === "NO") {
+          streamingMessage = "Something went wrong. Please try again.";
         }
         //   const data = await response.text();
         removeTemporaryMessage(streamingMessageId);
