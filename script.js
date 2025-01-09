@@ -861,9 +861,21 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
   
-  // Run on load
-  adjustChatBodyHeight();
+  // Function to check if the viewport is mobile
+  function isMobileView() {
+    return window.innerWidth <= 768; // Adjust the breakpoint as needed
+  }
   
-  // Run whenever the viewport changes (browser navbar collapses or expands)
-  window.visualViewport.addEventListener('resize', adjustChatBodyHeight);  
+  // Run on load if in mobile view
+  if (isMobileView()) {
+    adjustChatBodyHeight();
+  }
+  
+  // Run whenever the viewport changes, but only in mobile view
+  window.visualViewport.addEventListener('resize', () => {
+    if (isMobileView()) {
+      adjustChatBodyHeight();
+    }
+  });
+  
 });
