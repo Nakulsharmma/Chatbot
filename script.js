@@ -266,21 +266,21 @@ document.addEventListener("DOMContentLoaded", () => {
   const chatData = {
     Consultancy:
       "C-DOT provides consultancy services for telecommunication technology.",
-    "About us": "C-DOT is an R&D organization under the Government of India.",
+    "About Cdot": "C-DOT is an R&D organization under the Government of India.",
     // "6 G": "6G is the future of wireless communication technology.",
-    "Wireless Technology":
+    "Products":
       "Wireless technology enables communication without physical cables.",
-    "PM-WANI": "PM-WANI is an initiative to provide Wi-Fi access across India.",
+    "Directors": "PM-WANI is an initiative to provide Wi-Fi access across India.",
     // FAQs: "Check our FAQ section for common queries.",
-    "awards and achievements": "Explore the gallery for event photos and updates.",
+    "Awards and Achievements": "Explore the gallery for event photos and updates.",
   };
 
   const questionImages = {
-    "About us": "assests/img/events.svg",
+    "About Cdot": "assests/img/events.svg",
     Consultancy: "assests/img/consultancy.svg",
-    "6 G": "assests/img/wifi.svg",
-    "Wireless Technology": "assests/img/wireless.svg",
-    "PM-WANI": "assests/img/pm_wani.svg",
+    "6G": "assests/img/wifi.svg",
+    "Products": "assests/img/wireless.svg",
+    "Directors": "assests/img/pm_wani.svg",
     FAQs: "assests/img/Faq.svg",
     "awards and achievements": "assests/img/gallery.svg",
   };
@@ -823,15 +823,22 @@ document.addEventListener("DOMContentLoaded", () => {
         console.error("Error calling the API:", error);
         removeTemporaryMessage(streamingMessageId);
         appendMessage("Bot", "Something went wrong. Please try again.");
+      }finally {
+        // Always re-enable input and buttons
         userInput.disabled = false;
         sendBtn.disabled = false;
         micBtn.disabled = false;
         optionsButtons.forEach((button) => (button.disabled = false));
-        userInput.style.backgroundColor = ""; // Resets to default
-        userInput.style.color = ""; // Resets to default
+        userInput.style.backgroundColor = ""; // Reset to default
+        userInput.style.color = ""; // Reset to default
         userInput.style.cursor = "";
-      // }
-    }
+    
+        // Automatically focus the input field
+        setTimeout(() => {
+          userInput.focus();
+        }, 50);
+        scrollToBottom();
+      }
   };
 
   userInput.addEventListener("keydown", (event) => {
