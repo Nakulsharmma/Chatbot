@@ -279,8 +279,8 @@ document.addEventListener("DOMContentLoaded", () => {
     "About Cdot": "assests/img/events.svg",
     Consultancy: "assests/img/consultancy.svg",
     "6G": "assests/img/wifi.svg",
-    "Products": "assests/img/wireless.svg",
-    "Directors": "assests/img/pm_wani.svg",
+    "Products": "assests/img/sell.svg",
+    "Directors": "assests/img/Supplier.svg",
     FAQs: "assests/img/Faq.svg",
     "Awards and Achievements": "assests/img/gallery.svg",
   };
