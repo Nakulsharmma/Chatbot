@@ -282,7 +282,7 @@ document.addEventListener("DOMContentLoaded", () => {
     "Products": "assests/img/wireless.svg",
     "Directors": "assests/img/pm_wani.svg",
     FAQs: "assests/img/Faq.svg",
-    "awards and achievements": "assests/img/gallery.svg",
+    "Awards and Achievements": "assests/img/gallery.svg",
   };
 
   // Event listeners for chat icons
