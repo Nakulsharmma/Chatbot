@@ -807,7 +807,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const lastWord = streamingMessage.trim().split(/\s+/).pop();
         if (lastWord === "NO") {
-          streamingMessage = "Something went wrong. Please try again.";
+          streamingMessage = "The context provided does not contain any information related to “" + query + "”. Therefore, Please try again with a refined question or ask a different question.";
         }
         //   const data = await response.text();
         removeTemporaryMessage(streamingMessageId);
