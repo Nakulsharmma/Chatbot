@@ -21,7 +21,17 @@ document.addEventListener("DOMContentLoaded", () => {
   const cover_img = document.querySelector(".cover_img"); // Chat message container
   let isFirstInteraction = true;
   let optionsExpanded = false;
+  const SESSION_KEY = "browserSession"; // Key for session tracking
+  const CHAT_HISTORY_KEY = "chatHistory";
 
+// On page load
+  window.addEventListener("load", () => {
+    if (!sessionStorage.getItem(SESSION_KEY)) {
+      // If session is new, initialize the session key
+      sessionStorage.setItem(SESSION_KEY, Date.now());
+    }
+    loadChatFromLocalStorage(); // Load chat history from localStorage
+  });
 
   const SpeechRecognition =
     window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -137,69 +147,7 @@ document.addEventListener("DOMContentLoaded", () => {
       triggerEnterAction(); // Trigger Enter action on key press
     }
   });
-
-  const exportChat = () => {
-    const { jsPDF } = window.jspdf; // Access jsPDF
-    const doc = new jsPDF();
-  
-    // Set general styles and margins
-    const marginLeft = 15;
-    const marginRight = 15;
-    const pageWidth = doc.internal.pageSize.width;
-    const pageHeight = doc.internal.pageSize.height;
-    const maxLineWidth = pageWidth - marginLeft - marginRight;
-    const lineHeight = 10; // Line height for text
-    const sectionSpacing = 5; // Extra spacing between chat messages
-    let yPosition = 20; // Start position for text
-  
-    // Title
-    doc.setFont("helvetica", "bold");
-    doc.setFontSize(14);
-    doc.text("Chat Export", pageWidth / 2, yPosition, { align: "center" });
-    yPosition += 15;
-  
-    // Get chat history from localStorage
-    const chatMessages = JSON.parse(localStorage.getItem("chatHistory")) || [];
-  
-    // Regular expression to remove unwanted symbols
-    const cleanText = (text) => text.replace(/[=*#$%]/g, "").trim();
-  
-    // Process and format each message
-    chatMessages.forEach((msg, index) => {
-      const sender = msg.sender;
-      const message = cleanText(msg.message); // Clean message content
-      const timestamp = new Date(msg.timestamp).toLocaleString();
-  
-      // Set sender and timestamp styles
-      doc.setFont("helvetica", "bold");
-      doc.setFontSize(12);
-      doc.setTextColor(40, 40, 40);
-  
-      const formattedHeader = `[${timestamp}] ${sender}:`;
-      doc.text(formattedHeader, marginLeft, yPosition);
-  
-      // Wrap and add the message text
-      doc.setFont("helvetica", "normal");
-      doc.setFontSize(11);
-      doc.setTextColor(60, 60, 60);
-  
-      const wrappedMessage = doc.splitTextToSize(message, maxLineWidth);
-      yPosition += lineHeight; // Space below header
-      wrappedMessage.forEach((line) => {
-        if (yPosition + lineHeight > pageHeight - 10) {
-          doc.addPage();
-          yPosition = 20;
-        }
-        doc.text(line, marginLeft, yPosition);
-        yPosition += lineHeight;
-      });
-  
-      yPosition += sectionSpacing; // Add spacing between messages
-    });
-  
-    // Save the PDF
-    doc.save("chat_export.pdf");
-  };  
+ 
   
 
   chatbot.style.display = "none";
@@ -671,7 +619,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // scrollToBottom();
   };
 
-  loadChatFromLocalStorage();
+
 
   // Append a temporary message and return its unique ID
   const appendTemporaryMessage = (sender, message) => {
@@ -756,13 +704,12 @@ document.addEventListener("DOMContentLoaded", () => {
       try {
         //   const typingMessageId = appendTemporaryMessage("Bot", "Gathering the information for you...");
 
-        // Add animation for the typing indicator
-        //   const typingIndicator = document.createElement("div");
-        //   typingIndicator.className = "typing-indicator";
-        //   typingIndicator.innerHTML = `
-        //       <span>.</span><span>.</span><span>.</span>
-        //   `;
-        //   document.querySelector(`#${typingMessageId}`).appendChild(typingIndicator);
+          const typingIndicator = document.createElement("div");
+          typingIndicator.className = "typing-indicator";
+          typingIndicator.innerHTML = `
+              <span>.</span><span>.</span><span>.</span>
+          `;
+          document.getElementById(streamingMessageId).appendChild(typingIndicator);
 
         // const data = await response.json();
         let token = localStorage.getItem("authToken");
@@ -888,6 +835,9 @@ document.addEventListener("DOMContentLoaded", () => {
     if (isMobileView()) {
       adjustChatBodyHeight();
     }
+  });
+  window.addEventListener("beforeunload", () => {
+    // localStorage.removeItem(CHAT_HISTORY_KEY); 
   });
   
 });

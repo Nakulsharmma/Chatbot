@@ -259,15 +259,14 @@ border-radius: 10px;
 display: flex;
 justify-content: flex-start;
 gap: 5px;
-margin-top: 5px;
 animation: fadeIn 0.3s ease-in-out;
 }
 
 .typing-indicator span {
 display: inline-block;
-width: 8px;
-height: 8px;
-background-color: #ccc;
+width: 5px;
+height: 5px;
+background-color: #000;
 border-radius: 50%;
 animation: typing 1.5s infinite;
 }
