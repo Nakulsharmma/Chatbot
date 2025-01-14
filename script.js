@@ -388,15 +388,28 @@ document.addEventListener("DOMContentLoaded", () => {
   loadQuestions();
 
   const copyMessage = (message) => {
-    // Use the Clipboard API to copy text
     if (navigator.clipboard && navigator.clipboard.writeText) {
-      navigator.clipboard.writeText(message)
+      navigator.clipboard
+        .writeText(message)
         .then(() => alert("Message copied to clipboard!"))
         .catch((err) => console.error("Failed to copy message:", err));
     } else {
-      alert("Clipboard API not supported or unavailable.");
-    }    
-  };
+      // Fallback for unsupported browsers
+      const textArea = document.createElement("textarea");
+      textArea.value = message;
+      textArea.style.position = "fixed"; // Avoid scrolling
+      document.body.appendChild(textArea);
+      textArea.focus();
+      textArea.select();
+      try {
+        document.execCommand("copy");
+        alert("Message copied to clipboard!");
+      } catch (err) {
+        console.error("Fallback: Unable to copy", err);
+      }
+      document.body.removeChild(textArea);
+    }
+  };  
 
   const calculateTimeLapse = (timestamp) => {
     const now = new Date();
