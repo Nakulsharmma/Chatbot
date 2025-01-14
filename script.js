@@ -389,10 +389,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const copyMessage = (message) => {
     // Use the Clipboard API to copy text
-    navigator.clipboard
-      .writeText(message)
-      .then(() => alert("Message copied to clipboard!"))
-      .catch((err) => console.error("Failed to copy message:", err));
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(message)
+        .then(() => alert("Message copied to clipboard!"))
+        .catch((err) => console.error("Failed to copy message:", err));
+    } else {
+      alert("Clipboard API not supported or unavailable.");
+    }    
   };
 
   const calculateTimeLapse = (timestamp) => {
