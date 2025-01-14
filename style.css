@@ -336,6 +336,7 @@ border-radius: 10px; /* Rounded edges for the track */
 flex-wrap: wrap; /* Buttons in one line by default */
 max-height: 21px; /* Restrict height to a single row by default */
 transition: max-height 0.3s ease;
+padding: 10px 35px 10px 10px !important;
 }
 
 /* Expanded state */
