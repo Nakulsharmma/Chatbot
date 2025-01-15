@@ -756,131 +756,96 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Handle user query
   const handleUserQuery = async (query) => {
-    userInput.disabled = true;
-    sendBtn.disabled = true;
-    micBtn.disabled = true;
-    const optionsallButtons = document.querySelectorAll(".optionallbuttoncommon");
-    optionsallButtons.forEach((button) => (
-      button.disabled = true,
-      button.style.backgroundColor = "#d3d3d3",
-      button.style.color = "#a9a9a9"
-    ));
-    userInput.style.backgroundColor = "#d3d3d3";
-    userInput.style.color = "#a9a9a9";
-    userInput.style.cursor = "not-allowed";
+    // Disable user input and buttons
+    const disableElements = (state) => {
+      userInput.disabled = state;
+      sendBtn.disabled = state;
+      micBtn.disabled = state;
+      userInput.style.backgroundColor = state ? "#d3d3d3" : "";
+      userInput.style.color = state ? "#a9a9a9" : "";
+      userInput.style.cursor = state ? "not-allowed" : "";
+  
+      const optionsAllButtons = document.querySelectorAll(".optionallbuttoncommon");
+      optionsAllButtons.forEach((button) => {
+        button.disabled = state;
+        button.style.backgroundColor = state ? "#d3d3d3" : "";
+        button.style.color = state ? "#a9a9a9" : "";
+      });
+    };
+  
+    disableElements(true);
+  
     if (chatData[query]) {
       moveChatMessageBelowInput();
       createchatmessage();
     }
+  
     appendMessage("You", query);
     const threadId = getThreadId();
-    // if (chatData[query]) {
-    //   const response =
-    //     chatData[query] || "Sorry, I don't have an answer for that.";
-    //   appendMessage("Bot", response);
-    //   userInput.disabled = false;
-    //   sendBtn.disabled = false;
-    //   micBtn.disabled = false;
-    //   optionsButtons.forEach((button) => (button.disabled = false));
-    //   userInput.style.backgroundColor = ""; // Resets to default
-    //   userInput.style.color = ""; // Resets to default
-    //   userInput.style.cursor = "";
-    // } else {
-      // If not found, fallback to the API
-      const streamingMessageId = appendTemporaryMessage("Bot", "");
-      try {
-        //   const typingMessageId = appendTemporaryMessage("Bot", "Gathering the information for you...");
-
-          const typingIndicator = document.createElement("div");
-          typingIndicator.className = "typing-indicator";
-          typingIndicator.innerHTML = `
-              <span>.</span><span>.</span><span>.</span>
-          `;
-          document.getElementById(streamingMessageId).appendChild(typingIndicator);
-
-        // const data = await response.json();
-        let token = localStorage.getItem("authToken");
-        if (!token) {
-          const email = "admin@cdot.in";
-          const password = "admin";
-          token  = await authenticateAndStoreToken(email, password);
-        }
-        const response = await fetch(
-          "http://192.168.109.222:8000/api/chatbot/",
-          {
-            method: "POST",
-            headers: {
-              Authorization:`Bearer ${token}`,
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              human_text: query,
-              thread_id: threadId,
-            }),
-          }
-        );
-        const reader = response.body.getReader();
-        const decoder = new TextDecoder("utf-8");
-        let streamingMessage = "";
-
-        while (true) {
-          const { value, done } = await reader.read();
-          if (done) break;
-
-          // Decode the chunk and append to the message
-          const chunk = decoder.decode(value, { stream: true });
-          streamingMessage += chunk;
-
-          // Update the temporary message with the new content
-          const tempMessageDiv = document.getElementById(streamingMessageId);
-          if (tempMessageDiv) {
-            tempMessageDiv.innerHTML = parseMarkdown(streamingMessage);
-            scrollToBottom();
-          }
-        }
-
-        const lastWord = streamingMessage.trim().split(/\s+/).pop();
-        if (lastWord === "NO") {
-          streamingMessage = "The context provided does not contain any information related to “" + query + "”. Therefore, Please try again with a refined question or ask a different question.";
-        }
-        //   const data = await response.text();
-        removeTemporaryMessage(streamingMessageId);
-        appendMessage("Bot", streamingMessage, null, false, true);
-        userInput.disabled = false;
-        sendBtn.disabled = false;
-        micBtn.disabled = false;
-        optionsallButtons.forEach((button) => (
-          button.disabled = false,
-          button.style.backgroundColor = "",
-          button.style.color = ""
-        ));
-        userInput.style.backgroundColor = ""; // Resets to default
-        userInput.style.color = ""; // Resets to default
-        userInput.style.cursor = "";
-      } catch (error) {
-        console.error("Error calling the API:", error);
-        removeTemporaryMessage(streamingMessageId);
-        appendMessage("Bot", "Something went wrong. Please try again.");
-      }finally {
-        // Always re-enable input and buttons
-        userInput.disabled = false;
-        sendBtn.disabled = false;
-        micBtn.disabled = false;
-        optionsallButtons.forEach((button) => (
-          button.disabled = false,
-          button.style.backgroundColor = "",
-          button.style.color = ""
-        ));
-        userInput.style.backgroundColor = ""; // Reset to default
-        userInput.style.color = ""; // Reset to default
-        userInput.style.cursor = "";
-    
-        // Automatically focus the input field
-        setTimeout(() => {
-          userInput.focus();
-        }, 50);
-        scrollToBottom();
+    const streamingMessageId = appendTemporaryMessage("Bot", "");
+  
+    try {
+      const typingIndicator = document.createElement("div");
+      typingIndicator.className = "typing-indicator";
+      typingIndicator.innerHTML = `<span>.</span><span>.</span><span>.</span>`;
+      document.getElementById(streamingMessageId).appendChild(typingIndicator);
+  
+      let token = localStorage.getItem("authToken");
+      if (!token) {
+        const email = "admin@cdot.in";
+        const password = "admin";
+        token = await authenticateAndStoreToken(email, password);
       }
+  
+      const response = await fetch("http://192.168.109.222:8000/api/chatbot/", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          human_text: query,
+          thread_id: threadId,
+        }),
+      });
+  
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder("utf-8");
+      let streamingMessage = "";
+  
+      while (true) {
+        const { value, done } = await reader.read();
+        if (done) break;
+  
+        const chunk = decoder.decode(value, { stream: true });
+        streamingMessage += chunk;
+  
+        const tempMessageDiv = document.getElementById(streamingMessageId);
+        if (tempMessageDiv) {
+          tempMessageDiv.innerHTML = parseMarkdown(streamingMessage);
+          scrollToBottom();
+        }
+      }
+  
+      if (streamingMessage.trim().endsWith("NO")) {
+        streamingMessage = `The context provided does not contain any information related to “${query}”. Therefore, please try again with a refined question or ask a different question.`;
+      }
+  
+      removeTemporaryMessage(streamingMessageId);
+      appendMessage("Bot", streamingMessage, null, false, true);
+    } catch (error) {
+      console.error("Error calling the API:", error);
+      removeTemporaryMessage(streamingMessageId);
+      appendMessage("Bot", "Something went wrong. Please try again.");
+    } finally {
+      disableElements(false);
+  
+      setTimeout(() => {
+        userInput.focus();
+      }, 50);
+  
+      scrollToBottom();
+    }
   };
 
   userInput.addEventListener("keydown", (event) => {
