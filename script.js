@@ -216,15 +216,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Chat JSON data
   const chatData = {
-    Consultancy:
-      "C-DOT provides consultancy services for telecommunication technology.",
     "About Cdot": "C-DOT is an R&D organization under the Government of India.",
     // "6 G": "6G is the future of wireless communication technology.",
+    "Awards and Achievements": "Explore the gallery for event photos and updates.",
     "Products":
       "Wireless technology enables communication without physical cables.",
     "Directors": "PM-WANI is an initiative to provide Wi-Fi access across India.",
+    Consultancy:
+      "C-DOT provides consultancy services for telecommunication technology.",
     // FAQs: "Check our FAQ section for common queries.",
-    "Awards and Achievements": "Explore the gallery for event photos and updates.",
   };
 
   const questionImages = {
@@ -759,7 +759,12 @@ document.addEventListener("DOMContentLoaded", () => {
     userInput.disabled = true;
     sendBtn.disabled = true;
     micBtn.disabled = true;
-    optionsButtons.forEach((button) => (button.disabled = true));
+    const optionsallButtons = document.querySelectorAll(".optionallbuttoncommon");
+    optionsallButtons.forEach((button) => (
+      button.disabled = true,
+      button.style.backgroundColor = "#d3d3d3",
+      button.style.color = "#a9a9a9"
+    ));
     userInput.style.backgroundColor = "#d3d3d3";
     userInput.style.color = "#a9a9a9";
     userInput.style.cursor = "not-allowed";
@@ -844,7 +849,11 @@ document.addEventListener("DOMContentLoaded", () => {
         userInput.disabled = false;
         sendBtn.disabled = false;
         micBtn.disabled = false;
-        optionsButtons.forEach((button) => (button.disabled = false));
+        optionsallButtons.forEach((button) => (
+          button.disabled = false,
+          button.style.backgroundColor = "",
+          button.style.color = ""
+        ));
         userInput.style.backgroundColor = ""; // Resets to default
         userInput.style.color = ""; // Resets to default
         userInput.style.cursor = "";
@@ -857,7 +866,11 @@ document.addEventListener("DOMContentLoaded", () => {
         userInput.disabled = false;
         sendBtn.disabled = false;
         micBtn.disabled = false;
-        optionsButtons.forEach((button) => (button.disabled = false));
+        optionsallButtons.forEach((button) => (
+          button.disabled = false,
+          button.style.backgroundColor = "",
+          button.style.color = ""
+        ));
         userInput.style.backgroundColor = ""; // Reset to default
         userInput.style.color = ""; // Reset to default
         userInput.style.cursor = "";
