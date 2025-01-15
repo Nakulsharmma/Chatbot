@@ -228,7 +228,7 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   const questionImages = {
-    "About Cdot": "assests/img/events.svg",
+    "About C-DOT": "assests/img/events.svg",
     Consultancy: "assests/img/consultancy.svg",
     "6G": "assests/img/wifi.svg",
     "Products": "assests/img/Sell.svg",
