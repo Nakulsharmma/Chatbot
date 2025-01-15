@@ -137,6 +137,10 @@ document.addEventListener("DOMContentLoaded", () => {
     console.log("Speech recognition is not supported in this browser.");
     document.getElementById("user-input").placeholder =
       "Speech recognition is not supported in this browser.";
+    setTimeout(() => {
+      document.getElementById("user-input").placeholder =
+      "Type your message here...";
+    }, 5000);
   }
 
   // Listen for the Enter key to trigger the action
