@@ -216,7 +216,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Chat JSON data
   const chatData = {
-    "About Cdot": "C-DOT is an R&D organization under the Government of India.",
+    "About C-DOT": "C-DOT is an R&D organization under the Government of India.",
     // "6 G": "6G is the future of wireless communication technology.",
     "Awards and Achievements": "Explore the gallery for event photos and updates.",
     "Products":
