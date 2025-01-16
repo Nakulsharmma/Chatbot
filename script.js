@@ -438,6 +438,15 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   const parseMarkdown = (message) => {
+    // Check if the message contains table-like markdown syntax
+    if (message.includes("|") && message.includes("---")) {
+      // Escape the table-like syntax to prevent it from being rendered as a table
+      message = message
+        .replace(/\|/g, "\\|") // Escape pipe symbols
+        .replace(/---/g, "\\-\\-\\-"); // Escape dashes
+    }
+  
+    // Parse the markdown message
     if (typeof marked.marked === "function") {
       return marked.marked(message);
     } else if (typeof marked === "function") {
@@ -446,8 +455,7 @@ document.addEventListener("DOMContentLoaded", () => {
       console.error("Marked.js is not loaded correctly.");
       return message; // Fallback to raw message
     }
-  };
-  
+  };   
 
   const appendMessage = (
     sender,
@@ -565,7 +573,7 @@ document.addEventListener("DOMContentLoaded", () => {
           // Create a new utterance and start speaking
           currentUtterance = new SpeechSynthesisUtterance(message.replace(/[=*#@%&]/g, ""));
           currentUtterance.lang = "en-US"; // Set language
-          currentUtterance.rate = 1.5; // Adjust speech rate if needed
+          currentUtterance.rate = 1; // Adjust speech rate if needed
 
           currentUtterance.onend = () => {
             // When speech ends, reset the button state
