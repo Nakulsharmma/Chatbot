@@ -752,7 +752,6 @@ document.addEventListener("DOMContentLoaded", () => {
         const data = await response.json();
         const token = data.access_token;
         localStorage.setItem("authToken", token); // Store token in localStorage
-        console.log("Token stored in localStorage:", token);
         return token;
       } else {
         console.error("Failed to fetch token:", await response.text());
@@ -764,6 +763,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Handle user query
   const handleUserQuery = async (query) => {
+    let isUserScrolling = false; // Flag to track user scrolling
+    let autoScrollTimeout;
     // Disable user input and buttons
     const disableElements = (state) => {
       userInput.disabled = state;
@@ -779,6 +780,21 @@ document.addEventListener("DOMContentLoaded", () => {
         button.style.backgroundColor = state ? "#d3d3d3" : "";
         button.style.color = state ? "#a9a9a9" : "";
       });
+    };
+    const chatMessage = document.getElementById("chat-message");
+    chatMessage.addEventListener("scroll", () => {
+      clearTimeout(autoScrollTimeout);
+      isUserScrolling = true;
+  
+      autoScrollTimeout = setTimeout(() => {
+        isUserScrolling = false; // Reset after user stops interacting
+      }, 2000); // Adjust timeout as needed
+    });
+  
+    const scrollToBottom = () => {
+      if (!isUserScrolling) {
+        chatMessage.scrollTop = chatMessage.scrollHeight;
+      }
     };
   
     disableElements(true);
