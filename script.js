@@ -781,6 +781,7 @@ document.addEventListener("DOMContentLoaded", () => {
         button.style.color = state ? "#a9a9a9" : "";
       });
     };
+    if (!isFirstInteraction) {
     const chatMessage = document.getElementById("chat-message");
     chatMessage.addEventListener("scroll", () => {
       clearTimeout(autoScrollTimeout);
@@ -796,6 +797,7 @@ document.addEventListener("DOMContentLoaded", () => {
         chatMessage.scrollTop = chatMessage.scrollHeight;
       }
     };
+  }
   
     disableElements(true);
   
