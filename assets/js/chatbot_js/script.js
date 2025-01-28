@@ -147,7 +147,6 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("user-input").addEventListener("keydown", (event) => {
     if (event.key === "Enter") {
       event.preventDefault(); // Prevent default form submission if necessary
-      console.log("Enter key pressed");
       triggerEnterAction(); // Trigger Enter action on key press
     }
   });
@@ -617,7 +616,6 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   setInterval(() => {
-    console.log("Updating timestamps...");
     updateTimestamps();
   }, 60000);
 
