@@ -53,7 +53,7 @@ height: 30px;
 }
 
 #chat-header span {
-font-size: 18px;
+font-size: 16px;
 font-weight: bold;
 color: #003f8a;
 }
@@ -135,7 +135,7 @@ border-top-right-radius: 0;
 .user-message{
 position: relative;
 /* max-width: 70%; */
-background-color: #DEE2E6; /* Light blue */
+background-color: #dee2e661; /* Light blue */
 color: #000000; /* Text color */
 /* width: 60%; Fixed width to 70% */
 /* max-width: 70%; Ensures it does not exceed 70% */
@@ -160,7 +160,7 @@ right: 0;
 width: 0;
 height: 0;
 border: 20px solid transparent;
-border-right-color: #dee2e6;
+border-right-color: #eef0f2;
 border-left: 0;
 border-bottom: 0;
 margin-top: -10px;
@@ -179,7 +179,7 @@ border-top-left-radius: 0;
 .bot-message{
 position: relative;
 max-width: 70%;
-background-color: #93DFFC; /* Light blue */
+background-color: #93dffcdb; /* Light blue */
 color: #000; /* Text color */
 padding: 10px 15px;
 font-size: 12.4px;
@@ -201,7 +201,7 @@ left: 0; /* Adjust the positioning */
 width: 0;
 height: 0;
 border: 20px solid transparent;
-border-right-color: #93DFFC;
+border-right-color: #a1e3fb;
 border-left: 0;
 border-bottom: 0;
 margin-top: -10px;

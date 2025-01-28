@@ -219,7 +219,7 @@ document.addEventListener("DOMContentLoaded", () => {
     "About C-DOT": "C-DOT is an R&D organization under the Government of India.",
     // "6 G": "6G is the future of wireless communication technology.",
     "Awards and Achievements": "Explore the gallery for event photos and updates.",
-    "Products":
+    "Product Section":
       "Wireless technology enables communication without physical cables.",
     "Directors": "PM-WANI is an initiative to provide Wi-Fi access across India.",
     Consultancy:
@@ -231,7 +231,7 @@ document.addEventListener("DOMContentLoaded", () => {
     "About C-DOT": "assests/img/events.svg",
     Consultancy: "assests/img/consultancy.svg",
     "6G": "assests/img/wifi.svg",
-    "Products": "assests/img/Sell.svg",
+    "Product Section": "assests/img/Sell.svg",
     "Directors": "assests/img/Supplier.svg",
     FAQs: "assests/img/Faq.svg",
     "Awards and Achievements": "assests/img/gallery.svg",
@@ -752,7 +752,6 @@ document.addEventListener("DOMContentLoaded", () => {
         const data = await response.json();
         const token = data.access_token;
         localStorage.setItem("authToken", token); // Store token in localStorage
-        console.log("Token stored in localStorage:", token);
         return token;
       } else {
         console.error("Failed to fetch token:", await response.text());
@@ -764,6 +763,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Handle user query
   const handleUserQuery = async (query) => {
+    let isUserScrolling = false; // Flag to track user scrolling
+    let autoScrollTimeout;
     // Disable user input and buttons
     const disableElements = (state) => {
       userInput.disabled = state;
@@ -789,6 +790,21 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   
     appendMessage("You", query);
+    const chatMessage = document.getElementById("chat-message");
+    chatMessage.addEventListener("scroll", () => {
+      clearTimeout(autoScrollTimeout);
+      isUserScrolling = true;
+  
+      autoScrollTimeout = setTimeout(() => {
+        isUserScrolling = false; // Reset after user stops interacting
+      }, 2000); // Adjust timeout as needed
+    });
+  
+    const scrollToBottom = () => {
+      if (!isUserScrolling) {
+        chatMessage.scrollTop = chatMessage.scrollHeight;
+      }
+    };
     const threadId = getThreadId();
     const streamingMessageId = appendTemporaryMessage("Bot", "");
   
