@@ -153,7 +153,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <!-- <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; img-src 'self'; style-src 'self' 'unsafe-inline';"> -->
     <title>Chatbot</title>
-    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="assets/css/chatbot_css/style.css" />
   </head>
   <body>
     <header>
@@ -227,31 +227,31 @@
     <div id="chatbot" role="dialog" aria-labelledby="chat-header" aria-hidden="true" style="display: none;">
         <div id="chat-header">
           <div class="logo-section">
-            <img src="assests/img/logo.png" alt="C-DOT Logo" class="logo" />
+            <img src="assets/img/chatbot_img/logo.png" alt="C-DOT Logo" class="logo" />
             <span>C-DOT</span>
           </div>
           <div class="option">
             <button class="options-btn" id = "minimize-btn">
-              <img src="assests/img/Subtract.svg" alt="minimize down icon" class="logo"/>
+              <img src="assets/img/chatbot_img/Subtract.svg" alt="minimize down icon" class="logo"/>
             </button>
             <button class="options-btn" id="export-btn">
-              <img src="assests/img/export.svg" alt="Close Chatbot" style = "width:25px" class="logo" />
+              <img src="assets/img/chatbot_img/export.svg" alt="Close Chatbot" style = "width:25px" class="logo" />
               <span class="tooltip">Export Chat</span>
             </button>
             <button class="options-btn" id = "close-btn">
-              <img src="assests/img/close.svg" alt="Close Chatbot" class="logo" />
+              <img src="assets/img/chatbot_img/close.svg" alt="Close Chatbot" class="logo" />
             </button>
           </div>
         </div>
         <div id="chat-body" class="chat-body" aria-live="polite" role="log">
           <div class="options-container">
             <div class="options">
-                <img src = "assests/img/cdot.svg" alt="Cover image" class="cover_img">
+                <img src = "assets/img/chatbot_img/cdot.svg" alt="Cover image" class="cover_img">
                 <!-- Questions will be dynamically loaded here -->
             </div>
           </div>
           <div class="chat-footer">
-            <button id="toggle-options-btn" class="arrow-up"><img src="assests/img/ChevronUp.svg" alt="Up Arrow" /></button>
+            <button id="toggle-options-btn" class="arrow-up"><img src="assets/img/chatbot_img/ChevronUp.svg" alt="Up Arrow" /></button>
             <div class="input-section">
               <div class="input-message">
                 <input
@@ -261,10 +261,10 @@
                   aria-label="Chat input field"
                 />
                 <button id="send-btn" aria-label="Send message">
-                  <img src="assests/img/send.svg" alt="Chatbot send button" class="logo" />
+                  <img src="assets/img/chatbot_img/send.svg" alt="Chatbot send button" class="logo" />
                 </button>
                 <button id="mic-btn" aria-label="Activate voice input">
-                  <img src="assests/img/Microphone.svg" alt="Microphone Icon" class="logo" />
+                  <img src="assets/img/chatbot_img/Microphone.svg" alt="Microphone Icon" class="logo" />
                 </button>
               </div>
             </div>
@@ -272,11 +272,11 @@
         </div>
     </div>     
     <div id="chat-icon">
-        <img src="assests/img/chat_icon.svg" alt="Chatbot Icon" class="logo" />
-        <img src="assests/img/chat_down_icon.svg" alt="Chatbot down icon" class="logo"  style="display: none;"/>
+        <img src="assets/img/chatbot_img/chat_icon.svg" alt="Chatbot Icon" class="logo" />
+        <img src="assets/img/chatbot_img/chat_down_icon.svg" alt="Chatbot down icon" class="logo"  style="display: none;"/>
     </div> 
-    <script src="assests/js/marked.min.js"></script>
-    <script src="assests/js/jspdf.min.js"></script> 
-    <script src="script.js" defer></script>  
+    <script src="assets/js/chatbot_js/marked.min.js"></script>
+    <script src="assets/js/chatbot_js/jspdf.min.js"></script> 
+    <script src="assets/js/chatbot_js/script.js" defer></script>  
   </body>
 </html>

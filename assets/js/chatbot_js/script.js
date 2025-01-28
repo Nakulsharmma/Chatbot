@@ -228,13 +228,13 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   const questionImages = {
-    "About C-DOT": "assests/img/events.svg",
-    Consultancy: "assests/img/consultancy.svg",
-    "6G": "assests/img/wifi.svg",
-    "Product Section": "assests/img/Sell.svg",
-    "Directors": "assests/img/Supplier.svg",
-    FAQs: "assests/img/Faq.svg",
-    "Awards and Achievements": "assests/img/gallery.svg",
+    "About C-DOT": "assets/img/chatbot_img/events.svg",
+    Consultancy: "assets/img/chatbot_img/consultancy.svg",
+    "6G": "assets/img/chatbot_img/wifi.svg",
+    "Product Section": "assets/img/chatbot_img/Sell.svg",
+    "Directors": "assets/img/chatbot_img/Supplier.svg",
+    FAQs: "assets/img/chatbot_img/Faq.svg",
+    "Awards and Achievements": "assets/img/chatbot_img/gallery.svg",
   };
 
   // Event listeners for chat icons
@@ -541,7 +541,7 @@ document.addEventListener("DOMContentLoaded", () => {
       copyButton.className = "copy-button";
 
       const copyIcon = document.createElement("img");
-      copyIcon.src = "assests/img/copy.svg"; // Replace with the actual path to your image
+      copyIcon.src = "assets/img/chatbot_img/copy.svg"; // Replace with the actual path to your image
       copyIcon.alt = "Copy";
       copyIcon.style.width = "16px"; // Set size of the icon
       copyIcon.style.height = "16px";
@@ -554,7 +554,7 @@ document.addEventListener("DOMContentLoaded", () => {
       speakerButton.className = "speaker-button";
 
       const speakerIcon = document.createElement("img");
-      speakerIcon.src = "assests/img/Voice.svg"; // Replace with the actual path to your speaker icon
+      speakerIcon.src = "assets/img/chatbot_img/Voice.svg"; // Replace with the actual path to your speaker icon
       speakerIcon.alt = "Speak";
       speakerIcon.style.width = "16px";
       speakerIcon.style.height = "16px";
@@ -568,7 +568,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (isSpeaking) {
           // If currently speaking, stop the speech and update the icon
           window.speechSynthesis.cancel();
-          speakerIcon.src = "assests/img/Voice.svg"; // Reset to speaker icon
+          speakerIcon.src = "assets/img/chatbot_img/Voice.svg"; // Reset to speaker icon
           speakerIcon.alt = "Speak";
           isSpeaking = false;
         } else {
@@ -579,13 +579,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
           currentUtterance.onend = () => {
             // When speech ends, reset the button state
-            speakerIcon.src = "assests/img/Voice.svg";
+            speakerIcon.src = "assets/img/chatbot_img/Voice.svg";
             speakerIcon.alt = "Speak";
             isSpeaking = false;
           };
 
           window.speechSynthesis.speak(currentUtterance);
-          speakerIcon.src = "assests/img/mute.svg"; // Change to mute icon
+          speakerIcon.src = "assets/img/chatbot_img/mute.svg"; // Change to mute icon
           speakerIcon.alt = "Mute";
           isSpeaking = true;
         }
