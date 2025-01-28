@@ -781,6 +781,23 @@ document.addEventListener("DOMContentLoaded", () => {
         button.style.color = state ? "#a9a9a9" : "";
       });
     };
+    if (!isFirstInteraction) {
+    const chatMessage = document.getElementById("chat-message");
+    chatMessage.addEventListener("scroll", () => {
+      clearTimeout(autoScrollTimeout);
+      isUserScrolling = true;
+  
+      autoScrollTimeout = setTimeout(() => {
+        isUserScrolling = false; // Reset after user stops interacting
+      }, 2000); // Adjust timeout as needed
+    });
+  
+    const scrollToBottom = () => {
+      if (!isUserScrolling) {
+        chatMessage.scrollTop = chatMessage.scrollHeight;
+      }
+    };
+  }
   
     disableElements(true);
   
