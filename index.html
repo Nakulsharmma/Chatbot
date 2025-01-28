@@ -224,7 +224,7 @@
         <p>&copy; 2024 MyWebsite. All rights reserved.</p>
       </div>
     </footer>
-    <div id="chatbot" style="display: none;">
+    <div id="chatbot" role="dialog" aria-labelledby="chat-header" aria-hidden="true" style="display: none;">
         <div id="chat-header">
           <div class="logo-section">
             <img src="assests/img/logo.png" alt="C-DOT Logo" class="logo" />
@@ -243,10 +243,10 @@
             </button>
           </div>
         </div>
-        <div id="chat-body" class="chat-body">
+        <div id="chat-body" class="chat-body" aria-live="polite" role="log">
           <div class="options-container">
             <div class="options">
-                <img src = "assests/img/cdot.svg" class="cover_img">
+                <img src = "assests/img/cdot.svg" alt="Cover image" class="cover_img">
                 <!-- Questions will be dynamically loaded here -->
             </div>
           </div>
@@ -258,11 +258,12 @@
                   type="text"
                   id="user-input"
                   placeholder="Type your message here..."
+                  aria-label="Chat input field"
                 />
-                <button id="send-btn">
+                <button id="send-btn" aria-label="Send message">
                   <img src="assests/img/send.svg" alt="Chatbot send button" class="logo" />
                 </button>
-                <button id="mic-btn">
+                <button id="mic-btn" aria-label="Activate voice input">
                   <img src="assests/img/Microphone.svg" alt="Microphone Icon" class="logo" />
                 </button>
               </div>

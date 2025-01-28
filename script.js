@@ -359,6 +359,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const button = document.createElement("button");
       button.classList.add("option-all-button"); // Add class to the span for styling
       button.classList.add("optionallbuttoncommon"); // Add class to the span for styling
+      button.setAttribute("aria-label", `Option for ${question}`);
       const span = document.createElement("span");
       span.classList.add("option-button-text"); // Add class to the span for styling
       span.textContent = question;
@@ -483,6 +484,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Set class based on sender
     messageDiv.className = sender === "You" ? "user-message" : "bot-message";
+    messageDiv.role = "article";
 
     // Function to truncate a message
     const truncateMessage = (msg, wordLimit) => {
