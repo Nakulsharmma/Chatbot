@@ -201,7 +201,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     const response = await fetch(
-      `http://192.168.109.222:8000/api/clear-chat-history?thread_id=${threadId}`,
+      `https://192.168.109.222:8000/api/clear-chat-history?thread_id=${threadId}`,
       {
         method: "GET",
         headers: {
@@ -741,7 +741,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const formData = new FormData();
       formData.append("email", email);
       formData.append("password", password);
-      const response = await fetch("http://192.168.109.222:8000/api/auth-token/", 
+      const response = await fetch("https://192.168.109.222:8000/api/auth-token/", 
         {
           method: "POST",
           body: formData,
@@ -838,7 +838,7 @@ document.addEventListener("DOMContentLoaded", () => {
         token = await authenticateAndStoreToken(email, password);
       }
   
-      const response = await fetch("http://192.168.109.222:8000/api/chatbot/", {
+      const response = await fetch("https://192.168.109.222:8000/api/chatbot/", {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,
