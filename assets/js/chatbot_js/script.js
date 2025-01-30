@@ -3,9 +3,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const toggleOptionsBtn = document.getElementById("toggle-options-btn");
   const chatbot = document.getElementById("chatbot");
   const chatIcon = document.querySelector("#chat-icon img[alt='Chatbot Icon']");
-  const chatDownIcon = document.querySelector(
-    "#chat-icon img[alt='Chatbot down icon']"
-  );
   const minimizedownicon = document.querySelector(
     "#minimize-btn img[alt='minimize down icon']"
   );
@@ -150,11 +147,27 @@ document.addEventListener("DOMContentLoaded", () => {
       triggerEnterAction(); // Trigger Enter action on key press
     }
   });
+
+  document.getElementById("chat-header").addEventListener("click", (event) => {
+    // Prevent collapsing when clicking inside the '.option' div
+    if (!event.target.closest(".option")) {
+        document.getElementById("chatbot").classList.toggle("chat-collapsed");
+    }
+  });
+  document.addEventListener("click", (event) => {
+    const chatbot = document.getElementById("chatbot");
+
+    // Check if the clicked element is outside the chatbot
+    if (!chatbot.contains(event.target) && !chatIcon.contains(event.target)) {
+        chatbot.classList.add("chat-collapsed"); // Minimize the chatbot
+
+    }
+  });
+
  
   
 
   chatbot.style.display = "none";
-  chatDownIcon.style.display = "none";
   chatIcon.style.display = "block";
   arrowButton.style.display = "none";
   // Function to toggle chatbot visibility
@@ -162,11 +175,9 @@ document.addEventListener("DOMContentLoaded", () => {
     if (showChatbot) {
       chatbot.style.display = "block";
       chatIcon.style.display = "none";
-      chatDownIcon.style.display = "block";
     } else {
       chatbot.style.display = "none";
       chatIcon.style.display = "block";
-      chatDownIcon.style.display = "none";
     }
   };
   const toggleOptions = () => {
@@ -217,9 +228,9 @@ document.addEventListener("DOMContentLoaded", () => {
   const chatData = {
     "About C-DOT": "C-DOT is an R&D organization under the Government of India.",
     // "6 G": "6G is the future of wireless communication technology.",
-    "Awards and Achievements": "Explore the gallery for event photos and updates.",
     "Product Section":
-      "Wireless technology enables communication without physical cables.",
+    "Wireless technology enables communication without physical cables.",
+    "Awards and Achievements": "Explore the gallery for event photos and updates.",
     "Directors": "PM-WANI is an initiative to provide Wi-Fi access across India.",
     Consultancy:
       "C-DOT provides consultancy services for telecommunication technology.",
@@ -242,7 +253,6 @@ document.addEventListener("DOMContentLoaded", () => {
     scrollToBottom(); // Scroll to the bottom
   });
 
-  chatDownIcon.addEventListener("click", () => toggleChatbotVisibility(false));
   minimizedownicon.addEventListener("click", () => toggleChatbotVisibility(false));
 
 
@@ -346,7 +356,6 @@ document.addEventListener("DOMContentLoaded", () => {
       // Only create the div if it doesn't already exist
       chatMessages = document.createElement("div");
       chatMessages.setAttribute("id", "chat-message");
-      chatMessages.style.maxHeight = "370px";
       chatMessages.style.marginBottom = "10px";
       chatBody.prepend(chatMessages);
     }
@@ -480,7 +489,15 @@ document.addEventListener("DOMContentLoaded", () => {
     const messageTimestamp = timestamp || now.toISOString();
     // const timeString = timestamp || now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
     const timeLapse = calculateTimeLapse(messageTimestamp);
-
+    const botmessageicon = document.createElement("div");
+    botmessageicon.className = sender === "You" ? "user-image" : "bot-image";
+    const botimg = document.createElement("img");
+    botimg.src = sender === "You" ? "assets/img/chatbot_img/User.svg" : "assets/img/chatbot_img/logo.png"; // Replace with the actual path to your image
+    botimg.alt = "Logo";
+    botimg.style.width = sender === "You" ? "20px" : "16px"; 
+    botimg.style.height = sender === "You" ? "20px" : "16px";
+    botimg.style.cursor = "pointer"
+    botmessageicon.appendChild(botimg);
     // Set class based on sender
     messageDiv.className = sender === "You" ? "user-message" : "bot-message";
     messageDiv.role = "article";
@@ -598,8 +615,10 @@ document.addEventListener("DOMContentLoaded", () => {
       timestampCopyDiv.appendChild(speakerButton);
 
       messageDiv.appendChild(timestampCopyDiv);
+      messageDiv.appendChild(botmessageicon);
     } else {
       messageDiv.appendChild(timestampDiv);
+      messageDiv.appendChild(botmessageicon);
     }
 
     // Add the new message to the chat container
@@ -830,6 +849,16 @@ document.addEventListener("DOMContentLoaded", () => {
       typingIndicator.className = "typing-indicator";
       typingIndicator.innerHTML = `<span>.</span><span>.</span><span>.</span>`;
       document.getElementById(streamingMessageId).appendChild(typingIndicator);
+      const botmessageicon = document.createElement("div");
+      botmessageicon.className = "bot-image";
+      const botimg = document.createElement("img");
+      botimg.src = sender = "assets/img/chatbot_img/logo.png"; // Replace with the actual path to your image
+      botimg.alt = "Logo";
+      botimg.style.width =  "16px"; 
+      botimg.style.height =  "16px";
+      botimg.style.cursor = "pointer"
+      botmessageicon.appendChild(botimg);
+      document.getElementById(streamingMessageId).appendChild(botmessageicon);
   
       let token = localStorage.getItem("authToken");
       if (!token) {
@@ -908,37 +937,33 @@ document.addEventListener("DOMContentLoaded", () => {
   function adjustChatBodyHeight() {
     const chatBody = document.getElementById('chat-body');
     const visualViewportHeight = window.visualViewport.height; // Get the actual height of the visible viewport
-  
+
     // Check if the search bar (browser navbar) is visible or hidden
     const isNavbarVisible = visualViewportHeight < window.innerHeight;
-  
-    if (isNavbarVisible) {
-      // Browser navbar is visible
-      chatBody.style.height = `calc(${visualViewportHeight}px - 210px - env(safe-area-inset-bottom))`;
-    } else {
-      // Browser navbar is hidden
-      chatBody.style.height = `calc(${visualViewportHeight}px - 150px - env(safe-area-inset-bottom))`;
-    }
-  }
-  
-  // Function to check if the viewport is mobile
-  function isMobileView() {
-    return window.innerWidth <= 768; // Adjust the breakpoint as needed
-  }
-  
-  // Run on load if in mobile view
-  if (isMobileView()) {
-    adjustChatBodyHeight();
-  }
-  
-  // Run whenever the viewport changes, but only in mobile view
-  window.visualViewport.addEventListener('resize', () => {
+
     if (isMobileView()) {
-      adjustChatBodyHeight();
+        // Apply height adjustments for mobile view
+        if (isNavbarVisible) {
+            chatBody.style.height = `calc(${visualViewportHeight}px - 210px - env(safe-area-inset-bottom))`;
+        } else {
+            chatBody.style.height = `calc(${visualViewportHeight}px - 150px - env(safe-area-inset-bottom))`;
+        }
+    } else {
+        // Restore default height for desktop
+        chatBody.style.height = "359px"; // Reset to original height
     }
-  });
-  window.addEventListener("beforeunload", () => {
-    // localStorage.removeItem(CHAT_HISTORY_KEY); 
-  });
+}
+
+// Function to check if the viewport is mobile
+function isMobileView() {
+    return window.innerWidth <= 768; // Adjust the breakpoint as needed
+}
+
+// Run on load
+adjustChatBodyHeight();
+
+// Run whenever the viewport changes
+window.visualViewport.addEventListener('resize', adjustChatBodyHeight);
+window.addEventListener('resize', adjustChatBodyHeight);
   
 });

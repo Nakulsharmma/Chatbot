@@ -228,7 +228,7 @@
         <div id="chat-header">
           <div class="logo-section">
             <img src="assets/img/chatbot_img/logo.png" alt="C-DOT Logo" class="logo" />
-            <span>C-DOT</span>
+            <span>C-BOT</span>
           </div>
           <div class="option">
             <button class="options-btn" id = "minimize-btn">
@@ -250,30 +250,34 @@
                 <!-- Questions will be dynamically loaded here -->
             </div>
           </div>
-          <div class="chat-footer">
-            <button id="toggle-options-btn" class="arrow-up"><img src="assets/img/chatbot_img/ChevronUp.svg" alt="Up Arrow" /></button>
-            <div class="input-section">
-              <div class="input-message">
-                <input
-                  type="text"
-                  id="user-input"
-                  placeholder="Type your message here..."
-                  aria-label="Chat input field"
-                />
-                <button id="send-btn" aria-label="Send message">
-                  <img src="assets/img/chatbot_img/send.svg" alt="Chatbot send button" class="logo" />
-                </button>
-                <button id="mic-btn" aria-label="Activate voice input">
-                  <img src="assets/img/chatbot_img/Microphone.svg" alt="Microphone Icon" class="logo" />
-                </button>
-              </div>
+        </div>
+        <div class="chat-footer">
+          <button id="toggle-options-btn" class="arrow-up"><img src="assets/img/chatbot_img/ChevronUp.svg" alt="Up Arrow" /></button>
+          <div class="input-section">
+            <div class="input-message">
+              <input
+                type="text"
+                id="user-input"
+                placeholder="Type your message here..."
+                aria-label="Chat input field"
+              />
+              <button id="send-btn" aria-label="Send message">
+                <img src="assets/img/chatbot_img/send.svg" alt="Chatbot send button" class="logo" />
+              </button>
+              <button id="mic-btn" aria-label="Activate voice input">
+                <img src="assets/img/chatbot_img/Microphone.svg" alt="Microphone Icon" class="logo" />
+              </button>
+            </div>
+            <div class="footer-logo-section">
+              <span class="footer-text">Powered by</span>
+              <img src="assets/img/chatbot_img/logo.png" alt="C-DOT Logo" class="footer-logo" />
+              <span class="footer-text">C-DOT</span> 
             </div>
           </div>
         </div>
     </div>     
     <div id="chat-icon">
         <img src="assets/img/chatbot_img/chat_icon.svg" alt="Chatbot Icon" class="logo" />
-        <img src="assets/img/chatbot_img/chat_down_icon.svg" alt="Chatbot down icon" class="logo"  style="display: none;"/>
     </div> 
     <script src="assets/js/chatbot_js/marked.min.js"></script>
     <script src="assets/js/chatbot_js/jspdf.min.js"></script> 
