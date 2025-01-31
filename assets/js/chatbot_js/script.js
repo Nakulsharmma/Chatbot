@@ -965,5 +965,23 @@ adjustChatBodyHeight();
 // Run whenever the viewport changes
 window.visualViewport.addEventListener('resize', adjustChatBodyHeight);
 window.addEventListener('resize', adjustChatBodyHeight);
+
+function adjustChatHeight() {
+  let navbar = document.getElementById("header");
+  let chatBody = document.getElementById("chat-body");
+
+  let navHeight = navbar.offsetHeight;
+  let chatRect = chatBody.getBoundingClientRect();
+  let navRect = navbar.getBoundingClientRect();
+
+  // Check if chat-body is overlapping the navbar
+  if (chatRect.top < navRect.bottom) {
+    chatBody.style.height = `calc(100vh - ${navHeight}px)`;
+  } 
+}
+
+// Run function on load and resize
+window.addEventListener("load", adjustChatHeight);
+window.addEventListener("resize", adjustChatHeight);
   
 });
