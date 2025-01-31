@@ -156,18 +156,189 @@
     <link rel="stylesheet" href="assets/css/chatbot_css/style.css" />
   </head>
   <body>
-    <header>
-      <div class="container">
-        <h1 class="logo">MyWebsite</h1>
-        <nav>
-          <ul>
-            <li><a href="#features">Features</a></li>
-            <li><a href="#about">About</a></li>
-            <li><a href="#contact">Contact</a></li>
-          </ul>
-        </nav>
+    <nav id="header" class="navbar fixed-top navbar-expand-lg navbar-light bg-light header-shadow">
+      <a href="home.php?lang=en">
+          <img class="navbar-brand img-fluid cdotlogo rounded" style="height: 65px;" src="../assets/img/cdot_logo.png"></a>
+          <div id="cdot_header" class="flex-container">
+                  <div><h4 class="cdot_header_big">Centre for Development of Telematics</h4></div>
+                  <div><h6 class="cdot_header_small">Telecom Technology Centre of Govt. of India</h6></div>
+          </div>
+      
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+  
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto justify-content-end">
+  
+        <li><a id="home_button" href="home.php?lang=en"><svg class="svg-inline--fa fa-home fa-w-18 fa-2x pr-2" aria-hidden="true" data-prefix="fas" data-icon="home" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" data-fa-i2svg=""><path fill="currentColor" d="M488 312.7V456c0 13.3-10.7 24-24 24H348c-6.6 0-12-5.4-12-12V356c0-6.6-5.4-12-12-12h-72c-6.6 0-12 5.4-12 12v112c0 6.6-5.4 12-12 12H112c-13.3 0-24-10.7-24-24V312.7c0-3.6 1.6-7 4.4-9.3l188-154.8c4.4-3.6 10.8-3.6 15.3 0l188 154.8c2.7 2.3 4.3 5.7 4.3 9.3zm83.6-60.9L488 182.9V44.4c0-6.6-5.4-12-12-12h-56c-6.6 0-12 5.4-12 12V117l-89.5-73.7c-17.7-14.6-43.3-14.6-61 0L4.4 251.8c-5.1 4.2-5.8 11.8-1.6 16.9l25.5 31c4.2 5.1 11.8 5.8 16.9 1.6l235.2-193.7c4.4-3.6 10.8-3.6 15.3 0l235.2 193.7c5.1 4.2 12.7 3.5 16.9-1.6l25.5-31c4.2-5.2 3.4-12.7-1.7-16.9z"></path></svg><!-- <i class="fas fa-home fa-2x pr-2"></i> --></a></li>
+        
+        <li id="about_us" class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="aboutus.php?lang=en" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            About Us        </a>
+          <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+            <a class="dropdown-item" href="aboutus.php?lang=en#corporate_profile">Corporate Profile</a>
+            <a class="dropdown-item" href="aboutus.php?lang=en#org_structure">Organization Structure</a>
+            <a class="dropdown-item" href="aboutus.php?lang=en#success_story">Success Stories</a>
+            <a class="dropdown-item" href="aboutus.php?lang=en#awards">Awards &amp; Accolades</a>
+            <a class="dropdown-item" href="aboutus.php?lang=en#business_model">Business Model</a>
+          </div>
+        </li>
+        
+         <li id="products" class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="products.php?lang=en" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Products        </a>
+          <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+            <a class="dropdown-item" href="product_category.php?lang=en&amp;catId=1">Optical Technology</a>
+            <a class="dropdown-item" href="product_category.php?lang=en&amp;catId=2">Switching &amp; Routing</a>
+            <a class="dropdown-item" href="product_category.php?lang=en&amp;catId=3">Wireless Technology</a>
+            <a class="dropdown-item" href="product_category.php?lang=en&amp;catId=4">Software Applications</a>
+            <a class="dropdown-item" href="product_category.php?lang=en&amp;catId=5">Legacy Products &amp; Solutions</a>
+            <!--a class="dropdown-item" href="product_category.php?lang=&catId=6"></a-->
+            <a class="dropdown-item" href="product_category.php?lang=en&amp;catId=7">PM-WANI</a>
+      <a class="dropdown-item" href="product_category.php?lang=en&amp;catId=8">Broadcast and Converged Solutions</a>
+      <a class="dropdown-item" href="product_category.php?lang=en&amp;catId=9">Disaster Management Solutions</a>
+      <a class="dropdown-item" href="product_category.php?lang=en&amp;catId=10">Post Quantum Cryptography</a>
+      <a class="dropdown-item" href="product_category.php?lang=en&amp;catId=11">Security Solutions</a>
+      <a class="dropdown-item" href="../assets/docs/products/ProductBooklet.pdf?version=1" target="_blank">Product Booklet</a>
+          </div>
+        </li>
+        
+        <li id="services" class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="services.php?lang=en" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Services        </a>
+          <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+            <a class="dropdown-item" href="services.php?lang=en#tot">Transfer of Technology</a>
+            <a class="dropdown-item" href="../assets/docs/misc/OpenRAN-Testbed.pdf?version=1" target="_blank">O-RAN Test and Integration Lab</a>
+            <a class="dropdown-item" href="services.php?lang=en#consultancy">Consultancy</a>
+            <a class="dropdown-item" href="../assets/docs/misc/ipdrfaq.pdf?version=1" target="_blank">IPDR Consultancy</a>
+            <a class="dropdown-item" href="ipr.php?lang=en">IPR MANAGEMENT</a>
+            <a class="dropdown-item" href="services.php?lang=en#training">Training</a>
+            <a class="dropdown-item" href="services.php?lang=en#field_support">Field Support</a>
+          </div>
+        </li>
+  
+        <li id="media" class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Media        </a>
+          <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+            <a class="dropdown-item" href="news.php?lang=en">News</a>
+            <a class="dropdown-item" href="eventGallery.php?lang=en">Event Gallery</a>
+            <a class="dropdown-item" href="annualReport.php?lang=en">Annual Reports</a>
+            <a class="dropdown-item" href="webinar.php?lang=en">Webinar</a>
+            <a class="dropdown-item" href="circulars.php?lang=en">OMs &amp; Circulars</a>
+          </div>
+        </li>
+        
+        <li id="tender" class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Tenders        </a>
+          <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+            <a class="dropdown-item" href="integrityPact.php?lang=en">Integrity Pact</a>
+            <a class="dropdown-item" href="tenders.php?lang=en&amp;type=new">New Tenders</a>
+            <a class="dropdown-item" href="tenders.php?lang=en&amp;type=arc">Archived Tenders</a>
+          </div>
+        </li>
+        
+        <li id="careers" class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="careers.php?lang=en" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Careers        </a>
+          <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+            <a class="dropdown-item" href="careers.php?lang=en#work_culture">Work Culture</a>
+            <a class="dropdown-item" href="careers.php?lang=en#employee_development">Employee Development</a>
+            <a class="dropdown-item" href="careers.php?lang=en#current_openings">Current Openings</a>
+            <a class="dropdown-item" href="careers.php?lang=en#manpower">Current Manpower</a>
+            <a class="dropdown-item" href="careers.php?lang=#recruitment_procedure"></a>
+            
+          </div>
+        </li>
+        
+        <li id="5g" class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="5ghome.php?lang=en" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Alliances        </a>
+          <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+            <a class="dropdown-item" href="5gAlliancesHome.php">5G Alliance</a>
+      <a class="dropdown-item" href="quantumAlliance.php">Quantum Alliance</a>
+      <a class="dropdown-item" href="cyberSecurityAlliance.php">Cyber Security Alliance</a>
+      <a class="dropdown-item" href="mcxAlliance.php">MCX Alliance</a>
+          </div>
+        </li>
+        
+        <li id="coi" class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="coiIotM2M.php?lang=en" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            COI        </a>
+          <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+            <!--a class="dropdown-item" href="<?php// echo COMMON_DOC_BASE_PATH."/coi/iotM2M/Call_for_Proposal_for_COI_for_M2M_v3.pdf";?>" target="_blank"><?php// echo TNB_NAV_COI_IOTM2M_RESOURCES_CFP?></a>
+            <a class="dropdown-item" href="<?php// echo COMMON_DOC_BASE_PATH."/coi/iotM2M/Broucher_COI_IOTM2M.pdf";?>" target="_blank"><?php// echo TNB_NAV_COI_IOTM2M_RESOURCES_BROUCHER?></a>
+            <a class="dropdown-item" href="<?php// echo COMMON_DOC_BASE_PATH."/coi/iotM2M/Writeup_COI_for_M2M_v17.pdf";?>" target="_blank" ><?php// echo TNB_NAV_COI_IOTM2M_RESOURCES_COI_DOC?></a-->
+            <a class="dropdown-item" href="https://coi.cdot.in" target="_blank">IoT/M2M Portal</a>
+            <!--a class="dropdown-item" href="<?php// echo COMMON_DOC_BASE_PATH."/coi/iotM2M/PresentationSchedule.pdf";?>" target="_blank"><?php// echo TNB_NAV_COI_IOTM2M_RESOURCES_PRESENTATION_SCHEDULE?></a-->
+            <a class="dropdown-item" href="ccrp.php">Collaborative Programs</a>
+            <!-- a class="dropdown-item" href="quantumAlliance.php"><?//php echo TNB_NAV_COI_QUANTUM_ALLIANCE?></a -->
+            <a class="dropdown-item" href="quantumHackathon.php">Quantum Hackathon</a>
+      <!-- a class="dropdown-item" href="https://mis.cdot.in/COI-Registration" target="_blank"><?//php echo TNB_NAV_COI_OTHER_DOMAIN?></a -->
+            <a class="dropdown-item" href="https://blended-learning.ieee.org/Portal/Course/Home#/IEEE-CDOT-Certified-Telecom-Expert-Program--ICCTEP" target="_blank">IEEE C-DOT CERTIFIED PROGRAM (ICCTEP)</a>
+          </div>
+        </li>
+      </ul>
+      
+      <div class="row">
+          <div class="col-lg-9 col-md-4 pr-2">
+            <div id="___gcse_0"><div class="gsc-control-cse gsc-control-cse-en"><div class="gsc-control-wrapper-cse" dir="ltr"><form class="gsc-search-box gsc-search-box-tools" accept-charset="utf-8"><table cellspacing="0" cellpadding="0" role="presentation" class="gsc-search-box"><tbody><tr><td class="gsc-input"><div class="gsc-input-box" id="gsc-iw-id1"><table cellspacing="0" cellpadding="0" role="presentation" id="gs_id50" class="gstl_50 gsc-input" style="width: 100%; padding: 0px;"><tbody><tr><td id="gs_tti50" class="gsib_a"><input autocomplete="off" type="text" size="10" class="gsc-input" name="search" title="search" aria-label="search" id="gsc-i-id1" dir="ltr" spellcheck="false" placeholder="Search" style="width: 100%; padding: 0px; border: none; margin: 0px; height: auto; outline: none;"></td><td class="gsib_b"><div class="gsst_b" id="gs_st50" dir="ltr"><a class="gsst_a" href="javascript:void(0)" title="Clear search box" role="button" style="display: none;"><span class="gscb_a" id="gs_cb50" aria-hidden="true">×</span></a></div></td></tr></tbody></table></div></td><td class="gsc-search-button"><button class="gsc-search-button gsc-search-button-v2"><svg width="13" height="13" viewBox="0 0 13 13"><title>search</title><path d="m4.8495 7.8226c0.82666 0 1.5262-0.29146 2.0985-0.87438 0.57232-0.58292 0.86378-1.2877 0.87438-2.1144 0.010599-0.82666-0.28086-1.5262-0.87438-2.0985-0.59352-0.57232-1.293-0.86378-2.0985-0.87438-0.8055-0.010599-1.5103 0.28086-2.1144 0.87438-0.60414 0.59352-0.8956 1.293-0.87438 2.0985 0.021197 0.8055 0.31266 1.5103 0.87438 2.1144 0.56172 0.60414 1.2665 0.8956 2.1144 0.87438zm4.4695 0.2115 3.681 3.6819-1.259 1.284-3.6817-3.7 0.0019784-0.69479-0.090043-0.098846c-0.87973 0.76087-1.92 1.1413-3.1207 1.1413-1.3553 0-2.5025-0.46363-3.4417-1.3909s-1.4088-2.0686-1.4088-3.4239c0-1.3553 0.4696-2.4966 1.4088-3.4239 0.9392-0.92727 2.0864-1.3969 3.4417-1.4088 1.3553-0.011889 2.4906 0.45771 3.406 1.4088 0.9154 0.95107 1.379 2.0924 1.3909 3.4239 0 1.2126-0.38043 2.2588-1.1413 3.1385l0.098834 0.090049z"></path></svg></button></td><td class="gsc-clear-button"><div class="gsc-clear-button" title="clear results">&nbsp;</div></td></tr></tbody></table></form><div class="gsc-results-wrapper-overlay"><div class="gsc-results-close-btn" tabindex="0"></div><div class="gsc-positioningWrapper"><div class="gsc-tabsAreaInvisible"><div aria-label="refinement" role="tab" class="gsc-tabHeader gsc-inline-block gsc-tabhActive">Web</div><span class="gs-spacer"> </span><div tabindex="0" aria-label="refinement" role="tab" class="gsc-tabHeader gsc-tabhInactive gsc-inline-block">Image</div><span class="gs-spacer"> </span></div></div><div class="gsc-positioningWrapper"><div class="gsc-refinementsAreaInvisible"></div></div><div class="gsc-above-wrapper-area-invisible"><div class="gsc-above-wrapper-area-backfill-container"></div><table cellspacing="0" cellpadding="0" role="presentation" class="gsc-above-wrapper-area-container"><tbody><tr><td class="gsc-result-info-container"><div class="gsc-result-info-invisible"></div></td><td class="gsc-orderby-container"><div class="gsc-orderby-invisible"><div class="gsc-orderby-label gsc-inline-block">Sort by:</div><div class="gsc-option-menu-container gsc-inline-block"><div class="gsc-selected-option-container gsc-inline-block"><div class="gsc-selected-option">Relevance</div><div class="gsc-option-selector"></div></div><div class="gsc-option-menu-invisible"><div class="gsc-option-menu-item gsc-option-menu-item-highlighted"><div class="gsc-option">Relevance</div></div><div class="gsc-option-menu-item"><div class="gsc-option">Date</div></div></div></div></div></td></tr></tbody></table></div><div class="gsc-adBlockInvisible"></div><div class="gsc-wrapper"><div class="gsc-adBlockInvisible"></div><div class="gsc-resultsbox-invisible"><div class="gsc-resultsRoot gsc-tabData gsc-tabdActive"><div><div class="gsc-expansionArea"></div></div></div><div class="gsc-resultsRoot gsc-tabData gsc-tabdInactive"><div><div class="gsc-expansionArea"></div></div></div></div></div></div><div class="gsc-modal-background-image" tabindex="0"></div></div></div></div>
+          </div>
+          
+          <style type="text/css">
+              .gsc-control-cse {
+              box-sizing: border-box;
+              width: 240px;
+              }
+              
+              .gsc-search-button-v2 {
+               border-radius: 4px;
+               border-color: #28a745;
+               background-color: #28a745;
+               width: 50px;
+               padding: 6px 10px;
+               height: 31px;
+               cursor: pointer;
+               transition: all 0.5s;
+              }
+              
+              .gsc-search-button-v2:hover, .gsc-search-button-v2:focus {
+               border-color: #28a745;
+               background-color: #1e8c38;
+              }
+              
+              input.gsc-input, .gsc-input-box, .gsc-input-box:hover, .gsc-input-box:focus {
+              transition: all 0.5s;
+                 border-color: #28a745;
+                 border-radius: 5px;
+                 height: 31px;
+                 width: 160px;
+              }
+              .gsc-input-box:hover, .gsc-input-box:focus {
+              box-shadow: 1px 1px 4px #28a745;
+              }
+              
+              .gsc-control-wrapper-cse {
+              margin-top: 5px;
+              }
+              
+              .gsc-search-box-tools .gsc-search-box .gsc-input {
+                 padding-right: 2px;
+              }
+              .gsib_a {
+              padding: 2px 6px 6px 6px;
+              }
+          </style>
+          
+        <div class="col-lg-3 col-md-8 d-flex pl-2">
+            <a class="btn btn-success btn-sm my-auto" href="/cdotweb/web/home.php?lang=hi">हिंदी            </a>
+          </div>
       </div>
-    </header>
+      
+    </div>
+  </nav>
 
     <section class="hero">
       <div class="container">
