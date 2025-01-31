@@ -448,12 +448,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const parseMarkdown = (message) => {
     // Check if the message contains table-like markdown syntax
-    if (message.includes("|") && message.includes("---")) {
-      // Escape the table-like syntax to prevent it from being rendered as a table
-      message = message
-        .replace(/\|/g, "\\|") // Escape pipe symbols
-        .replace(/---/g, "\\-\\-\\-"); // Escape dashes
-    }
+    // if (message.includes("|") && message.includes("---")) {
+    //   // Escape the table-like syntax to prevent it from being rendered as a table
+    //   message = message
+    //     .replace(/\|/g, "\\|") // Escape pipe symbols
+    //     .replace(/---/g, "\\-\\-\\-"); // Escape dashes
+    // }
   
     // Parse the markdown message
     if (typeof marked.marked === "function") {
