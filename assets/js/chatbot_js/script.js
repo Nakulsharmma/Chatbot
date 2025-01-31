@@ -250,7 +250,9 @@ document.addEventListener("DOMContentLoaded", () => {
   // Event listeners for chat icons
   chatIcon.addEventListener("click", () => {
     toggleChatbotVisibility(true); // Show the chatbot
+    if (isFirstInteraction) {
     scrollToBottom(); // Scroll to the bottom
+    }
   });
 
   minimizedownicon.addEventListener("click", () => toggleChatbotVisibility(false));
