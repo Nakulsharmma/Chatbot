@@ -212,7 +212,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     const response = await fetch(
-      `https://192.168.109.222:8000/api/clear-chat-history?thread_id=${threadId}`,
+      `https://chatbot.cdot.in/api/clear-chat-history?thread_id=${threadId}`,
       {
         method: "GET",
         headers: {
@@ -762,7 +762,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const formData = new FormData();
       formData.append("email", email);
       formData.append("password", password);
-      const response = await fetch("https://192.168.109.222:8000/api/auth-token/", 
+      const response = await fetch("https://chatbot.cdot.in/api/auth-token/", 
         {
           method: "POST",
           body: formData,
@@ -869,7 +869,7 @@ document.addEventListener("DOMContentLoaded", () => {
         token = await authenticateAndStoreToken(email, password);
       }
   
-      const response = await fetch("https://192.168.109.222:8000/api/chatbot/", {
+      const response = await fetch("https://chatbot.cdot.in/api/chatbot/", {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -967,23 +967,5 @@ adjustChatBodyHeight();
 // Run whenever the viewport changes
 window.visualViewport.addEventListener('resize', adjustChatBodyHeight);
 window.addEventListener('resize', adjustChatBodyHeight);
-
-function adjustChatHeight() {
-  let navbar = document.getElementById("header");
-  let chatBody = document.getElementById("chat-body");
-
-  let navHeight = navbar.offsetHeight;
-  let chatRect = chatBody.getBoundingClientRect();
-  let navRect = navbar.getBoundingClientRect();
-
-  // Check if chat-body is overlapping the navbar
-  if (chatRect.top < navRect.bottom) {
-    chatBody.style.height = `calc(100vh - ${navHeight}px)`;
-  } 
-}
-
-// Run function on load and resize
-window.addEventListener("load", adjustChatHeight);
-window.addEventListener("resize", adjustChatHeight);
   
 });
