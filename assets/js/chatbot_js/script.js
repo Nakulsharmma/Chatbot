@@ -890,7 +890,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const chunk = decoder.decode(value, { stream: true });
         streamingMessage += chunk;
   
-        const tempMessageDiv = document.getElementById(streamingMessageId);
+        const tempMessageDiv = document.querySelector(`#${streamingMessageId} > div.typing-indicator`);
         if (tempMessageDiv) {
           tempMessageDiv.innerHTML = parseMarkdown(streamingMessage);
           scrollToBottom();
