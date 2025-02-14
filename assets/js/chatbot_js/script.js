@@ -132,6 +132,7 @@ document.addEventListener("DOMContentLoaded", () => {
     fetch("https://chatbot.cdot.in/api/submit-feedback", {
       method: "POST",
       headers: {
+        "Content-Type": "application/json",
         Authorization: `Bearer ${token}`
       },
       body: JSON.stringify({ rating: selectedRating, feedback: feedbackText, thread_id: threadId })
