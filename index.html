@@ -269,9 +269,50 @@
               </button>
             </div>
             <div class="footer-logo-section">
-              <span class="footer-text">Powered by</span>
-              <img src="assets/img/chatbot_img/logo.png" alt="C-DOT Logo" class="footer-logo" />
-              <span class="footer-text">C-DOT</span> 
+              <div>
+                <span class="footer-text">Powered by</span>
+                <img src="assets/img/chatbot_img/logo.png" alt="C-DOT Logo" class="footer-logo" />
+                <span class="footer-text">C-DOT</span> 
+              </div>
+              <div class="feedback">
+                <span class= "feedback-text">Help me improve</span>
+                <img src="assets/img/chatbot_img/thumbsup.svg" alt="Feedback Logo" class="feedback-logo" />
+              </div>
+            </div>
+          </div>
+          <div id="feedback-popup" class="feedback-popup" style="display: none;">
+            <div class="popup-content">
+              <div class="feedback-heading">
+                <h5 class="feedback-header">Provide your feedback</h5>
+                <button id="close-feedback" class="close-btn">&times;</button>
+              </div>
+              <hr>
+              <div class="raiting-content">
+                <span class="feedback-heading-text">Please rate your experience</span>
+
+                <div class="star-rating">
+                  <span class="star" data-value="1">&#9733;</span>
+                  <span class="star" data-value="2">&#9733;</span>
+                  <span class="star" data-value="3">&#9733;</span>
+                  <span class="star" data-value="4">&#9733;</span>
+                  <span class="star" data-value="5">&#9733;</span>
+                </div>
+              </div>
+              <div class="feedback-textarea">
+                <textarea id="feedback-text" placeholder="Write your feedback here..."></textarea>
+                <button id="submit-feedback" disabled onclick="submitFeedback()">Submit Feedback</button>
+              </div>
+              <hr>
+                <div>
+                  <span class="footer-text">Powered by</span>
+                  <img src="assets/img/chatbot_img/logo.png" alt="C-DOT Logo" class="footer-logo" />
+                  <span class="footer-text">C-DOT</span> 
+                </div>
+                <div id="confirmation-popup" class="popup hidden">
+                  <div class="popup-content">
+                      <p>Review Submitted!</p>
+                  </div>
+              </div>
             </div>
           </div>
         </div>

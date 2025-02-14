@@ -30,6 +30,121 @@ document.addEventListener("DOMContentLoaded", () => {
     loadChatFromLocalStorage(); // Load chat history from localStorage
   });
 
+  document.querySelector(".feedback").addEventListener("click", function() {
+    let popup = document.getElementById("feedback-popup");
+    popup.style.bottom = "5px";
+    popup.style.display = "block";
+    document.getElementById("chat-body").classList.add("backdrop");
+  });
+
+  document.getElementById("close-feedback").addEventListener("click", function() {
+    let popup = document.getElementById("feedback-popup");
+    popup.style.bottom = "-300px";
+    document.getElementById("chat-body").classList.remove("backdrop");
+    setTimeout(() => popup.style.display = "none", 300);
+  });
+
+  document.querySelectorAll(".star").forEach(star => {
+    star.addEventListener("click", function() {
+      document.querySelectorAll(".star").forEach(s => s.classList.remove("active"));
+      this.classList.add("active");
+    });
+  });
+  const stars = document.querySelectorAll(".star");
+  const textarea = document.getElementById("feedback-text");
+  const submitButton = document.getElementById("submit-feedback");
+  let selectedRating = 0;
+
+  // Function to update stars based on selection
+  function updateStars(rating) {
+      stars.forEach((star, index) => {
+          if (index < rating) {
+              star.classList.add("selected");
+          } else {
+              star.classList.remove("selected");
+          }
+      });
+  }
+
+  // Star rating selection
+  stars.forEach((star, index) => {
+      star.addEventListener("click", function () {
+          selectedRating = index + 1; // Get the star rating (1-5)
+          updateStars(selectedRating);
+          updateSubmitButtonState();
+      });
+  });
+
+  // Textarea validation
+  if (textarea) {
+      textarea.addEventListener("input", function () {
+          console.log("Textarea input detected"); // Debugging
+          updateSubmitButtonState();
+      });
+  } else {
+      console.error("Textarea not found!");
+  }
+
+  function updateSubmitButtonState() {
+      if (selectedRating > 0) {
+          submitButton.removeAttribute("disabled");
+          submitButton.classList.add("enabled");
+      } else {
+          submitButton.setAttribute("disabled", "true");
+          submitButton.classList.remove("enabled");
+      }
+  }
+
+  // Submit feedback
+  window.submitFeedback = function () {
+      const feedbackText = textarea.value.trim();
+      const threadId = localStorage.getItem("thread_id");
+      if (!threadId) {
+        threadId = getThreadId();
+      }
+      const token = localStorage.getItem("authToken");
+      if (!token) {
+        const email = "admin@cdot.in";
+        const password = "admin";
+        // Using then() instead of await
+        authenticateAndStoreToken(email, password)
+          .then(newToken => {
+            token = newToken;
+            submitFeedbackToAPI(token, feedbackText, threadId);
+          })
+          .catch(error => {
+            console.error("Error during authentication:", error);
+          });
+      }
+      else{
+        submitFeedbackToAPI(token, feedbackText, threadId);
+      }
+  };
+  function submitFeedbackToAPI(token, feedbackText, threadId) {
+    fetch("https://chatbot.cdot.in/api/submit-feedback", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`
+      },
+      body: JSON.stringify({ rating: selectedRating, feedback: feedbackText, thread_id: threadId })
+    })
+    .then(response => response.json())
+    .then(data => {
+      closeFeedbackPopup();
+    })
+    .catch(error => {
+      console.error("Error submitting feedback:", error);
+    });
+  }
+
+
+
+  window.closeFeedbackPopup = function () {
+      document.getElementById("feedback-popup").style.display = "none";
+      document.getElementById("chat-body").classList.remove("backdrop");
+  };
+
+
   const SpeechRecognition =
     window.SpeechRecognition || window.webkitSpeechRecognition;
   let recognition;
