@@ -94,6 +94,14 @@ document.addEventListener("DOMContentLoaded", () => {
           submitButton.classList.remove("enabled");
       }
   }
+  const getThreadId = () => {
+    let threadId = localStorage.getItem("thread_id");
+    if (!threadId) {
+      threadId = `${Math.floor(Math.random() * 1000000)}`; // Generate random ID
+      localStorage.setItem("thread_id", threadId);
+    }
+    return threadId;
+  };
 
   // Submit feedback
   window.submitFeedback = function () {
@@ -308,14 +316,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   };
 
-  const getThreadId = () => {
-    let threadId = localStorage.getItem("thread_id");
-    if (!threadId) {
-      threadId = `${Math.floor(Math.random() * 1000000)}`; // Generate random ID
-      localStorage.setItem("thread_id", threadId);
-    }
-    return threadId;
-  };
+
 
   async function resetThreadId () {
     const threadId = localStorage.getItem("thread_id");
