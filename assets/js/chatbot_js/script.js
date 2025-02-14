@@ -129,7 +129,7 @@ document.addEventListener("DOMContentLoaded", () => {
       }
   };
   function submitFeedbackToAPI(token, feedbackText, threadId) {
-    fetch("https://chatbot.cdot.in/api/submit-feedback", {
+    fetch("https://chatbot.cdot.in/api/submit-feedback/", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
