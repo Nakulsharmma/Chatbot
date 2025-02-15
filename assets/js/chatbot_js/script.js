@@ -53,6 +53,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const stars = document.querySelectorAll(".star");
   const textarea = document.getElementById("feedback-text");
   const submitButton = document.getElementById("submit-feedback");
+  const popupMessage = document.getElementById("confirmation-popup"); // Popup message element
   let selectedRating = 0;
 
   // Function to update stars based on selection
@@ -78,7 +79,6 @@ document.addEventListener("DOMContentLoaded", () => {
   // Textarea validation
   if (textarea) {
       textarea.addEventListener("input", function () {
-          console.log("Textarea input detected"); // Debugging
           updateSubmitButtonState();
       });
   } else {
@@ -86,7 +86,10 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function updateSubmitButtonState() {
-      if (selectedRating > 0) {
+    const feedbackText = textarea.value.trim(); 
+    const wordCount = feedbackText.split(/\s+/).filter(word => word.length > 0).length; // Count words
+    
+      if (selectedRating > 0 && wordCount >= 1) {
           submitButton.removeAttribute("disabled");
           submitButton.classList.add("enabled");
       } else {
@@ -102,15 +105,53 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     return threadId;
   };
+  async function authenticateAndStoreToken(email, password) {
+    try {
+      const formData = new FormData();
+      formData.append("email", email);
+      formData.append("password", password);
+      const response = await fetch("https://chatbot.cdot.in/api/auth-token/", 
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
+
+      if (response.ok) {
+        const data = await response.json();
+        const token = data.access_token;
+        localStorage.setItem("authToken", token); // Store token in localStorage
+        return token;
+      } else {
+        console.error("Failed to fetch token:", await response.text());
+      }
+    } catch (error) {
+      console.error("Error during authentication:", error);
+    }
+  }
+
+  function showPopup(message) {
+      popupMessage.innerText = message; // Set the message
+      const img = document.createElement("img");
+      img.src = "assets/img/chatbot_img/thumbsup.svg";
+      img.alt = "Feedback Submit Logo";
+      img.style.Width = "30%"; // Responsive image
+      img.style.display = "block"; 
+      img.style.margin = "10px auto"; // Center image
+      popupMessage.appendChild(img);
+      popupMessage.style.display = "block"; // Show popup
+      
+      // Auto-close popup after 2 seconds
+  }
 
   // Submit feedback
   window.submitFeedback = function () {
       const feedbackText = textarea.value.trim();
-      const threadId = localStorage.getItem("thread_id");
+      let threadId = localStorage.getItem("thread_id");
       if (!threadId) {
         threadId = getThreadId();
       }
-      const token = localStorage.getItem("authToken");
+      let token = localStorage.getItem("authToken");
       if (!token) {
         const email = "admin@cdot.in";
         const password = "admin";
@@ -139,6 +180,16 @@ document.addEventListener("DOMContentLoaded", () => {
     })
     .then(response => response.json())
     .then(data => {
+      showPopup("feedback submited");
+      textarea.value = "";
+      selectedRating = 0;
+      updateStars(selectedRating);
+      document.querySelectorAll(".star").forEach(star => {
+        star.classList.remove("selected"); 
+        star.classList.remove("active"); 
+      });
+      submitButton.setAttribute("disabled", "true");
+      submitButton.classList.remove("enabled");
       closeFeedbackPopup();
     })
     .catch(error => {
@@ -149,8 +200,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
   window.closeFeedbackPopup = function () {
-      document.getElementById("feedback-popup").style.display = "none";
-      document.getElementById("chat-body").classList.remove("backdrop");
+     setTimeout(() => {
+       popupMessage.style.display = "none";
+        document.getElementById("feedback-popup").style.display = "none";
+        document.getElementById("chat-body").classList.remove("backdrop");
+     }, 2000);
+      
   };
 
 
@@ -872,30 +927,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   };
 
-  async function authenticateAndStoreToken(email, password) {
-    try {
-      const formData = new FormData();
-      formData.append("email", email);
-      formData.append("password", password);
-      const response = await fetch("https://chatbot.cdot.in/api/auth-token/", 
-        {
-          method: "POST",
-          body: formData,
-        }
-      );
 
-      if (response.ok) {
-        const data = await response.json();
-        const token = data.access_token;
-        localStorage.setItem("authToken", token); // Store token in localStorage
-        return token;
-      } else {
-        console.error("Failed to fetch token:", await response.text());
-      }
-    } catch (error) {
-      console.error("Error during authentication:", error);
-    }
-  }
 
   // Handle user query
   const handleUserQuery = async (query) => {
