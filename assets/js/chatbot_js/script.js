@@ -30,12 +30,6 @@ document.addEventListener("DOMContentLoaded", () => {
     loadChatFromLocalStorage(); // Load chat history from localStorage
   });
 
-  document.querySelector(".feedback").addEventListener("click", function() {
-    let popup = document.getElementById("feedback-popup");
-    popup.style.bottom = "5px";
-    popup.style.display = "block";
-    document.getElementById("chat-body").classList.add("backdrop");
-  });
 
   document.getElementById("close-feedback").addEventListener("click", function() {
     let popup = document.getElementById("feedback-popup");
@@ -44,37 +38,9 @@ document.addEventListener("DOMContentLoaded", () => {
     setTimeout(() => popup.style.display = "none", 300);
   });
 
-  document.querySelectorAll(".star").forEach(star => {
-    star.addEventListener("click", function() {
-      document.querySelectorAll(".star").forEach(s => s.classList.remove("active"));
-      this.classList.add("active");
-    });
-  });
-  const stars = document.querySelectorAll(".star");
   const textarea = document.getElementById("feedback-text");
   const submitButton = document.getElementById("submit-feedback");
   const popupMessage = document.getElementById("confirmation-popup"); // Popup message element
-  let selectedRating = 0;
-
-  // Function to update stars based on selection
-  function updateStars(rating) {
-      stars.forEach((star, index) => {
-          if (index < rating) {
-              star.classList.add("selected");
-          } else {
-              star.classList.remove("selected");
-          }
-      });
-  }
-
-  // Star rating selection
-  stars.forEach((star, index) => {
-      star.addEventListener("click", function () {
-          selectedRating = index + 1; // Get the star rating (1-5)
-          updateStars(selectedRating);
-          updateSubmitButtonState();
-      });
-  });
 
   // Textarea validation
   if (textarea) {
@@ -89,7 +55,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const feedbackText = textarea.value.trim(); 
     const wordCount = feedbackText.split(/\s+/).filter(word => word.length > 0).length; // Count words
     
-      if (selectedRating > 0 && wordCount >= 1) {
+      if (wordCount >= 1) {
           submitButton.removeAttribute("disabled");
           submitButton.classList.add("enabled");
       } else {
@@ -131,82 +97,25 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function showPopup(message) {
-      popupMessage.innerText = message; // Set the message
-      const img = document.createElement("img");
-      img.src = "assets/img/chatbot_img/thumbsup.svg";
-      img.alt = "Feedback Submit Logo";
-      img.style.Width = "30%"; // Responsive image
-      img.style.display = "block"; 
-      img.style.margin = "10px auto"; // Center image
-      popupMessage.appendChild(img);
-      popupMessage.style.display = "block"; // Show popup
-      
+      if(message = "Feedback submitted successfully"){
+        popupMessage.innerText = "Thank You"; // Set the message
+        const img = document.createElement("img");
+        img.src = "assets/img/chatbot_img/thumbsup.svg";
+        img.alt = "Feedback Submit Logo";
+        img.className = "shake";
+        img.style.Width = "30%"; 
+        img.style.display = "block"; 
+        img.style.margin = "3px auto"; // Center image
+        popupMessage.appendChild(img);
+        popupMessage.style.display = "block"; // Show popup
+      }
+
       // Auto-close popup after 2 seconds
   }
 
   // Submit feedback
-  window.submitFeedback = function () {
-      const feedbackText = textarea.value.trim();
-      let threadId = localStorage.getItem("thread_id");
-      if (!threadId) {
-        threadId = getThreadId();
-      }
-      let token = localStorage.getItem("authToken");
-      if (!token) {
-        const email = "admin@cdot.in";
-        const password = "admin";
-        // Using then() instead of await
-        authenticateAndStoreToken(email, password)
-          .then(newToken => {
-            token = newToken;
-            submitFeedbackToAPI(token, feedbackText, threadId);
-          })
-          .catch(error => {
-            console.error("Error during authentication:", error);
-          });
-      }
-      else{
-        submitFeedbackToAPI(token, feedbackText, threadId);
-      }
-  };
-  function submitFeedbackToAPI(token, feedbackText, threadId) {
-    fetch("https://chatbot.cdot.in/api/submit-feedback/", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`
-      },
-      body: JSON.stringify({ rating: selectedRating, feedback: feedbackText, thread_id: threadId })
-    })
-    .then(response => response.json())
-    .then(data => {
-      showPopup("feedback submited");
-      textarea.value = "";
-      selectedRating = 0;
-      updateStars(selectedRating);
-      document.querySelectorAll(".star").forEach(star => {
-        star.classList.remove("selected"); 
-        star.classList.remove("active"); 
-      });
-      submitButton.setAttribute("disabled", "true");
-      submitButton.classList.remove("enabled");
-      closeFeedbackPopup();
-    })
-    .catch(error => {
-      console.error("Error submitting feedback:", error);
-    });
-  }
+  
 
-
-
-  window.closeFeedbackPopup = function () {
-     setTimeout(() => {
-       popupMessage.style.display = "none";
-        document.getElementById("feedback-popup").style.display = "none";
-        document.getElementById("chat-body").classList.remove("backdrop");
-     }, 2000);
-      
-  };
 
 
   const SpeechRecognition =
@@ -572,6 +481,71 @@ document.addEventListener("DOMContentLoaded", () => {
   };
   loadQuestions();
 
+  window.submitFeedback = function () {
+    const feedbackText = textarea.value.trim();
+    let feedback_question = document.getElementById("question-text");
+    let feedback_answer = document.getElementById("answer-text");
+    let feedback_message = document.getElementById("message-text");
+    const question = feedback_question.value.trim();
+    const answer = feedback_answer.value.trim();
+    const messageId = feedback_message.value.trim();
+    let threadId = localStorage.getItem("thread_id");
+    let token = localStorage.getItem("authToken");
+    submitFeedbackToAPI(question,answer,0,token, feedbackText, threadId,messageId);
+  };
+
+  function submitFeedbackToAPI(question,answer,rating,token, feedbackText, threadId,messageId) {
+    fetch("https://chatbot.cdot.in/api/submit-feedback/", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`
+      },
+      body: JSON.stringify(
+        { question:question,
+          answer:answer,
+          feedback_type: rating, 
+          feedback: feedbackText, 
+          thread_id: threadId })
+    })
+    .then(response => response.json())
+    .then(data => {
+      showPopup("Feedback submitted successfully");
+      removeFeedbackButtons(messageId);
+      saveRemovedButtons(messageId);
+      
+      if(rating == 0){
+        textarea.value = "";
+        submitButton.setAttribute("disabled", "true");
+        submitButton.classList.remove("enabled");
+        setTimeout(() => {
+          popupMessage.style.display = "none";
+           document.getElementById("feedback-popup").style.display = "none";
+           document.getElementById("chat-body").classList.remove("backdrop");
+        }, 2000);
+      }
+      setTimeout(() => {
+        popupMessage.style.display = "none";
+         document.getElementById("chat-body").classList.remove("backdrop");
+      }, 2000);    
+      })
+    .catch(error => {
+      console.error("Error submitting feedback:", error);
+    });
+  }
+
+  const saveRemovedButtons = (messageId) => {
+      let removedButtons = JSON.parse(localStorage.getItem("removedButtons")) || [];
+      
+      if (!removedButtons.includes(messageId)) {
+          removedButtons.push(messageId);
+          localStorage.setItem("removedButtons", JSON.stringify(removedButtons));
+      }
+  };
+
+
+  
+
   const copyMessage = (message) => {
     if (navigator.clipboard && navigator.clipboard.writeText) {
       navigator.clipboard
@@ -619,31 +593,34 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   const parseMarkdown = (message) => {
-    // Check if the message contains table-like markdown syntax
-    if (message.includes("|") && message.includes("---")) {
-      // Escape the table-like syntax to prevent it from being rendered as a table
-      message = message
-        .replace(/\|/g, "\\|") // Escape pipe symbols
-        .replace(/---/g, "\\-\\-\\-"); // Escape dashes
-    }
+    // Match markdown table patterns
+    const tableRegex = /^(\|.+\|)\n(\|[-:\s]+)+\n((\|.*\|\n?)+)/gm;
+    
+    // Replace table markdown with escaped characters
+    message = message.replace(tableRegex, (match) => {
+      return match.replace(/\|/g, "\\|").replace(/---/g, "\\-\\-\\-");
+    });
   
-    // Parse the markdown message
+    // Parse the markdown safely
     if (typeof marked.marked === "function") {
       return marked.marked(message);
     } else if (typeof marked === "function") {
       return marked(message);
     } else {
       console.error("Marked.js is not loaded correctly.");
-      return message; // Fallback to raw message
+      return message; // Return raw text if marked.js fails
     }
-  };   
+  };
+  
+  
 
   const appendMessage = (
     sender,
     message,
     timestamp = null,
-    skipLocalStorage = false,
-    isStreaming = false
+    skipLocalStorage = false, 
+    query = "",
+    message_Id,
   ) => {
     let chatMessages = document.getElementById("chat-message");
 
@@ -673,6 +650,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // Set class based on sender
     messageDiv.className = sender === "You" ? "user-message" : "bot-message";
     messageDiv.role = "article";
+
 
     // Function to truncate a message
     const truncateMessage = (msg, wordLimit) => {
@@ -728,14 +706,47 @@ document.addEventListener("DOMContentLoaded", () => {
       const copyButton = document.createElement("button");
       copyButton.className = "copy-button";
 
+      if(!message_Id){
+      var message_Id = `message-${Date.now()}`;
+      }
+      messageDiv.setAttribute("data-id", message_Id);
       const copyIcon = document.createElement("img");
       copyIcon.src = "assets/img/chatbot_img/copy.svg"; // Replace with the actual path to your image
       copyIcon.alt = "Copy";
       copyIcon.style.width = "16px"; // Set size of the icon
       copyIcon.style.height = "16px";
       copyIcon.style.cursor = "pointer"
+
+      const LikeButton = document.createElement("button");
+      LikeButton.className = "like-button";
+
+      const LikeIcon = document.createElement("img");
+      LikeIcon.src = "assets/img/chatbot_img/like.svg"; // Replace with the actual path to your image
+      LikeIcon.alt = "Like";
+      LikeIcon.style.width = "16px"; // Set size of the icon
+      LikeIcon.style.height = "16px";
+      LikeIcon.style.cursor = "pointer"
+
+      const DislikeButton = document.createElement("button");
+      DislikeButton.className = "dislike-button";
+
+      const dislikeIcon = document.createElement("img");
+      dislikeIcon.src = "assets/img/chatbot_img/dislike.svg"; // Replace with the actual path to your image
+      dislikeIcon.alt = "Dislike";
+      dislikeIcon.style.width = "16px"; // Set size of the icon
+      dislikeIcon.style.height = "16px";
+      dislikeIcon.style.cursor = "pointer"
+
       copyButton.appendChild(copyIcon);
+      LikeButton.appendChild(LikeIcon);
+      DislikeButton.appendChild(dislikeIcon);
+
       copyButton.onclick = () => copyMessage(message.replace(/[=*#@%&]/g, ""));
+
+      LikeButton.onclick = () => likeMessage(query,message.replace(/[=*#@%&]/g), message_Id);
+
+      DislikeButton.onclick = () => dislikeMessage(query,message.replace(/[=*#@%&]/g), message_Id);
+
 
       // Add speaker button for bot messages
       const speakerButton = document.createElement("button");
@@ -784,6 +795,8 @@ document.addEventListener("DOMContentLoaded", () => {
       timestampCopyDiv.className = "timestamp-copy";
       timestampCopyDiv.appendChild(timestampDiv);
       timestampCopyDiv.appendChild(copyButton);
+      timestampCopyDiv.appendChild(LikeButton);
+      timestampCopyDiv.appendChild(DislikeButton);
       timestampCopyDiv.appendChild(speakerButton);
 
       messageDiv.appendChild(timestampCopyDiv);
@@ -801,10 +814,52 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (!skipLocalStorage) {
       const storedChat = JSON.parse(localStorage.getItem("chatHistory")) || [];
-      storedChat.push({ sender, message, timestamp: messageTimestamp });
+      storedChat.push({ sender, message, timestamp: messageTimestamp, query,message_Id });
       localStorage.setItem("chatHistory", JSON.stringify(storedChat));
     }
   };
+
+  const removeFeedbackButtons = (messageId) => {
+    const messageDiv = document.querySelector(`.bot-message[data-id="${messageId}"]`);
+    if (messageDiv) {
+        const likeButton = messageDiv.querySelector(".like-button");
+        const dislikeButton = messageDiv.querySelector(".dislike-button");
+        const copyButton = messageDiv.querySelector(".copy-button");
+
+        if (likeButton) likeButton.remove();
+        if (dislikeButton) dislikeButton.remove();
+
+        // ✅ Add class to copy button's parent div
+        if (copyButton) {
+              copyButton.classList.add("remove_feedback_button");
+        }
+    }
+};
+
+
+  const likeMessage = (question,answer,messageId) => {
+    event.stopPropagation(); 
+    console.log("question:",question);
+    console.log("answer:",answer);
+    console.log("Message ID:", messageId); // Debugging log
+    document.getElementById("chat-body").classList.add("backdrop");
+    let threadId = localStorage.getItem("thread_id");
+    let token = localStorage.getItem("authToken");
+    submitFeedbackToAPI(question,answer,1,token, "", threadId,messageId);
+}
+
+const dislikeMessage = (question,answer,messageId) => {
+  let feedback_question = document.getElementById("question-text");
+  let feedback_answer = document.getElementById("answer-text");
+  let feedback_message = document.getElementById("message-text");
+  feedback_question.value = question;
+  feedback_answer.value = answer;
+  feedback_message.value = messageId;  
+  let popup = document.getElementById("feedback-popup");
+  popup.style.bottom = "5px";
+  popup.style.display = "block";
+  document.getElementById("chat-body").classList.add("backdrop");
+}
 
   setInterval(() => {
     updateTimestamps();
@@ -821,10 +876,18 @@ document.addEventListener("DOMContentLoaded", () => {
   }
   const loadChatFromLocalStorage = () => {
     const storedChat = JSON.parse(localStorage.getItem("chatHistory")) || [];
-    if (storedChat.length > 0) {
+    const removedButtons = JSON.parse(localStorage.getItem("removedButtons")) || [];
+
+    if (storedChat.length > 0) { 
       storedChat.forEach((chat) => {
         const sanitizedMessage = sanitizeInput(chat.message);
-        appendMessage(chat.sender, sanitizedMessage, chat.timestamp, true);
+        appendMessage(chat.sender, sanitizedMessage, chat.timestamp, true,chat.query,chat.message_Id);
+        
+        setTimeout(() => {
+          if (chat.message_Id && removedButtons.includes(chat.message_Id)) {
+            removeFeedbackButtons(chat.message_Id);
+          }
+        }, 100);
       });
       moveChatMessageBelowInput();
       setTimeout(() => {
@@ -1028,6 +1091,9 @@ document.addEventListener("DOMContentLoaded", () => {
         }),
       });
   
+      if (!response.ok) {
+        throw new Error(`API Error: ${response.status} ${response.statusText}`);
+      }
       const reader = response.body.getReader();
       const decoder = new TextDecoder("utf-8");
       let streamingMessage = "";
@@ -1051,11 +1117,11 @@ document.addEventListener("DOMContentLoaded", () => {
       }
   
       removeTemporaryMessage(streamingMessageId);
-      appendMessage("Bot", streamingMessage, null, false, true);
+      appendMessage("Bot", streamingMessage, null, false,query);
     } catch (error) {
       console.error("Error calling the API:", error);
       removeTemporaryMessage(streamingMessageId);
-      appendMessage("Bot", "Something went wrong. Please try again.");
+      appendMessage("Bot", "The chatbot service is currently unavailable. Please try again later.");
     } finally {
       disableElements(false);
   

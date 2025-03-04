@@ -274,31 +274,22 @@
                 <img src="assets/img/chatbot_img/logo.png" alt="C-DOT Logo" class="footer-logo" />
                 <span class="footer-text">C-DOT</span> 
               </div>
-              <div class="feedback">
-                <span class= "feedback-text">Help me improve</span>
-                <img src="assets/img/chatbot_img/thumbsup.svg" alt="Feedback Logo" class="feedback-logo" />
-              </div>
             </div>
           </div>
           <div id="feedback-popup" class="feedback-popup" style="display: none;">
             <div class="popup-content">
               <div class="feedback-heading">
-                <h5 class="feedback-header">Provide your feedback</h5>
+                <h5 class="feedback-header">Apologies for any inconvenience</h5>
                 <button id="close-feedback" class="close-btn">&times;</button>
               </div>
               <hr>
               <div class="raiting-content">
-                <span class="feedback-heading-text">Please rate your experience</span>
-
-                <div class="star-rating">
-                  <span class="star" data-value="1">&#9733;</span>
-                  <span class="star" data-value="2">&#9733;</span>
-                  <span class="star" data-value="3">&#9733;</span>
-                  <span class="star" data-value="4">&#9733;</span>
-                  <span class="star" data-value="5">&#9733;</span>
-                </div>
-              </div>
+                <span class="feedback-heading-text">Your feedback is highly appreciated, as it helps us in enhance our processes.</span>
+              </div> 
               <div class="feedback-textarea">
+                <input type ="hidden" id = "question-text" value = "">
+                <input type ="hidden" id = "answer-text" value = "">
+                <input type ="hidden" id = "message-text" value = "">
                 <textarea id="feedback-text" placeholder="Write your feedback here..."></textarea>
                 <button id="submit-feedback" disabled onclick="submitFeedback()">Submit Feedback</button>
               </div>
@@ -308,13 +299,13 @@
                   <img src="assets/img/chatbot_img/logo.png" alt="C-DOT Logo" class="footer-logo" />
                   <span class="footer-text">C-DOT</span> 
                 </div>
-                <div id="confirmation-popup" class="popup">
-                  <div id="popup-content">
-                      
-                  </div>
-              </div>
             </div>
           </div>
+          <div id="confirmation-popup" class="popup">
+          <div id="popup-content">
+              
+          </div>
+        </div>
         </div>
     </div>     
     <div id="chat-icon">

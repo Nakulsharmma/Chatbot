@@ -71,7 +71,7 @@ height: 30px;
   height: 17px;
   vertical-align: middle;
 }
-.footer-text, .feedback-text{
+.footer-text{
   font-size: 12px;
   color: #b1aaaa;
 }
@@ -274,17 +274,42 @@ white-space: nowrap;
 }
 
 /* Copy Button */
-.copy-button {
+.copy-button,.like-button,.dislike-button {
 position: absolute;
-background: #93dffc;
-right:2px;
+background: #a1e3fb;
 border: none;
 color: #007bff;
 cursor: pointer;
 font-size: 12px;
-padding: 0;
-margin-left: 10px;
+padding: 2px;
+opacity:0.8;
 border-radius: 20px;
+}
+.copy-button{
+  right:42px;
+  border-radius: 20px 20px 0px 20px;
+}
+.like-button{
+  right:22px;
+  border-radius: 20px 20px 0px 0px;
+}
+
+.dislike-button{
+  right:2px;
+  border-radius: 20px 20px 20px 0px;
+}
+
+@keyframes shakeUpDown {
+  0% { transform: translateY(0); }
+  25% { transform: translateY(-5px); }
+  50% { transform: translateY(5px); }
+  75% { transform: translateY(-5px); }
+  100% { transform: translateY(0); }
+}
+
+.shake {
+  animation: shakeUpDown 0.5s ease-in-out;
+  width:35%;
 }
 
 .copy-button:hover {
@@ -397,19 +422,21 @@ to {
   color: gold;
 }
 
-textarea {
+#feedback-text {
   width: 100%;
   height: 65px;
+  font-size:11px;
   margin-top: 10px;
   border-radius: 5px;
   padding:5px;
   box-sizing: border-box;
 }
 .feedback-header{
-  font-size: 12px;
+  font-size: 14px;
   margin:0px;
+  color: #244082;
   text-align: left;
-  font-weight: 300;
+  font-weight: 600;
 }
 .feedback{
   cursor:pointer;
@@ -420,13 +447,19 @@ textarea {
 
 }
 .feedback-heading-text{
-  font-size:16px;
+  font-size:12px;
+  color: #8c8484;
 }
 .feedback-textarea{
   margin: 10px;
     padding: 8px 16px;
     border: 1px solid #969393;
     border-radius: 5px;
+}
+
+.remove_feedback_button{
+border-radius: 20px;
+right: 10px;
 }
 
 #submit-feedback {
@@ -444,8 +477,10 @@ textarea {
 .popup {
   display: none;
   position: absolute;
-  bottom: 65%;
-  left:24%;
+  text-align: center;
+  bottom:160px;
+  left:50%;
+  transform: translate(-50%, -50%);
   background: white;
   padding: 20px;
   border-radius: 8px;
