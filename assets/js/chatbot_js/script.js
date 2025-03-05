@@ -312,7 +312,7 @@ document.addEventListener("DOMContentLoaded", () => {
     "Product Section":
     "Wireless technology enables communication without physical cables.",
     "Awards and Achievements": "Explore the gallery for event photos and updates.",
-    "Directors": "PM-WANI is an initiative to provide Wi-Fi access across India.",
+    "EVP": "PM-WANI is an initiative to provide Wi-Fi access across India.",
     Consultancy:
       "C-DOT provides consultancy services for telecommunication technology.",
     // FAQs: "Check our FAQ section for common queries.",
@@ -323,7 +323,7 @@ document.addEventListener("DOMContentLoaded", () => {
     Consultancy: "assets/img/chatbot_img/consultancy.svg",
     "6G": "assets/img/chatbot_img/wifi.svg",
     "Product Section": "assets/img/chatbot_img/Sell.svg",
-    "Directors": "assets/img/chatbot_img/Supplier.svg",
+    "EVP": "assets/img/chatbot_img/Supplier.svg",
     FAQs: "assets/img/chatbot_img/Faq.svg",
     "Awards and Achievements": "assets/img/chatbot_img/gallery.svg",
   };
