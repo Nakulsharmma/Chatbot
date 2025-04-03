@@ -696,13 +696,13 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // Add timestamp
-    const timestampDiv = document.createElement("div");
-    timestampDiv.className = "timestamp";
-    timestampDiv.textContent = timeLapse;
-    timestampDiv.setAttribute("data-timestamp", messageTimestamp);
 
     if (sender !== "You") {
       // Add copy button for bot messages
+      const timestampDiv = document.createElement("div");
+      timestampDiv.className = "timestamp";
+      timestampDiv.textContent = timeLapse;
+      timestampDiv.setAttribute("data-timestamp", messageTimestamp);
       const copyButton = document.createElement("button");
       copyButton.className = "copy-button";
 
@@ -802,6 +802,29 @@ document.addEventListener("DOMContentLoaded", () => {
       messageDiv.appendChild(timestampCopyDiv);
       messageDiv.appendChild(botmessageicon);
     } else {
+      const timestampDiv = document.createElement("div");
+      timestampDiv.className = "timestampquery";
+      timestampDiv.textContent = timeLapse;
+      timestampDiv.setAttribute("data-timestamp", messageTimestamp);
+      const copyButton = document.createElement("button");
+      copyButton.className = "copy-button-query";
+      if(!message_Id){
+        var message_Id = `message-${Date.now()}`;
+      }
+      messageDiv.setAttribute("data-id", message_Id);
+      const copyIcon = document.createElement("img");
+      copyIcon.src = "assets/img/chatbot_img/copy.svg"; 
+      copyIcon.alt = "Copy";
+      copyIcon.style.width = "16px"; 
+      copyIcon.style.height = "16px";
+      copyIcon.style.cursor = "pointer";
+      copyButton.appendChild(copyIcon);
+      copyButton.onclick = () => copyMessage(message.replace(/[=*#@%&]/g, ""));
+      const timestampCopyDiv = document.createElement("div");
+      timestampCopyDiv.className = "timestamp-copy";
+      timestampCopyDiv.appendChild(timestampDiv);
+      timestampCopyDiv.appendChild(copyButton);
+      messageDiv.appendChild(timestampCopyDiv);
       messageDiv.appendChild(timestampDiv);
       messageDiv.appendChild(botmessageicon);
     }

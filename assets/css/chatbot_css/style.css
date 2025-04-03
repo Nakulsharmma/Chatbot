@@ -191,7 +191,7 @@ background-color: #dee2e661; /* Light blue */
 color: #000000; /* Text color */
 /* width: 60%; Fixed width to 70% */
 /* max-width: 70%; Ensures it does not exceed 70% */
-min-width: 15%;
+min-width: 30%;
 padding: 10px 15px;
 font-size: 12.4px;
 word-wrap: break-word;
@@ -272,7 +272,16 @@ margin-top: 5px;
 text-align: right;
 white-space: nowrap;
 }
-
+.timestampquery{
+  color: #888;
+position: absolute;
+font-size: 10px;
+bottom: -17px;
+margin-top: 5px;
+text-align: right;
+white-space: nowrap;
+right:13px;
+}
 /* Copy Button */
 .copy-button,.like-button,.dislike-button {
 position: absolute;
@@ -285,6 +294,19 @@ padding: 2px;
 opacity:0.8;
 border-radius: 20px;
 }
+
+.copy-button-query {
+  position: absolute;
+  background: #dee2e661;
+  border: none;
+  color: #dee2e661;
+  cursor: pointer;
+  font-size: 12px;
+  padding: 2px;
+  opacity:0.8;
+  border-radius: 20px;
+  left: 6px;
+  }
 .copy-button{
   right:42px;
   border-radius: 20px 20px 0px 20px;
