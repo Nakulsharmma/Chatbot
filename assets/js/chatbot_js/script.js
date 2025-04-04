@@ -230,6 +230,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Listen for the Enter key to trigger the action
   document.getElementById("user-input").addEventListener("keydown", (event) => {
+    disableMessageSelection();
     if (event.key === "Enter") {
       event.preventDefault(); // Prevent default form submission if necessary
       triggerEnterAction(); // Trigger Enter action on key press
@@ -239,6 +240,7 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("chat-header").addEventListener("click", (event) => {
     // Prevent collapsing when clicking inside the '.option' div
     if (!event.target.closest(".option")) {
+        disableMessageSelection();
         document.getElementById("chatbot").classList.toggle("chat-collapsed");
     }
   });
@@ -247,6 +249,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Check if the clicked element is outside the chatbot
     if (!chatbot.contains(event.target) && !chatIcon.contains(event.target)) {
+        disableMessageSelection();
         chatbot.classList.add("chat-collapsed"); // Minimize the chatbot
 
     }
@@ -339,11 +342,156 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Event listeners for the close buttons in chatbot header
   const exportBtn = document.getElementById("export-btn");
-  exportBtn.addEventListener("click", () => {
-    // if (confirm("Do you want to export the chat?")) {
-      exportChat();
-    // }
+  exportBtn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    e.preventDefault();
+    showExportOptions();
   });
+  // exportBtn.addEventListener("click", () => {
+  //   // if (confirm("Do you want to export the chat?")) {
+  //     exportChat();
+  //   // }
+  // });
+  function showExportOptions() {
+    const dropdown = document.getElementById("export-popup-content");
+    dropdown.innerHTML = `
+      <div class="export-options">
+        <button id="export-full-chat" class="export-option-btn">Export Chat</button>
+        <button id="export-selected" class="export-option-btn">Export Messages</button>
+      </div>
+    `;
+    
+    const closeDropdown = (e) => {
+      if (!dropdown.contains(e.target) && e.target !== exportBtn) {
+        dropdown.innerHTML = '';
+        document.removeEventListener("click", closeDropdown);
+      }
+    };
+  
+    setTimeout(() => {
+      document.addEventListener("click", closeDropdown);
+    }, 0);
+    
+    document.getElementById("export-full-chat").addEventListener("click", (e) => {
+      e.stopPropagation();
+      dropdown.innerHTML = '';
+      exportChat();
+    });
+    
+    document.getElementById("export-selected").addEventListener("click", (e) => {
+      e.stopPropagation();
+      dropdown.innerHTML = '';
+      enableMessageSelection();
+    });
+    dropdown.addEventListener("click", (e) => {
+      e.stopPropagation();
+    });
+  }
+
+  function enableMessageSelection() {
+    // Hide original header content
+    const headerContent = document.querySelector(".logo-section");
+    if (headerContent) headerContent.style.display = "none";
+    
+    const headerContentButtons = document.querySelector(".option"); // Changed from #header-optiions-button
+    if (headerContentButtons) headerContentButtons.style.display = "none";
+
+    // Create selection header
+    const selectionHeader = document.createElement("div");
+    selectionHeader.className = "selection-header";
+    selectionHeader.style.width = "100%";
+    selectionHeader.style.margin = "2%";
+    selectionHeader.innerHTML = `
+      <div class="selection-actions">
+        <img id="cancel-selection-btn" src="assets/img/chatbot_img/Chevron Left.svg" alt="Back icon" class="header-selection-btn cancel logo_header_export">
+        <img id="select-all-btn" style="margin-left: auto;" src="assets/img/chatbot_img/Check All.svg" alt="Check_all icon" class="header-selection-btn logo_header_export">
+        <img id="export-selected-btn" style="margin-left: 5px;" src="assets/img/chatbot_img/export.svg" alt="export icon" class="header-selection-btn primary logo_header_export">
+        </div>
+    `;
+    
+    document.getElementById("chat-header").appendChild(selectionHeader);
+
+    // Add checkboxes to all messages
+    const messages = document.querySelectorAll(".user-message, .bot-message");
+    messages.forEach(msg => {
+        if (!msg.querySelector(".export-checkbox")) {
+            const checkbox = document.createElement("input");
+            checkbox.type = "checkbox";
+            checkbox.className = "export-checkbox";
+            checkbox.checked = false;
+            checkbox.style.marginRight = "10px";
+            checkbox.addEventListener("click", (e) => e.stopPropagation());
+            msg.insertBefore(checkbox, msg.firstChild);
+        }
+    });
+
+    // Add event listeners
+    document.getElementById("select-all-btn").addEventListener("click", function(e) {
+        e.stopPropagation();
+        document.querySelectorAll(".export-checkbox").forEach(checkbox => {
+            checkbox.checked = true;
+        });
+    });
+
+    // Note: You had deselect-all-btn in the HTML but not in your new header
+    // Either add the button or remove this event listener
+    const deselectAllBtn = document.getElementById("deselect-all-btn");
+    if (deselectAllBtn) {
+        deselectAllBtn.addEventListener("click", function(e) {
+            e.stopPropagation();
+            document.querySelectorAll(".export-checkbox").forEach(checkbox => {
+                checkbox.checked = false;
+            });
+        });
+    }
+
+    document.getElementById("export-selected-btn").addEventListener("click", function(e) {
+        e.stopPropagation();
+        const selectedMessages = [];
+        const messages = document.querySelectorAll(".user-message, .bot-message");
+        
+        messages.forEach((msg, index) => {
+            const checkbox = msg.querySelector(".export-checkbox");
+            if (checkbox && checkbox.checked) {
+                const sender = msg.classList.contains("user-message") ? "You" : "Bot";
+                const messageText = msg.textContent.trim();
+                selectedMessages.push({ index, sender, message: messageText });
+            }
+        });
+        
+        if (selectedMessages.length === 0) {
+            alert("Please select at least one message to export.");
+            return;
+        }
+        
+        exportChat(selectedMessages.map(msg => msg.index));
+        disableMessageSelection();
+    });
+
+    document.getElementById("cancel-selection-btn").addEventListener("click", function(e) {
+        e.stopPropagation();
+        disableMessageSelection();
+    });
+}
+  
+    // Add cancel button
+
+    function disableMessageSelection() {
+      // Remove all checkboxes
+      document.querySelectorAll(".export-checkbox").forEach(checkbox => {
+        checkbox.remove();
+      });
+      
+      // Remove selection header
+      const selectionHeader = document.querySelector(".selection-header");
+      if (selectionHeader) selectionHeader.remove();
+      
+      // Show original header content
+      const headerContent = document.querySelector(".logo-section");
+      headerContent.style.display = "flex";
+      const headerContentbutton = document.querySelector("#header-optiions-button");
+      headerContentbutton.style.display = "flex";
+    }
 
   optionsBtns.addEventListener("click", () => {
     if (confirm("Do you want to clear chat history and close the chatbot?")) {
@@ -463,8 +611,11 @@ document.addEventListener("DOMContentLoaded", () => {
       }
       button.appendChild(span);
       optionsDiv.appendChild(button);
+      disableMessageSelection();
       // Add click listener to each button
-      button.addEventListener("click", () => handleUserQuery(question));
+      button.addEventListener("click", () => 
+        handleUserQuery(question)
+    );
     });
   };
 
@@ -924,19 +1075,19 @@ const dislikeMessage = (question,answer,messageId) => {
     // scrollToBottom();
   };
 
-  const exportChat = () => {
-    const { jsPDF } = window.jspdf; // Access jsPDF
+  const exportChat = (selectedIndices = null) => {
+    const { jsPDF } = window.jspdf;
     const doc = new jsPDF();
-  
+    
     // Set general styles and margins
     const marginLeft = 15;
     const marginRight = 15;
     const pageWidth = doc.internal.pageSize.width;
     const pageHeight = doc.internal.pageSize.height;
     const maxLineWidth = pageWidth - marginLeft - marginRight;
-    const lineHeight = 10; // Line height for text
-    const sectionSpacing = 5; // Extra spacing between chat messages
-    let yPosition = 20; // Start position for text
+    const lineHeight = 10;
+    const sectionSpacing = 5;
+    let yPosition = 20;
   
     // Title
     doc.setFont("helvetica", "bold");
@@ -944,16 +1095,20 @@ const dislikeMessage = (question,answer,messageId) => {
     doc.text("Chat Export", pageWidth / 2, yPosition, { align: "center" });
     yPosition += 15;
   
-    // Get chat history from localStorage
+    // Get chat history
     const chatMessages = JSON.parse(localStorage.getItem("chatHistory")) || [];
+    
+    // If selectedIndices is provided, filter messages
+    const messagesToExport = selectedIndices 
+      ? chatMessages.filter((_, index) => selectedIndices.includes(index))
+      : chatMessages;
   
-    // Regular expression to remove unwanted symbols
     const cleanText = (text) => text.replace(/[=*#$%]/g, "").trim();
   
     // Process and format each message
-    chatMessages.forEach((msg, index) => {
+    messagesToExport.forEach((msg) => {
       const sender = msg.sender;
-      const message = cleanText(msg.message); // Clean message content
+      const message = cleanText(msg.message);
       const timestamp = new Date(msg.timestamp).toLocaleString();
   
       // Set sender and timestamp styles
@@ -970,7 +1125,7 @@ const dislikeMessage = (question,answer,messageId) => {
       doc.setTextColor(60, 60, 60);
   
       const wrappedMessage = doc.splitTextToSize(message, maxLineWidth);
-      yPosition += lineHeight; // Space below header
+      yPosition += lineHeight;
       wrappedMessage.forEach((line) => {
         if (yPosition + lineHeight > pageHeight - 10) {
           doc.addPage();
@@ -980,7 +1135,7 @@ const dislikeMessage = (question,answer,messageId) => {
         yPosition += lineHeight;
       });
   
-      yPosition += sectionSpacing; // Add spacing between messages
+      yPosition += sectionSpacing;
     });
   
     // Save the PDF
@@ -1017,6 +1172,7 @@ const dislikeMessage = (question,answer,messageId) => {
 
   // Handle user query
   const handleUserQuery = async (query) => {
+    disableMessageSelection();
     let isUserScrolling = false; // Flag to track user scrolling
     let autoScrollTimeout;
     // Disable user input and buttons
