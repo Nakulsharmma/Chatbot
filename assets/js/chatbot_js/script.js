@@ -412,8 +412,8 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("chat-header").appendChild(selectionHeader);
 
     // Add checkboxes to all messages
-    const messages = document.querySelectorAll(".user-message, .bot-message");
-    messages.forEach(msg => {
+    const userMessages = document.querySelectorAll(".user-message");
+    userMessages.forEach(msg => {
         if (!msg.querySelector(".export-checkbox")) {
             const checkbox = document.createElement("input");
             checkbox.type = "checkbox";
@@ -421,6 +421,15 @@ document.addEventListener("DOMContentLoaded", () => {
             checkbox.checked = false;
             checkbox.style.marginRight = "10px";
             checkbox.addEventListener("click", (e) => e.stopPropagation());
+
+            // Link answer on click
+            checkbox.addEventListener("change", () => {
+                const nextSibling = msg.nextElementSibling;
+                if (nextSibling && nextSibling.classList.contains("bot-message")) {
+                    nextSibling.classList.toggle("linked-selected", checkbox.checked);
+                }
+            });
+
             msg.insertBefore(checkbox, msg.firstChild);
         }
     });
@@ -453,10 +462,20 @@ document.addEventListener("DOMContentLoaded", () => {
         messages.forEach((msg, index) => {
             const checkbox = msg.querySelector(".export-checkbox");
             if (checkbox && checkbox.checked) {
-                const sender = msg.classList.contains("user-message") ? "You" : "Bot";
-                const messageText = msg.textContent.trim();
-                selectedMessages.push({ index, sender, message: messageText });
-            }
+              const sender = "You";
+              const messageText = msg.textContent.trim();
+              selectedMessages.push({ index, sender, message: messageText });
+          
+              // Include next bot message if exists
+              const next = msg.nextElementSibling;
+              if (next && next.classList.contains("bot-message")) {
+                  selectedMessages.push({
+                      index: Array.from(messages).indexOf(next),
+                      sender: "Bot",
+                      message: next.textContent.trim()
+                  });
+              }
+          }          
         });
         
         if (selectedMessages.length === 0) {
