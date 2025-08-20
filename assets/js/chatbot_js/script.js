@@ -1345,8 +1345,7 @@ const dislikeMessage = (question,answer,messageId) => {
     }
   });
   userInput.addEventListener("input", () => {
-    userInput.value = userInput.value.replace(/[^a-zA-Z0-9\s.,?!-]/g, "");
-
+      userInput.value = userInput.value.replace(/[^\u0900-\u097F\s.,?!-a-zA-Z0-9]/g, "");
       // if (userInput.value.length > 60) {
       //   userInput.value = userInput.value.slice(0, 60);
       // }
