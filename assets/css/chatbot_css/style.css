@@ -55,7 +55,7 @@ align-items: center;
 gap: 10px;
 }
 
-#chat-header .logo {
+#chat-header .chatbot-logo {
 width: 30px;
 height: 30px;
 }
@@ -91,7 +91,7 @@ color: #003f8a;
   display: none; /* Hide body and footer when collapsed */
 }
 
-.chat-collapsed #chat-header .logo {
+.chat-collapsed #chat-header .chatbot-logo {
   height:20px; 
   width:20px;
 }
@@ -814,7 +814,7 @@ cursor: pointer; /* Make it clickable */
 padding: 0;
 }
 
-#send-btn .logo {
+#send-btn .chatbot-logo {
 width: 20px; /* Adjust size of the icon */
 height: 20px;
 display: block;
@@ -1009,7 +1009,7 @@ code {
   font-size: 14px;
 }
 
-#send-btn .logo {
+#send-btn .chatbot-logo {
   width: 24px;
   height: 24px;
 }

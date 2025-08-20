@@ -76,7 +76,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const formData = new FormData();
       formData.append("email", email);
       formData.append("password", password);
-      const response = await fetch("https://chatbot.cdot.in/api/auth-token/", 
+      const response = await fetch("api/auth-token/", 
         {
           method: "POST",
           body: formData,
@@ -296,7 +296,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     const response = await fetch(
-      `https://chatbot.cdot.in/api/clear-chat-history?thread_id=${threadId}`,
+      `api/clear-chat-history?thread_id=${threadId}`,
       {
         method: "GET",
         headers: {
@@ -665,7 +665,7 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   function submitFeedbackToAPI(question,answer,rating,token, feedbackText, threadId,messageId) {
-    fetch("https://chatbot.cdot.in/api/submit-feedback/", {
+    fetch("api/submit-feedback/", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -1073,8 +1073,8 @@ const dislikeMessage = (question,answer,messageId) => {
 
     if (storedChat.length > 0) { 
       storedChat.forEach((chat) => {
-        const sanitizedMessage = sanitizeInput(chat.message);
-        appendMessage(chat.sender, sanitizedMessage, chat.timestamp, true,chat.query,chat.message_Id);
+        // const sanitizedMessage = sanitizeInput(chat.message);
+        appendMessage(chat.sender, chat.message, chat.timestamp, true,chat.query,chat.message_Id);
         
         setTimeout(() => {
           if (chat.message_Id && removedButtons.includes(chat.message_Id)) {
@@ -1277,7 +1277,7 @@ const dislikeMessage = (question,answer,messageId) => {
         token = await authenticateAndStoreToken(email, password);
       }
   
-      const response = await fetch("https://chatbot.cdot.in/api/chatbot/", {
+      const response = await fetch("api/chatbot/", {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -1345,7 +1345,11 @@ const dislikeMessage = (question,answer,messageId) => {
     }
   });
   userInput.addEventListener("input", () => {
-    userInput.value = userInput.value.replace(/[^a-zA-Z0-9\s.,?!]/g, "");
+    userInput.value = userInput.value.replace(/[^a-zA-Z0-9\s.,?!-]/g, "");
+
+      // if (userInput.value.length > 60) {
+      //   userInput.value = userInput.value.slice(0, 60);
+      // }
   });
   function adjustChatBodyHeight() {
     const chatBody = document.getElementById('chat-body');

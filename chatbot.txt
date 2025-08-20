@@ -1,0 +1,25 @@
+1. Ensure that the .htaccess file is created or updated in parallel with the source code
+folder, incorporating the following rewrite rules:
+
+RewriteEngine On
+
+# Enable proxy  
+RewriteCond %{REQUEST_URI} ^/api/ [NC]  
+RewriteRule ^api/(.*)$ http://chatbot.cdot.in/api/$1 [P,L]
+
+2. Execute the following commands to enable the required Apache modules:
+
+sudo a2enmod rewrite
+sudo a2enmod proxy
+sudo a2enmod proxy_http
+
+3. Update the <Directory /var/www/> section as follows:
+
+From
+<Directory /var/www/>
+  AllowOverride None
+</Directory>
+To
+<Directory /var/www/>
+  AllowOverride All
+</Directory> 
