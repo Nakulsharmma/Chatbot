@@ -237,21 +237,25 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  document.getElementById("chat-header").addEventListener("click", (event) => {
-    // Prevent collapsing when clicking inside the '.option' div
-    if (!event.target.closest(".option")) {
-        disableMessageSelection();
-        document.getElementById("chatbot").classList.toggle("chat-collapsed");
+document.getElementById("chat-header").addEventListener("click", (event) => {
+    // Only work on mobile devices (screen width less than 768px)
+    if (window.innerWidth > 768) {
+        // Prevent collapsing when clicking inside the '.option' div
+        if (!event.target.closest(".option")) {
+            disableMessageSelection();
+            document.getElementById("chatbot").classList.toggle("chat-collapsed");
+        }
     }
-  });
+});
   document.addEventListener("click", (event) => {
     const chatbot = document.getElementById("chatbot");
 
     // Check if the clicked element is outside the chatbot
     if (!chatbot.contains(event.target) && !chatIcon.contains(event.target)) {
+          if (window.innerWidth > 768) {
         disableMessageSelection();
         chatbot.classList.add("chat-collapsed"); // Minimize the chatbot
-
+          }
     }
   });
 
@@ -1360,9 +1364,9 @@ const dislikeMessage = (question,answer,messageId) => {
     if (isMobileView()) {
         // Apply height adjustments for mobile view
         if (isNavbarVisible) {
-            chatBody.style.height = `calc(${visualViewportHeight}px - 210px - env(safe-area-inset-bottom))`;
+            chatBody.style.height = `calc(${visualViewportHeight}px - 378px - env(safe-area-inset-bottom))`;
         } else {
-            chatBody.style.height = `calc(${visualViewportHeight}px - 150px - env(safe-area-inset-bottom))`;
+            chatBody.style.height = `calc(${visualViewportHeight}px - 318px - env(safe-area-inset-bottom))`;
         }
     } else {
         // Restore default height for desktop
@@ -1381,5 +1385,13 @@ adjustChatBodyHeight();
 // Run whenever the viewport changes
 window.visualViewport.addEventListener('resize', adjustChatBodyHeight);
 window.addEventListener('resize', adjustChatBodyHeight);
-  
+  if (lang === "hi") {
+    setTimeout(() => {
+      let translateDropdown = document.querySelector(".goog-te-combo");
+      if (translateDropdown) {
+        translateDropdown.value = "hi";   // set to Hindi
+        translateDropdown.dispatchEvent(new Event("change")); // trigger translation
+      }
+    }, 1000); // small delay to allow translator to load
+  }
 });
