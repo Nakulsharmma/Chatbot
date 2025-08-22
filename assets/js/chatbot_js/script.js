@@ -1348,12 +1348,13 @@ const dislikeMessage = (question,answer,messageId) => {
       }
     }
   });
-  userInput.addEventListener("input", () => {
-      userInput.value = userInput.value.replace(/[^\u0900-\u097F\s.,?!-a-zA-Z0-9]/g, "");
-      // if (userInput.value.length > 60) {
-      //   userInput.value = userInput.value.slice(0, 60);
-      // }
-  });
+userInput.addEventListener("input", () => {
+  userInput.value = userInput.value.replace(
+    /[^\u0900-\u097Fa-zA-Z0-9\s.,?!-]/g,
+    ""
+  );
+});
+
   function adjustChatBodyHeight() {
     const chatBody = document.getElementById('chat-body');
     const visualViewportHeight = window.visualViewport.height; // Get the actual height of the visible viewport
