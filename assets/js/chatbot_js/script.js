@@ -312,7 +312,8 @@ function applyTranslations() {
     let micBtn = document.getElementById("mic-btn");
     let inputField = document.getElementById("user-input");
     let recognitionTimeout;
-    const originalPlaceholder = inputField.placeholder; // Store the original placeholder text
+    const t = translations[lang] || translations["en"];
+    const originalPlaceholder = t.inputPlaceholder;
     let permissionGranted = false; // Track whether permission has been granted
 
     const triggerEnterAction = () => {
@@ -334,7 +335,7 @@ function applyTranslations() {
 
     // Function to request permission and start listening
     const requestPermissionAndStart = () => {
-      inputField.placeholder = "Please Allow microphone...";
+      inputField.placeholder = t.microphoneAccess;
       recognition.start(); // Start recognition, browser will request permission
       console.log("Requesting microphone permission...");
     };
@@ -350,7 +351,7 @@ function applyTranslations() {
       } else {
         recognition.start(); // Start speech recognition
         micBtn.classList.add("active"); // Highlight mic button
-        inputField.placeholder = "Speak up, I'm listening..."; // Change placeholder
+        inputField.placeholder = t.microphoneListening; // Change placeholder
         console.log("Speech recognition started...");
       }
     });
@@ -359,7 +360,7 @@ function applyTranslations() {
     recognition.onaudiostart = () => {
       permissionGranted = true;
       micBtn.classList.add("active");
-      inputField.placeholder = "Speak up, I'm listening...";
+      inputField.placeholder =  t.microphoneListening;
       console.log("Microphone access granted.");
     };
 
@@ -393,7 +394,7 @@ function applyTranslations() {
     // Handle errors
     recognition.onerror = (event) => {
       if (event.error === "not-allowed" || event.error === "denied") {
-        inputField.placeholder = "Microphone access denied.";
+        inputField.placeholder = t.microphoneDenied;
         console.error("Microphone permission denied.");
       } else {
         console.error("Speech recognition error: ", event.error);
@@ -402,11 +403,12 @@ function applyTranslations() {
     };
   } else {
     console.log("Speech recognition is not supported in this browser.");
+    const t = translations[lang] || translations["en"];
     document.getElementById("user-input").placeholder =
-      "Speech recognition is not supported in this browser.";
+       t.speechNotSupported;
     setTimeout(() => {
       document.getElementById("user-input").placeholder =
-      "Type your message here...";
+      t.inputPlaceholder;
     }, 5000);
   }
 
