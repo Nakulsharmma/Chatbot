@@ -30,6 +30,187 @@ document.addEventListener("DOMContentLoaded", () => {
     loadChatFromLocalStorage(); // Load chat history from localStorage
   });
 
+    const translations = {
+    en: {
+      botName: "C-BOT",
+      welcome: "Welcome to C-BOT!",
+      inputPlaceholder: "Type your message here...",
+      feedbackPlaceholder: "Write your feedback here...",
+      feedbackHeader: "Apologies for any inconvenience",
+      feedbackText: "Your feedback is highly appreciated, as it helps us enhance our processes.",
+      submitFeedback: "Submit Feedback",
+      poweredBy: "Powered by",
+      companyname: "C-DOT",
+      exportTooltip: "Export Chat",
+      exportChat: "Export Chat",
+      exportMessages: "Export Messages",
+      clearChatConfirm: "Do you want to clear chat history and close the chatbot?",
+      selectMessageAlert: "Please select at least one message to export.",
+      thankYou: "Thank You",
+      microphoneAccess: "Please Allow microphone...",
+      microphoneDenied: "Microphone access denied.",
+      microphoneListening: "Speak up, I'm listening...",
+      speechNotSupported: "Speech recognition is not supported in this browser.",
+      readMore: "Read More",
+      readLess: "Read Less",
+      messageCopied: "Message copied to clipboard!",
+      serviceUnavailable: "The chatbot service is currently unavailable. Please try again later.",
+      noInformation: "The context provided does not contain any information related to",
+
+      chatData: {
+        "About C-DOT": "C-DOT is an R&D organization under the Government of India.",
+        "Product Section": "Wireless technology enables communication without physical cables.",
+        "Awards and Achievements": "Explore the gallery for event photos and updates.",
+        "EVP": "PM-WANI is an initiative to provide Wi-Fi access across India.",
+        "Consultancy": "C-DOT provides consultancy services for telecommunication technology."
+      }
+    },
+
+    hi: {
+      botName: "सी-बॉट",
+      welcome: "सी-बॉट में आपका स्वागत है!",
+      inputPlaceholder: "यहाँ अपना संदेश लिखें...",
+      feedbackPlaceholder: "अपनी प्रतिक्रिया यहाँ लिखें...",
+      feedbackHeader: "किसी भी असुविधा के लिए क्षमा करें",
+      feedbackText: "आपका फीडबैक हमारे लिए बहुत मूल्यवान है, यह हमें अपनी प्रक्रिया बेहतर बनाने में मदद करता है।",
+      submitFeedback: "प्रतिक्रिया भेजें",
+      poweredBy: "द्वारा संचालित",
+      companyname: "सी-डॉट",
+      exportTooltip: "चैट निर्यात करें",
+      exportChat: "चैट निर्यात करें",
+      exportMessages: "संदेश निर्यात करें",
+      clearChatConfirm: "क्या आप चैट इतिहास साफ करना चाहते हैं और चैटबॉट को बंद करना चाहते हैं?",
+      selectMessageAlert: "कृपया निर्यात करने के लिए कम से कम एक संदेश चुनें।",
+      thankYou: "धन्यवाद",
+      microphoneAccess: "कृपया माइक्रोफोन की अनुमति दें...",
+      microphoneDenied: "माइक्रोफोन एक्सेस अस्वीकृत।",
+      microphoneListening: "बोलिए, मैं सुन रहा हूँ...",
+      speechNotSupported: "यह ब्राउज़र स्पीच रिकग्निशन का समर्थन नहीं करता है।",
+      readMore: "और पढ़ें",
+      readLess: "कम पढ़ें",
+      messageCopied: "संदेश क्लिपबोर्ड पर कॉपी किया गया!",
+      serviceUnavailable: "चैटबॉट सेवा वर्तमान में उपलब्ध नहीं है। कृपया बाद में पुनः प्रयास करें।",
+      noInformation: "प्रदान किए गए संदर्भ में इससे संबंधित कोई जानकारी नहीं है",
+
+      chatData: {
+        "About C-DOT": "सी-डॉट के बारे में",
+        "Product Section": "उत्पाद अनुभाग",
+        "Awards and Achievements": "पुरस्कार और उपलब्धियां",
+        "EVP": "ईवीपी",
+        "Consultancy": "परामर्श"
+      }
+    }
+  };
+
+  const questionKeyMapping = {
+  "en": {
+    "About C-DOT": "About C-DOT",
+    "Consultancy": "Consultancy",
+    "6G": "6G",
+    "Product Section": "Product Section",
+    "EVP": "EVP",
+    "FAQs": "FAQs",
+    "Awards and Achievements": "Awards and Achievements"
+  },
+  "hi": {
+    "About C-DOT": "सी-डॉट के बारे में",
+    "Consultancy": "परामर्श",
+    "6G": "6G",
+    "Product Section": "उत्पाद अनुभाग",
+    "EVP": "ईवीपी",
+    "FAQs": "FAQs",
+    "Awards and Achievements": "पुरस्कार और उपलब्धियां"
+  }
+};
+  // Get lang value from PHP (fallback to English if not provided)
+  let lang = window.lang || "en";
+  let activeChatData = (translations[lang] || translations["en"]).chatData;
+    const chatData = {
+    "About C-DOT": "C-DOT is an R&D organization under the Government of India.",
+    // "6 G": "6G is the future of wireless communication technology.",
+    "Product Section":
+    "Wireless technology enables communication without physical cables.",
+    "Awards and Achievements": "Explore the gallery for event photos and updates.",
+    "EVP": "PM-WANI is an initiative to provide Wi-Fi access across India.",
+    Consultancy:
+      "C-DOT provides consultancy services for telecommunication technology.",
+    // FAQs: "Check our FAQ section for common queries.",
+  };
+  const questionImages = {
+    "About C-DOT": "assets/img/chatbot_img/events.svg",
+    Consultancy: "assets/img/chatbot_img/consultancy.svg",
+    "6G": "assets/img/chatbot_img/wifi.svg",
+    "Product Section": "assets/img/chatbot_img/Sell.svg",
+    "EVP": "assets/img/chatbot_img/Supplier.svg",
+    FAQs: "assets/img/chatbot_img/Faq.svg",
+    "Awards and Achievements": "assets/img/chatbot_img/gallery.svg",
+  };
+
+
+function applyTranslations() {
+    const t = translations[lang] || translations["en"];
+
+    // Update chatbot name
+    const logoSectionSpan = document.querySelector(".logo-section span");
+    if (logoSectionSpan) logoSectionSpan.textContent = t.botName;
+
+    // Change input placeholder
+    document.getElementById("user-input").setAttribute("placeholder", t.inputPlaceholder);
+
+    // Change feedback popup content
+    const feedbackHeader = document.querySelector(".feedback-header");
+    if (feedbackHeader) feedbackHeader.textContent = t.feedbackHeader;
+
+    const feedbackText = document.querySelector(".feedback-heading-text");
+    if (feedbackText) feedbackText.textContent = t.feedbackText;
+
+    const submitBtn = document.getElementById("submit-feedback");
+    if (submitBtn) submitBtn.textContent = t.submitFeedback;
+
+    // Change footer text
+    document.querySelectorAll(".foottext").forEach(el => {
+      el.textContent = t.poweredBy;
+    });
+
+
+    document.querySelectorAll(".foottextcdot").forEach(el => {
+      el.textContent = t.companyname;
+    });
+    
+    const feedbackTextarea = document.getElementById("feedback-text");
+    if (feedbackTextarea) feedbackTextarea.setAttribute("placeholder", t.feedbackPlaceholder);
+
+    const exportTooltip = document.querySelector(".tooltip");
+    if (exportTooltip) exportTooltip.textContent = t.exportTooltip;
+
+    // Update chat data with translations
+    Object.keys(t.chatData).forEach(key => {
+      if (chatData[key]) {
+        // Only update the question keys, not the response values
+        // We need to keep the English responses but use Hindi question text
+        const newKey = t.chatData[key];
+        if (newKey !== key) {
+          // Move the value to the new key and delete the old key
+          chatData[newKey] = chatData[key];
+          delete chatData[key];
+        }
+      }
+    });
+          // Also update the questionImages to use translated keys
+    const translatedQuestionImages = {};
+    Object.keys(questionImages).forEach(key => {
+      const translatedKey = t.chatData[key] || key;
+      translatedQuestionImages[translatedKey] = questionImages[key];
+    });
+    
+    // Replace the original questionImages with the translated version
+    Object.keys(translatedQuestionImages).forEach(key => {
+      questionImages[key] = translatedQuestionImages[key];
+    });
+  }
+
+  // Apply tra
+  applyTranslations();
 
   document.getElementById("close-feedback").addEventListener("click", function() {
     let popup = document.getElementById("feedback-popup");
@@ -97,8 +278,9 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function showPopup(message) {
+      const t = translations[lang] || translations["en"];
       if(message = "Feedback submitted successfully"){
-        popupMessage.innerText = "Thank You"; // Set the message
+        popupMessage.innerText = t.thankYou; // Set the message
         const img = document.createElement("img");
         img.src = "assets/img/chatbot_img/thumbsup.svg";
         img.alt = "Feedback Submit Logo";
@@ -313,27 +495,7 @@ document.getElementById("chat-header").addEventListener("click", (event) => {
   };
 
   // Chat JSON data
-  const chatData = {
-    "About C-DOT": "C-DOT is an R&D organization under the Government of India.",
-    // "6 G": "6G is the future of wireless communication technology.",
-    "Product Section":
-    "Wireless technology enables communication without physical cables.",
-    "Awards and Achievements": "Explore the gallery for event photos and updates.",
-    "EVP": "PM-WANI is an initiative to provide Wi-Fi access across India.",
-    Consultancy:
-      "C-DOT provides consultancy services for telecommunication technology.",
-    // FAQs: "Check our FAQ section for common queries.",
-  };
 
-  const questionImages = {
-    "About C-DOT": "assets/img/chatbot_img/events.svg",
-    Consultancy: "assets/img/chatbot_img/consultancy.svg",
-    "6G": "assets/img/chatbot_img/wifi.svg",
-    "Product Section": "assets/img/chatbot_img/Sell.svg",
-    "EVP": "assets/img/chatbot_img/Supplier.svg",
-    FAQs: "assets/img/chatbot_img/Faq.svg",
-    "Awards and Achievements": "assets/img/chatbot_img/gallery.svg",
-  };
 
   // Event listeners for chat icons
   chatIcon.addEventListener("click", () => {
@@ -358,10 +520,11 @@ document.getElementById("chat-header").addEventListener("click", (event) => {
   // });
   function showExportOptions() {
     const dropdown = document.getElementById("export-popup-content");
+    const t = translations[lang] || translations["en"];
     dropdown.innerHTML = `
       <div class="export-options">
-        <button id="export-full-chat" class="export-option-btn">Export Chat</button>
-        <button id="export-selected" class="export-option-btn">Export Messages</button>
+        <button id="export-full-chat" class="export-option-btn">${t.exportChat}</button>
+        <button id="export-selected" class="export-option-btn">${t.exportMessages}</button>
       </div>
     `;
     
@@ -482,8 +645,9 @@ document.getElementById("chat-header").addEventListener("click", (event) => {
           }          
         });
         
+        const t = translations[lang] || translations["en"];
         if (selectedMessages.length === 0) {
-            alert("Please select at least one message to export.");
+            alert(t.selectMessageAlert);
             return;
         }
         
@@ -517,7 +681,8 @@ document.getElementById("chat-header").addEventListener("click", (event) => {
     }
 
   optionsBtns.addEventListener("click", () => {
-    if (confirm("Do you want to clear chat history and close the chatbot?")) {
+    const t = translations[lang] || translations["en"];
+    if (confirm(t.clearChatConfirm)) {
       localStorage.removeItem("chatHistory"); // Clear chat history
       resetThreadId();
       const chatMessages = document.getElementById("chat-message");
@@ -614,33 +779,46 @@ document.getElementById("chat-header").addEventListener("click", (event) => {
   };
 
   // Populate questions in the options div
-  const populateQuestions = (questions) => {
-    questions.forEach((question) => {
-      const button = document.createElement("button");
-      button.classList.add("option-all-button"); // Add class to the span for styling
-      button.classList.add("optionallbuttoncommon"); // Add class to the span for styling
-      button.setAttribute("aria-label", `Option for ${question}`);
-      const span = document.createElement("span");
-      span.classList.add("option-button-text"); // Add class to the span for styling
-      span.textContent = question;
+const populateQuestions = (questions) => {
+  questions.forEach((question) => {
+    const button = document.createElement("button");
+    button.classList.add("option-all-button");
+    button.classList.add("optionallbuttoncommon");
+    button.setAttribute("aria-label", `Option for ${question}`);
+    
+    const span = document.createElement("span");
+    span.classList.add("option-button-text");
+    span.textContent = question;
 
-      if (questionImages[question]) {
-        const img = document.createElement("img");
-        img.src = questionImages[question];
-        img.alt = `${question} image`;
-        img.classList.add("option-button-img"); // Add class to the span for styling
-        img.classList.add("optionbuttonimg"); // Add class to the span for styling
-        button.insertBefore(img, button.firstChild); // Insert the image before the text
+    // Find the original English key for the translated question
+    let imageKey = question;
+    if (lang !== "en") {
+      // Find the English key that maps to this Hindi question
+      for (const [englishKey, hindiValue] of Object.entries(questionKeyMapping["hi"])) {
+        if (hindiValue === question) {
+          imageKey = englishKey;
+          break;
+        }
       }
-      button.appendChild(span);
-      optionsDiv.appendChild(button);
-      disableMessageSelection();
-      // Add click listener to each button
-      button.addEventListener("click", () => 
-        handleUserQuery(question)
-    );
-    });
-  };
+    }
+
+    if (questionImages[imageKey]) {
+      const img = document.createElement("img");
+      img.src = questionImages[imageKey];
+      img.alt = `${question} image`;
+      img.classList.add("option-button-img");
+      img.classList.add("optionbuttonimg");
+      button.insertBefore(img, button.firstChild);
+    }
+    
+    button.appendChild(span);
+    optionsDiv.appendChild(button);
+    disableMessageSelection();
+    
+    // Add click listener to each button
+    button.addEventListener("click", () => handleUserQuery(question));
+  });
+};
 
   // Load questions and add them to options
   const loadQuestions = async () => {
@@ -721,10 +899,11 @@ document.getElementById("chat-header").addEventListener("click", (event) => {
   
 
   const copyMessage = (message) => {
+    const t = translations[lang] || translations["en"];
     if (navigator.clipboard && navigator.clipboard.writeText) {
       navigator.clipboard
         .writeText(message)
-        .then(() => alert("Message copied to clipboard!"))
+        .then(() => alert(t.messageCopied))
         .catch((err) => console.error("Failed to copy message:", err));
     } else {
       // Fallback for unsupported browsers
@@ -736,7 +915,7 @@ document.getElementById("chat-header").addEventListener("click", (event) => {
       textArea.select();
       try {
         document.execCommand("copy");
-        alert("Message copied to clipboard!");
+        alert(t.messageCopied);
       } catch (err) {
         console.error("Fallback: Unable to copy", err);
       }
@@ -845,8 +1024,9 @@ document.getElementById("chat-header").addEventListener("click", (event) => {
     messageDiv.appendChild(messageContent);
 
     if (isTruncated) {
+      const t = translations[lang] || translations["en"];
       const toggleButton = document.createElement("button");
-      toggleButton.textContent = "Read More";
+      toggleButton.textContent = t.readMore;
       toggleButton.style.border = "none";
       toggleButton.style.backgroundColor = "transparent";
       toggleButton.style.color = "blue";
@@ -858,10 +1038,10 @@ document.getElementById("chat-header").addEventListener("click", (event) => {
       toggleButton.addEventListener("click", () => {
         if (isExpanded) {
           messageContent.innerHTML = parseMarkdown(truncated);
-          toggleButton.textContent = "Read More";
+          toggleButton.textContent = t.readMore;
         } else {
           messageContent.innerHTML = parseMarkdown(original);
-          toggleButton.textContent = "Read Less";
+          toggleButton.textContent = t.readLess;
         }
         isExpanded = !isExpanded; // Toggle the state
       });
@@ -1315,7 +1495,8 @@ const dislikeMessage = (question,answer,messageId) => {
       }
   
       if (streamingMessage.trim().endsWith("NO")) {
-        streamingMessage = `The context provided does not contain any information related to “${query}”. Therefore, please try again with a refined question or ask a different question.`;
+        const t = translations[lang] || translations["en"];
+        streamingMessage = `${t.noInformation} "${query}". ${lang === "hi" ? "कृपया एक परिष्कृत प्रश्न के साथ पुनः प्रयास करें या कोई अन्य प्रश्न पूछें।" : "Therefore, please try again with a refined question or ask a different question."}`;
       }
   
       removeTemporaryMessage(streamingMessageId);
@@ -1323,7 +1504,9 @@ const dislikeMessage = (question,answer,messageId) => {
     } catch (error) {
       console.error("Error calling the API:", error);
       removeTemporaryMessage(streamingMessageId);
-      appendMessage("Bot", "The chatbot service is currently unavailable. Please try again later.");
+      const t = translations[lang] || translations["en"];
+
+      appendMessage("Bot", t.serviceUnavailable);
     } finally {
       disableElements(false);
   
@@ -1386,13 +1569,5 @@ adjustChatBodyHeight();
 // Run whenever the viewport changes
 window.visualViewport.addEventListener('resize', adjustChatBodyHeight);
 window.addEventListener('resize', adjustChatBodyHeight);
-  if (lang === "hi") {
-    setTimeout(() => {
-      let translateDropdown = document.querySelector(".goog-te-combo");
-      if (translateDropdown) {
-        translateDropdown.value = "hi";   // set to Hindi
-        translateDropdown.dispatchEvent(new Event("change")); // trigger translation
-      }
-    }, 1000); // small delay to allow translator to load
-  }
+
 });

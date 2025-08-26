@@ -154,7 +154,7 @@
       }
     </style>
     <script>
-      let lang = 'hi';
+      window.lang = 'hi';
     </script>
   </head>
   <body>
@@ -260,9 +260,9 @@
             </div>
             <div class="footer-logo-section">
               <div>
-                <span class="footer-text">Powered by</span>
+                <span class="footer-text foottext">Powered by</span>
                 <img src="assets/img/chatbot_img/logo.png" alt="C-DOT Logo" class="footer-logo" />
-                <span class="footer-text">C-DOT</span> 
+                <span class="footer-text foottextcdot">C-DOT</span> 
               </div>
             </div>
           </div>
@@ -285,9 +285,9 @@
               </div>
               <hr>
                 <div>
-                  <span class="footer-text">Powered by</span>
+                  <span class="footer-text foottext">Powered by</span>
                   <img src="assets/img/chatbot_img/logo.png" alt="C-DOT Logo" class="footer-logo" />
-                  <span class="footer-text">C-DOT</span> 
+                  <span class="footer-text foottextcdot" >C-DOT</span> 
                 </div>
             </div>
           </div>
@@ -297,25 +297,12 @@
           </div>
         </div>
         </div>
-    </div>  
-    <div id="google_translate_element" style="display:none;"></div>
-   
+    </div>     
     <div id="chat-icon">
         <img src="assets/img/chatbot_img/chat_icon.svg" alt="Chatbot Icon" class="chatbot-logo" />
     </div> 
     <script src="assets/js/chatbot_js/marked.min.js"></script>
     <script src="assets/js/chatbot_js/jspdf.min.js"></script> 
     <script src="assets/js/chatbot_js/script.js" defer></script>  
-    <script type="text/javascript">
-      function googleTranslateElementInit() {
-        new google.translate.TranslateElement(
-          { pageLanguage: 'en', includedLanguages: 'hi,en' }, 
-          'google_translate_element'
-        );
-      }
-    </script>
-
-    <script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
-
   </body>
 </html>
