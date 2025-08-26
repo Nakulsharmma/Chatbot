@@ -96,7 +96,7 @@ document.addEventListener("DOMContentLoaded", () => {
         "About C-DOT": "सी-डॉट के बारे में",
         "Product Section": "उत्पाद अनुभाग",
         "Awards and Achievements": "पुरस्कार और उपलब्धियां",
-        "EVP": "ईवीपी",
+        "EVP": "ई.वी.पी",
         "Consultancy": "परामर्श"
       }
     }
@@ -117,7 +117,7 @@ document.addEventListener("DOMContentLoaded", () => {
     "Consultancy": "परामर्श",
     "6G": "6G",
     "Product Section": "उत्पाद अनुभाग",
-    "EVP": "ईवीपी",
+    "EVP": "ई.वी.पी",
     "FAQs": "FAQs",
     "Awards and Achievements": "पुरस्कार और उपलब्धियां"
   }
