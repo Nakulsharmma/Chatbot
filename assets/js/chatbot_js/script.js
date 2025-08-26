@@ -58,11 +58,11 @@ document.addEventListener("DOMContentLoaded", () => {
       noInformation: "The context provided does not contain any information related to",
 
       chatData: {
-        "About C-DOT": "C-DOT is an R&D organization under the Government of India.",
-        "Product Section": "Wireless technology enables communication without physical cables.",
-        "Awards and Achievements": "Explore the gallery for event photos and updates.",
-        "EVP": "PM-WANI is an initiative to provide Wi-Fi access across India.",
-        "Consultancy": "C-DOT provides consultancy services for telecommunication technology."
+        "About C-DOT": "About C-DOT",
+        "Product Section": "Product Section",
+        "Awards and Achievements": "Awards and Achievements",
+        "EVP": "EVP",
+        "Consultancy": "Consultancy"
       }
     },
 
@@ -137,13 +137,13 @@ document.addEventListener("DOMContentLoaded", () => {
     // FAQs: "Check our FAQ section for common queries.",
   };
   const questionImages = {
-    "About C-DOT": "assets/img/chatbot_img/events.svg",
-    Consultancy: "assets/img/chatbot_img/consultancy.svg",
-    "6G": "assets/img/chatbot_img/wifi.svg",
-    "Product Section": "assets/img/chatbot_img/Sell.svg",
-    "EVP": "assets/img/chatbot_img/Supplier.svg",
-    FAQs: "assets/img/chatbot_img/Faq.svg",
-    "Awards and Achievements": "assets/img/chatbot_img/gallery.svg",
+    "About C-DOT": "../assets/img/chatbot_img/events.svg",
+    Consultancy: "../assets/img/chatbot_img/consultancy.svg",
+    "6G": "../assets/img/chatbot_img/wifi.svg",
+    "Product Section": "../assets/img/chatbot_img/Sell.svg",
+    "EVP": "../assets/img/chatbot_img/Supplier.svg",
+    FAQs: "../assets/img/chatbot_img/Faq.svg",
+    "Awards and Achievements": "../assets/img/chatbot_img/gallery.svg",
   };
 
 
@@ -282,7 +282,7 @@ function applyTranslations() {
       if(message = "Feedback submitted successfully"){
         popupMessage.innerText = t.thankYou; // Set the message
         const img = document.createElement("img");
-        img.src = "assets/img/chatbot_img/thumbsup.svg";
+        img.src = "../assets/img/chatbot_img/thumbsup.svg";
         img.alt = "Feedback Submit Logo";
         img.className = "shake";
         img.style.Width = "30%"; 
@@ -570,9 +570,9 @@ document.getElementById("chat-header").addEventListener("click", (event) => {
     selectionHeader.style.margin = "2%";
     selectionHeader.innerHTML = `
       <div class="selection-actions">
-        <img id="cancel-selection-btn" src="assets/img/chatbot_img/Chevron Left.svg" alt="Back icon" class="header-selection-btn cancel logo_header_export">
-        <img id="select-all-btn" style="margin-left: auto;" src="assets/img/chatbot_img/Check All.svg" alt="Check_all icon" class="header-selection-btn logo_header_export">
-        <img id="export-selected-btn" style="margin-left: 5px;" src="assets/img/chatbot_img/export.svg" alt="export icon" class="header-selection-btn primary logo_header_export">
+        <img id="cancel-selection-btn" src="../assets/img/chatbot_img/Chevron Left.svg" alt="Back icon" class="header-selection-btn cancel logo_header_export">
+        <img id="select-all-btn" style="margin-left: auto;" src="../assets/img/chatbot_img/Check All.svg" alt="Check_all icon" class="header-selection-btn logo_header_export">
+        <img id="export-selected-btn" style="margin-left: 5px;" src="../assets/img/chatbot_img/export.svg" alt="export icon" class="header-selection-btn primary logo_header_export">
         </div>
     `;
     
@@ -994,7 +994,7 @@ const populateQuestions = (questions) => {
     const botmessageicon = document.createElement("div");
     botmessageicon.className = sender === "You" ? "user-image" : "bot-image";
     const botimg = document.createElement("img");
-    botimg.src = sender === "You" ? "assets/img/chatbot_img/User.svg" : "assets/img/chatbot_img/logo.png"; // Replace with the actual path to your image
+    botimg.src = sender === "You" ? "../assets/img/chatbot_img/User.svg" : "../assets/img/chatbot_img/logo.png"; // Replace with the actual path to your image
     botimg.alt = "Logo";
     botimg.style.width = sender === "You" ? "20px" : "16px"; 
     botimg.style.height = sender === "You" ? "20px" : "16px";
@@ -1065,7 +1065,7 @@ const populateQuestions = (questions) => {
       }
       messageDiv.setAttribute("data-id", message_Id);
       const copyIcon = document.createElement("img");
-      copyIcon.src = "assets/img/chatbot_img/copy.svg"; // Replace with the actual path to your image
+      copyIcon.src = "../assets/img/chatbot_img/copy.svg"; // Replace with the actual path to your image
       copyIcon.alt = "Copy";
       copyIcon.style.width = "16px"; // Set size of the icon
       copyIcon.style.height = "16px";
@@ -1075,7 +1075,7 @@ const populateQuestions = (questions) => {
       LikeButton.className = "like-button";
 
       const LikeIcon = document.createElement("img");
-      LikeIcon.src = "assets/img/chatbot_img/like.svg"; // Replace with the actual path to your image
+      LikeIcon.src = "../assets/img/chatbot_img/like.svg"; // Replace with the actual path to your image
       LikeIcon.alt = "Like";
       LikeIcon.style.width = "16px"; // Set size of the icon
       LikeIcon.style.height = "16px";
@@ -1085,7 +1085,7 @@ const populateQuestions = (questions) => {
       DislikeButton.className = "dislike-button";
 
       const dislikeIcon = document.createElement("img");
-      dislikeIcon.src = "assets/img/chatbot_img/dislike.svg"; // Replace with the actual path to your image
+      dislikeIcon.src = "../assets/img/chatbot_img/dislike.svg"; // Replace with the actual path to your image
       dislikeIcon.alt = "Dislike";
       dislikeIcon.style.width = "16px"; // Set size of the icon
       dislikeIcon.style.height = "16px";
@@ -1107,7 +1107,7 @@ const populateQuestions = (questions) => {
       speakerButton.className = "speaker-button";
 
       const speakerIcon = document.createElement("img");
-      speakerIcon.src = "assets/img/chatbot_img/Voice.svg"; // Replace with the actual path to your speaker icon
+      speakerIcon.src = "../assets/img/chatbot_img/Voice.svg"; // Replace with the actual path to your speaker icon
       speakerIcon.alt = "Speak";
       speakerIcon.style.width = "16px";
       speakerIcon.style.height = "16px";
@@ -1121,7 +1121,7 @@ const populateQuestions = (questions) => {
         if (isSpeaking) {
           // If currently speaking, stop the speech and update the icon
           window.speechSynthesis.cancel();
-          speakerIcon.src = "assets/img/chatbot_img/Voice.svg"; // Reset to speaker icon
+          speakerIcon.src = "../assets/img/chatbot_img/Voice.svg"; // Reset to speaker icon
           speakerIcon.alt = "Speak";
           isSpeaking = false;
         } else {
@@ -1132,13 +1132,13 @@ const populateQuestions = (questions) => {
 
           currentUtterance.onend = () => {
             // When speech ends, reset the button state
-            speakerIcon.src = "assets/img/chatbot_img/Voice.svg";
+            speakerIcon.src = "../assets/img/chatbot_img/Voice.svg";
             speakerIcon.alt = "Speak";
             isSpeaking = false;
           };
 
           window.speechSynthesis.speak(currentUtterance);
-          speakerIcon.src = "assets/img/chatbot_img/mute.svg"; // Change to mute icon
+          speakerIcon.src = "../assets/img/chatbot_img/mute.svg"; // Change to mute icon
           speakerIcon.alt = "Mute";
           isSpeaking = true;
         }
@@ -1167,7 +1167,7 @@ const populateQuestions = (questions) => {
       }
       messageDiv.setAttribute("data-id", message_Id);
       const copyIcon = document.createElement("img");
-      copyIcon.src = "assets/img/chatbot_img/copy.svg"; 
+      copyIcon.src = "../assets/img/chatbot_img/copy.svg"; 
       copyIcon.alt = "Copy";
       copyIcon.style.width = "16px"; 
       copyIcon.style.height = "16px";
@@ -1446,7 +1446,7 @@ const dislikeMessage = (question,answer,messageId) => {
       const botmessageicon = document.createElement("div");
       botmessageicon.className = "bot-image";
       const botimg = document.createElement("img");
-      botimg.src = sender = "assets/img/chatbot_img/logo.png"; // Replace with the actual path to your image
+      botimg.src = sender = "../assets/img/chatbot_img/logo.png"; // Replace with the actual path to your image
       botimg.alt = "Logo";
       botimg.style.width =  "16px"; 
       botimg.style.height =  "16px";

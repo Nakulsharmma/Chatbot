@@ -4,231 +4,28 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Chatbot</title>
-    <link rel="stylesheet" href="assets/css/chatbot_css/style.css" />
-        <style>
-      /* General Reset */
-      body,
-      h1,
-      h2,
-      h3,
-      p,
-      ul,
-      li,
-      a {
-        margin: 0;
-        padding: 0;
-        text-decoration: none;
-        list-style: none;
-        box-sizing: border-box;
-      }
-
-      body {
-        font-family: Arial, sans-serif;
-        line-height: 1.6;
-      }
-
-      /* Header */
-      header {
-        background: #333;
-        color: #fff;
-        padding: 1rem 0;
-      }
-
-      header .container {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        width: 90%;
-        margin: 0 auto;
-      }
-
-      header .logo {
-        font-size: 1.5rem;
-      }
-
-      header nav ul {
-        display: flex;
-      }
-
-      header nav ul li {
-        margin-left: 20px;
-      }
-
-      header nav ul li a {
-        color: #fff;
-        font-weight: bold;
-      }
-
-      /* Hero Section */
-      .hero {
-        background: #007bff;
-        color: #fff;
-        text-align: center;
-        padding: 4rem 0;
-      }
-
-      .hero h1 {
-        font-size: 3rem;
-      }
-
-      .hero p {
-        font-size: 1.2rem;
-        margin: 1rem 0;
-      }
-
-      .hero .btn {
-        background: #fff;
-        color: #007bff;
-        padding: 0.8rem 1.5rem;
-        font-weight: bold;
-        border-radius: 5px;
-      }
-
-      /* Features Section */
-      .features {
-        background: #f4f4f4;
-        padding: 2rem 0;
-      }
-
-      .features h2 {
-        text-align: center;
-        margin-bottom: 2rem;
-      }
-
-      .feature-grid {
-        display: flex;
-        gap: 20px;
-        justify-content: center;
-      }
-
-      .feature {
-        background: #fff;
-        padding: 1rem;
-        border: 1px solid #ccc;
-        text-align: center;
-        width: 300px;
-        border-radius: 5px;
-      }
-
-      /* About Section */
-      .about {
-        padding: 2rem 0;
-        text-align: center;
-      }
-
-      /* Contact Section */
-      .contact {
-        background: #f4f4f4;
-        padding: 2rem 0;
-      }
-
-      .contact form {
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-        width: 50%;
-        margin: 0 auto;
-      }
-
-      .contact form input,
-      .contact form textarea {
-        padding: 0.8rem;
-        border: 1px solid #ccc;
-        border-radius: 5px;
-      }
-
-      .contact form button {
-        padding: 0.8rem;
-        background: #007bff;
-        color: #fff;
-        font-weight: bold;
-        border-radius: 5px;
-      }
-
-      /* Footer */
-      footer {
-        background: #333;
-        color: #fff;
-        text-align: center;
-        padding: 1rem 0;
-      }
-    </style>
+    <link rel="stylesheet" href="../assets/css/chatbot_css/style.css" />
     <script>
-      window.lang = 'hi';
+      window.lang = '<?php echo $lang; ?>';
     </script>
   </head>
   <body>
-     <section class="hero">
-      <div class="container">
-        <h1>Welcome to MyWebsite</h1>
-        <p>Your one-stop solution for all your needs!</p>
-        <a href="#features" class="btn">Explore More</a>
-      </div>
-    </section>
-
-    <section id="features" class="features">
-      <div class="container">
-        <h2>Our Features</h2>
-        <div class="feature-grid">
-          <div class="feature">
-            <h3>Feature 1</h3>
-            <p>Details about this feature.</p>
-          </div>
-          <div class="feature">
-            <h3>Feature 2</h3>
-            <p>Details about this feature.</p>
-          </div>
-          <div class="feature">
-            <h3>Feature 3</h3>
-            <p>Details about this feature.</p>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section id="about" class="about">
-      <div class="container">
-        <h2>About Us</h2>
-        <p>
-          We are a leading platform dedicated to providing top-notch services to
-          our clients worldwide.
-        </p>
-      </div>
-    </section>
-
-    <section id="contact" class="contact">
-      <div class="container">
-        <h2>Contact Us</h2>
-        <form>
-          <input type="text" placeholder="Your Name" required />
-          <input type="email" placeholder="Your Email" required />
-          <textarea placeholder="Your Message" required></textarea>
-          <button type="submit">Send</button>
-        </form>
-      </div>
-    </section>
-
-    <footer>
-      <div class="container">
-        <p>&copy; 2024 MyWebsite. All rights reserved.</p>
-      </div>
-    </footer>
     <div id="chatbot" role="dialog" aria-labelledby="chat-header" aria-hidden="true" style="display: none;">
         <div id="chat-header">
           <div class="logo-section">
-            <img src="assets/img/chatbot_img/logo.png" alt="C-DOT Logo" class="chatbot-logo" />
+            <img src="../assets/img/chatbot_img/logo.png" alt="C-DOT Logo" class="chatbot-logo" />
             <span>C-BOT</span>
           </div>
           <div class="option" id ="header-optiions-button">
             <button class="options-btn" id = "minimize-btn">
-              <img src="assets/img/chatbot_img/Subtract.svg" alt="minimize down icon" class="chatbot-logo"/>
+              <img src="../assets/img/chatbot_img/Subtract.svg" alt="minimize down icon" class="chatbot-logo"/>
             </button>
             <button class="options-btn" id="export-btn">
-              <img src="assets/img/chatbot_img/export.svg" alt="Close Chatbot" style = "width:25px" class="chatbot-logo" />
+              <img src="../assets/img/chatbot_img/export.svg" alt="Close Chatbot" style = "width:25px" class="chatbot-logo" />
               <span class="tooltip">Export Chat</span>
             </button>
             <button class="options-btn" id = "close-btn">
-              <img src="assets/img/chatbot_img/close.svg" alt="Close Chatbot" class="chatbot-logo" />
+              <img src="../assets/img/chatbot_img/close.svg" alt="Close Chatbot" class="chatbot-logo" />
             </button>
             <div id = "export-popup-content"></div>
           </div>
@@ -236,13 +33,13 @@
         <div id="chat-body" class="chat-body" aria-live="polite" role="log">
           <div class="options-container">
             <div class="options">
-                <img src = "assets/img/chatbot_img/cdot.svg" alt="Cover image" class="cover_img">
+                <img src = "../assets/img/chatbot_img/cdot.svg" alt="Cover image" class="cover_img">
                 <!-- Questions will be dynamically loaded here -->
             </div>
           </div>
         </div>
         <div class="chat-footer">
-          <button id="toggle-options-btn" class="arrow-up"><img src="assets/img/chatbot_img/ChevronUp.svg" alt="Up Arrow" /></button>
+          <button id="toggle-options-btn" class="arrow-up"><img src="../assets/img/chatbot_img/ChevronUp.svg" alt="Up Arrow" /></button>
           <div class="input-section">
             <div class="input-message">
               <input
@@ -252,16 +49,16 @@
                 aria-label="Chat input field"
               />
               <button id="send-btn" aria-label="Send message">
-                <img src="assets/img/chatbot_img/send.svg" alt="Chatbot send button" class="chatbot-logo" />
+                <img src="../assets/img/chatbot_img/send.svg" alt="Chatbot send button" class="chatbot-logo" />
               </button>
               <button id="mic-btn" aria-label="Activate voice input">
-                <img src="assets/img/chatbot_img/Microphone.svg" alt="Microphone Icon" class="chatbot-logo" />
+                <img src="../assets/img/chatbot_img/Microphone.svg" alt="Microphone Icon" class="chatbot-logo" />
               </button>
             </div>
             <div class="footer-logo-section">
               <div>
                 <span class="footer-text foottext">Powered by</span>
-                <img src="assets/img/chatbot_img/logo.png" alt="C-DOT Logo" class="footer-logo" />
+                <img src="../assets/img/chatbot_img/logo.png" alt="C-DOT Logo" class="footer-logo" />
                 <span class="footer-text foottextcdot">C-DOT</span> 
               </div>
             </div>
@@ -286,7 +83,7 @@
               <hr>
                 <div>
                   <span class="footer-text foottext">Powered by</span>
-                  <img src="assets/img/chatbot_img/logo.png" alt="C-DOT Logo" class="footer-logo" />
+                  <img src="../assets/img/chatbot_img/logo.png" alt="C-DOT Logo" class="footer-logo" />
                   <span class="footer-text foottextcdot" >C-DOT</span> 
                 </div>
             </div>
@@ -299,10 +96,10 @@
         </div>
     </div>     
     <div id="chat-icon">
-        <img src="assets/img/chatbot_img/chat_icon.svg" alt="Chatbot Icon" class="chatbot-logo" />
+        <img src="../assets/img/chatbot_img/chat_icon.svg" alt="Chatbot Icon" class="chatbot-logo" />
     </div> 
-    <script src="assets/js/chatbot_js/marked.min.js"></script>
-    <script src="assets/js/chatbot_js/jspdf.min.js"></script> 
-    <script src="assets/js/chatbot_js/script.js" defer></script>  
+    <script src="../assets/js/chatbot_js/marked.min.js"></script>
+    <script src="../assets/js/chatbot_js/jspdf.min.js"></script> 
+    <script src="../assets/js/chatbot_js/script.js" defer></script>  
   </body>
 </html>
