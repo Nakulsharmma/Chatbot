@@ -1280,72 +1280,79 @@ const dislikeMessage = (question,answer,messageId) => {
     // scrollToBottom();
   };
 
-  const exportChat = (selectedIndices = null) => {
+const exportChat = (selectedIndices = null) => {
+  // Create a temporary div to hold the chat content
+  const tempDiv = document.createElement('div');
+  tempDiv.style.position = 'absolute';
+  tempDiv.style.left = '-9999px';
+  tempDiv.style.width = '800px';
+  tempDiv.style.padding = '20px';
+  tempDiv.style.fontFamily = 'Noto Sans Devanagari, Arial, sans-serif';
+  
+  // Add title
+  const title = document.createElement('h1');
+  title.textContent = 'Chat Export';
+  title.style.textAlign = 'center';
+  title.style.marginBottom = '20px';
+  tempDiv.appendChild(title);
+  
+  // Get chat history
+  const chatMessages = JSON.parse(localStorage.getItem("chatHistory")) || [];
+  
+  // If selectedIndices is provided, filter messages
+  const messagesToExport = selectedIndices 
+    ? chatMessages.filter((_, index) => selectedIndices.includes(index))
+    : chatMessages;
+  
+  // Add each message to the temp div
+  messagesToExport.forEach((msg) => {
+    const messageDiv = document.createElement('div');
+    messageDiv.style.marginBottom = '15px';
+    
+    const senderSpan = document.createElement('strong');
+    senderSpan.textContent = `[${new Date(msg.timestamp).toLocaleString()}] ${msg.sender}: `;
+    
+    const messageSpan = document.createElement('span');
+    messageSpan.textContent = msg.message.replace(/[=*#$%]/g, "").trim();
+    
+    messageDiv.appendChild(senderSpan);
+    messageDiv.appendChild(messageSpan);
+    tempDiv.appendChild(messageDiv);
+  });
+  
+  // Add to document
+  document.body.appendChild(tempDiv);
+  
+  // Convert to canvas then to PDF
+  html2canvas(tempDiv).then(canvas => {
+    const imgData = canvas.toDataURL('image/png');
     const { jsPDF } = window.jspdf;
-    const doc = new jsPDF();
+    const doc = new jsPDF('p', 'mm', 'a4');
     
-    // Set general styles and margins
-    const marginLeft = 15;
-    const marginRight = 15;
-    const pageWidth = doc.internal.pageSize.width;
-    const pageHeight = doc.internal.pageSize.height;
-    const maxLineWidth = pageWidth - marginLeft - marginRight;
-    const lineHeight = 10;
-    const sectionSpacing = 5;
-    let yPosition = 20;
-  
-    // Title
-    doc.setFont("helvetica", "bold");
-    doc.setFontSize(14);
-    doc.text("Chat Export", pageWidth / 2, yPosition, { align: "center" });
-    yPosition += 15;
-  
-    // Get chat history
-    const chatMessages = JSON.parse(localStorage.getItem("chatHistory")) || [];
+    const imgWidth = 210; // A4 width in mm
+    const pageHeight = 297; // A4 height in mm
+    const imgHeight = canvas.height * imgWidth / canvas.width;
+    let heightLeft = imgHeight;
+    let position = 0;
     
-    // If selectedIndices is provided, filter messages
-    const messagesToExport = selectedIndices 
-      ? chatMessages.filter((_, index) => selectedIndices.includes(index))
-      : chatMessages;
-  
-    const cleanText = (text) => text.replace(/[=*#$%]/g, "").trim();
-  
-    // Process and format each message
-    messagesToExport.forEach((msg) => {
-      const sender = msg.sender;
-      const message = cleanText(msg.message);
-      const timestamp = new Date(msg.timestamp).toLocaleString();
-  
-      // Set sender and timestamp styles
-      doc.setFont("helvetica", "bold");
-      doc.setFontSize(12);
-      doc.setTextColor(40, 40, 40);
-  
-      const formattedHeader = `[${timestamp}] ${sender}:`;
-      doc.text(formattedHeader, marginLeft, yPosition);
-  
-      // Wrap and add the message text
-      doc.setFont("helvetica", "normal");
-      doc.setFontSize(11);
-      doc.setTextColor(60, 60, 60);
-  
-      const wrappedMessage = doc.splitTextToSize(message, maxLineWidth);
-      yPosition += lineHeight;
-      wrappedMessage.forEach((line) => {
-        if (yPosition + lineHeight > pageHeight - 10) {
-          doc.addPage();
-          yPosition = 20;
-        }
-        doc.text(line, marginLeft, yPosition);
-        yPosition += lineHeight;
-      });
-  
-      yPosition += sectionSpacing;
-    });
-  
+    doc.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+    heightLeft -= pageHeight;
+    
+    // Add additional pages if needed
+    while (heightLeft >= 0) {
+      position = heightLeft - imgHeight;
+      doc.addPage();
+      doc.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+      heightLeft -= pageHeight;
+    }
+    
     // Save the PDF
-    doc.save("chat_export.pdf");
-  };  
+    doc.save('chat_export.pdf');
+    
+    // Clean up
+    document.body.removeChild(tempDiv);
+  });
+};
 
 
   // Append a temporary message and return its unique ID
