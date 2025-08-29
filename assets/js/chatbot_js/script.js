@@ -948,13 +948,22 @@ const populateQuestions = (questions) => {
   };
 
   const parseMarkdown = (message) => {
-    // Match markdown table patterns
-    const tableRegex = /^(\|.+\|)\n(\|[-:\s]+)+\n((\|.*\|\n?)+)/gm;
+    // First, convert <br> tags to newlines for proper markdown processing
+    message = message.replace(/[=*#@%&]/g, "");
     
-    // Replace table markdown with escaped characters
-    message = message.replace(tableRegex, (match) => {
-      return match.replace(/\|/g, "\\|").replace(/---/g, "\\-\\-\\-");
-    });
+    // Convert line breaks to HTML
+    message = message.replace(/\n/g, '<br>');
+    
+    // Simple markdown parsing for bold text
+    message = message.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+    
+    // Simple markdown parsing for italic text
+    message = message.replace(/\*(.*?)\*/g, '<em>$1</em>');
+    
+    // Handle lists
+    message = message.replace(/^- (.*?)(<br>|$)/g, '<li>$1</li>');
+    message = message.replace(/(<li>.*<\/li>)/s, '<ul>$1</ul>');
+    
   
     // Parse the markdown safely
     if (typeof marked.marked === "function") {
@@ -1280,79 +1289,233 @@ const dislikeMessage = (question,answer,messageId) => {
     // scrollToBottom();
   };
 
-const exportChat = (selectedIndices = null) => {
-  // Create a temporary div to hold the chat content
-  const tempDiv = document.createElement('div');
-  tempDiv.style.position = 'absolute';
-  tempDiv.style.left = '-9999px';
-  tempDiv.style.width = '800px';
-  tempDiv.style.padding = '20px';
-  tempDiv.style.fontFamily = 'Noto Sans Devanagari, Arial, sans-serif';
-  
-  // Add title
-  const title = document.createElement('h1');
-  title.textContent = 'Chat Export';
-  title.style.textAlign = 'center';
-  title.style.marginBottom = '20px';
-  tempDiv.appendChild(title);
-  
-  // Get chat history
-  const chatMessages = JSON.parse(localStorage.getItem("chatHistory")) || [];
-  
-  // If selectedIndices is provided, filter messages
-  const messagesToExport = selectedIndices 
-    ? chatMessages.filter((_, index) => selectedIndices.includes(index))
-    : chatMessages;
-  
-  // Add each message to the temp div
-  messagesToExport.forEach((msg) => {
-    const messageDiv = document.createElement('div');
-    messageDiv.style.marginBottom = '15px';
+  // Replace the exportChat function with this improved version
+  const exportChat = (selectedIndices = null) => {
+    // Create a temporary div to hold the chat content
+    const tempDiv = document.createElement('div');
+    tempDiv.style.position = 'absolute';
+    tempDiv.style.left = '-9999px';
+    tempDiv.style.width = '800px';
+    tempDiv.style.padding = '20px';
+    tempDiv.style.fontFamily = 'Noto Sans Devanagari, Arial, sans-serif';
+    tempDiv.style.backgroundColor = 'white';
+    tempDiv.style.color = 'black';
     
-    const senderSpan = document.createElement('strong');
-    senderSpan.textContent = `[${new Date(msg.timestamp).toLocaleString()}] ${msg.sender}: `;
+    // Add title
+    const title = document.createElement('h1');
+    title.textContent = 'Chat Export';
+    title.style.textAlign = 'center';
+    title.style.marginBottom = '20px';
+    title.style.fontFamily = 'Noto Sans Devanagari, Arial, sans-serif';
+    tempDiv.appendChild(title);
     
-    const messageSpan = document.createElement('span');
-    messageSpan.textContent = msg.message.replace(/[=*#$%]/g, "").trim();
+    // Get chat history
+    const chatMessages = JSON.parse(localStorage.getItem("chatHistory")) || [];
     
-    messageDiv.appendChild(senderSpan);
-    messageDiv.appendChild(messageSpan);
-    tempDiv.appendChild(messageDiv);
-  });
-  
-  // Add to document
-  document.body.appendChild(tempDiv);
-  
-  // Convert to canvas then to PDF
-  html2canvas(tempDiv).then(canvas => {
-    const imgData = canvas.toDataURL('image/png');
-    const { jsPDF } = window.jspdf;
-    const doc = new jsPDF('p', 'mm', 'a4');
+    // If selectedIndices is provided, filter messages
+    const messagesToExport = selectedIndices 
+      ? chatMessages.filter((_, index) => selectedIndices.includes(index))
+      : chatMessages;
     
-    const imgWidth = 210; // A4 width in mm
-    const pageHeight = 297; // A4 height in mm
-    const imgHeight = canvas.height * imgWidth / canvas.width;
-    let heightLeft = imgHeight;
-    let position = 0;
+    // Add each message to the temp div
+    messagesToExport.forEach((msg) => {
+      const messageDiv = document.createElement('div');
+      messageDiv.style.marginBottom = '15px';
+      messageDiv.style.fontFamily = 'Noto Sans Devanagari, Arial, sans-serif';
+      
+      const senderSpan = document.createElement('strong');
+      senderSpan.textContent = `[${new Date(msg.timestamp).toLocaleString()}] ${msg.sender}: `;
+      senderSpan.style.fontFamily = 'Noto Sans Devanagari, Arial, sans-serif';
+      
+      const messageSpan = document.createElement('span');
+      // Remove HTML tags and format for PDF export
+
+      // Remove <br> tags and replace with newlines for better formatting
+      let cleanMessage = msg.message.replace(/<br\s*\/?>/gi, '\n').replace(/[=*#$%]/g, "").trim();
+      
+      messageSpan.textContent = cleanMessage;
+      messageSpan.style.fontFamily = 'Noto Sans Devanagari, Arial, sans-serif';
+      messageSpan.style.whiteSpace = 'pre-line'; // Preserve newlines
+      
+      messageDiv.appendChild(senderSpan);
+      messageDiv.appendChild(messageSpan);
+      tempDiv.appendChild(messageDiv);
+    });
     
-    doc.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-    heightLeft -= pageHeight;
+    // Add to document
+    document.body.appendChild(tempDiv);
     
-    // Add additional pages if needed
-    while (heightLeft >= 0) {
-      position = heightLeft - imgHeight;
-      doc.addPage();
-      doc.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+    // Convert to canvas then to PDF with higher quality
+    html2canvas(tempDiv, {
+      scale: 2, // Higher resolution
+      useCORS: true,
+      logging: false,
+      backgroundColor: '#ffffff'
+    }).then(canvas => {
+      const imgData = canvas.toDataURL('image/jpeg', 0.9);
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF('p', 'mm', 'a4');
+      
+      const imgWidth = 190;
+      const pageHeight = 280;
+      const imgHeight = canvas.height * imgWidth / canvas.width;
+      let heightLeft = imgHeight;
+      let position = 10;
+      
+      // Add first page
+      doc.addImage(imgData, 'JPEG', 10, position, imgWidth, imgHeight);
       heightLeft -= pageHeight;
+      
+      // Add additional pages if needed
+      while (heightLeft >= 0) {
+        position = heightLeft - imgHeight + 10;
+        doc.addPage();
+        doc.addImage(imgData, 'JPEG', 10, position, imgWidth, imgHeight);
+        heightLeft -= pageHeight;
+      }
+      
+      // Save the PDF
+      doc.save('chat_export.pdf');
+      
+      // Clean up
+      document.body.removeChild(tempDiv);
+    }).catch(error => {
+      console.error('Error generating PDF:', error);
+      document.body.removeChild(tempDiv);
+      
+      // Fallback to text-based PDF if html2canvas fails
+      fallbackExport(selectedIndices);
+    });
+  };
+
+  // Fallback export function if html2canvas fails
+  const fallbackExport = (selectedIndices = null) => {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+    
+    // Set general styles and margins
+    const marginLeft = 15;
+    const marginRight = 15;
+    const pageWidth = doc.internal.pageSize.width;
+    const pageHeight = doc.internal.pageSize.height;
+    const maxLineWidth = pageWidth - marginLeft - marginRight;
+    const lineHeight = 10;
+    const sectionSpacing = 5;
+    let yPosition = 20;
+
+    // Title
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(14);
+    doc.text("Chat Export", pageWidth / 2, yPosition, { align: "center" });
+    yPosition += 15;
+
+    // Get chat history
+    const chatMessages = JSON.parse(localStorage.getItem("chatHistory")) || [];
+    
+    // If selectedIndices is provided, filter messages
+    const messagesToExport = selectedIndices 
+      ? chatMessages.filter((_, index) => selectedIndices.includes(index))
+      : chatMessages;
+
+    const cleanText = (text) => {
+      // Remove <br> tags and replace with spaces for better text flow
+      return text.replace(/<br\s*\/?>/gi, ' ').replace(/[=*#$%]/g, "").trim();
+    };
+    // Process and format each message
+    messagesToExport.forEach((msg) => {
+      const sender = msg.sender;
+      const message = cleanText(msg.message);
+      const timestamp = new Date(msg.timestamp).toLocaleString();
+
+      // Set sender and timestamp styles
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(12);
+      doc.setTextColor(40, 40, 40);
+
+      const formattedHeader = `[${timestamp}] ${sender}:`;
+      doc.text(formattedHeader, marginLeft, yPosition);
+
+      // Wrap and add the message text
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(11);
+      doc.setTextColor(60, 60, 60);
+
+      // For Hindi text, we need to handle it differently
+      if (lang === "hi") {
+        // Try to use a different approach for Hindi text
+        try {
+          // Split Hindi text into chunks that fit the page width
+          const hindiTextChunks = splitHindiText(message, maxLineWidth, doc);
+          
+          hindiTextChunks.forEach((chunk) => {
+            if (yPosition + lineHeight > pageHeight - 10) {
+              doc.addPage();
+              yPosition = 20;
+            }
+            doc.text(chunk, marginLeft, yPosition);
+            yPosition += lineHeight;
+          });
+        } catch (error) {
+          console.error("Error rendering Hindi text:", error);
+          // Fallback to regular text splitting
+          const wrappedMessage = doc.splitTextToSize(message, maxLineWidth);
+          yPosition += lineHeight;
+          wrappedMessage.forEach((line) => {
+            if (yPosition + lineHeight > pageHeight - 10) {
+              doc.addPage();
+              yPosition = 20;
+            }
+            doc.text(line, marginLeft, yPosition);
+            yPosition += lineHeight;
+          });
+        }
+      } else {
+        // Regular text handling for English
+        const wrappedMessage = doc.splitTextToSize(message, maxLineWidth);
+        yPosition += lineHeight;
+        wrappedMessage.forEach((line) => {
+          if (yPosition + lineHeight > pageHeight - 10) {
+            doc.addPage();
+            yPosition = 20;
+          }
+          doc.text(line, marginLeft, yPosition);
+          yPosition += lineHeight;
+        });
+      }
+
+      yPosition += sectionSpacing;
+    });
+
+    // Save the PDF
+    doc.save("chat_export_fallback.pdf");
+  };
+
+  // Helper function to split Hindi text properly
+  function splitHindiText(text, maxWidth, doc) {
+    const words = text.split(' ');
+    const lines = [];
+    let currentLine = '';
+    
+    for (let i = 0; i < words.length; i++) {
+      const word = words[i];
+      const testLine = currentLine ? currentLine + ' ' + word : word;
+      const testWidth = doc.getTextWidth(testLine);
+      
+      if (testWidth > maxWidth && currentLine !== '') {
+        lines.push(currentLine);
+        currentLine = word;
+      } else {
+        currentLine = testLine;
+      }
     }
     
-    // Save the PDF
-    doc.save('chat_export.pdf');
+    if (currentLine) {
+      lines.push(currentLine);
+    }
     
-    // Clean up
-    document.body.removeChild(tempDiv);
-  });
-};
+    return lines;
+  }
+
 
 
   // Append a temporary message and return its unique ID
