@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Chatbot</title>
-    <link rel="stylesheet" href="../assets/css/chatbot_css/style.css" />
+    <link rel="stylesheet" href="assets/css/chatbot_css/style.css" />
     <script>
       window.lang = '<?php echo $lang; ?>';
     </script>
@@ -13,19 +13,19 @@
     <div id="chatbot" role="dialog" aria-labelledby="chat-header" aria-hidden="true" style="display: none;">
         <div id="chat-header">
           <div class="logo-section">
-            <img src="../assets/img/chatbot_img/logo.png" alt="C-DOT Logo" class="chatbot-logo" />
+            <img src="assets/img/chatbot_img/logo.png" alt="C-DOT Logo" class="chatbot-logo" />
             <span>C-BOT</span>
           </div>
           <div class="option" id ="header-optiions-button">
             <button class="options-btn" id = "minimize-btn">
-              <img src="../assets/img/chatbot_img/Subtract.svg" alt="minimize down icon" class="chatbot-logo"/>
+              <img src="assets/img/chatbot_img/Subtract.svg" alt="minimize down icon" class="chatbot-logo"/>
             </button>
             <button class="options-btn" id="export-btn">
-              <img src="../assets/img/chatbot_img/export.svg" alt="Close Chatbot" style = "width:25px" class="chatbot-logo" />
+              <img src="assets/img/chatbot_img/export.svg" alt="Close Chatbot" style = "width:25px" class="chatbot-logo" />
               <span class="tooltip">Export Chat</span>
             </button>
             <button class="options-btn" id = "close-btn">
-              <img src="../assets/img/chatbot_img/close.svg" alt="Close Chatbot" class="chatbot-logo" />
+              <img src="assets/img/chatbot_img/close.svg" alt="Close Chatbot" class="chatbot-logo" />
             </button>
             <div id = "export-popup-content"></div>
           </div>
@@ -33,13 +33,13 @@
         <div id="chat-body" class="chat-body" aria-live="polite" role="log">
           <div class="options-container">
             <div class="options">
-                <img src = "../assets/img/chatbot_img/cdot.svg" alt="Cover image" class="cover_img">
+                <img src = "assets/img/chatbot_img/cdot.svg" alt="Cover image" class="cover_img">
                 <!-- Questions will be dynamically loaded here -->
             </div>
           </div>
         </div>
         <div class="chat-footer">
-          <button id="toggle-options-btn" class="arrow-up"><img src="../assets/img/chatbot_img/ChevronUp.svg" alt="Up Arrow" /></button>
+          <button id="toggle-options-btn" class="arrow-up"><img src="assets/img/chatbot_img/ChevronUp.svg" alt="Up Arrow" /></button>
           <div class="input-section">
             <div class="input-message">
               <input
@@ -49,16 +49,16 @@
                 aria-label="Chat input field"
               />
               <button id="send-btn" aria-label="Send message">
-                <img src="../assets/img/chatbot_img/send.svg" alt="Chatbot send button" class="chatbot-logo" />
+                <img src="assets/img/chatbot_img/send.svg" alt="Chatbot send button" class="chatbot-logo" />
               </button>
               <button id="mic-btn" aria-label="Activate voice input">
-                <img src="../assets/img/chatbot_img/Microphone.svg" alt="Microphone Icon" class="chatbot-logo" />
+                <img src="assets/img/chatbot_img/Microphone.svg" alt="Microphone Icon" class="chatbot-logo" />
               </button>
             </div>
             <div class="footer-logo-section">
               <div>
                 <span class="footer-text foottext">Powered by</span>
-                <img src="../assets/img/chatbot_img/logo.png" alt="C-DOT Logo" class="footer-logo" />
+                <img src="assets/img/chatbot_img/logo.png" alt="C-DOT Logo" class="footer-logo" />
                 <span class="footer-text foottextcdot">C-DOT</span> 
               </div>
             </div>
@@ -83,7 +83,7 @@
               <hr>
                 <div>
                   <span class="footer-text foottext">Powered by</span>
-                  <img src="../assets/img/chatbot_img/logo.png" alt="C-DOT Logo" class="footer-logo" />
+                  <img src="assets/img/chatbot_img/logo.png" alt="C-DOT Logo" class="footer-logo" />
                   <span class="footer-text foottextcdot" >C-DOT</span> 
                 </div>
             </div>
@@ -96,11 +96,11 @@
         </div>
     </div>     
     <div id="chat-icon">
-        <img src="../assets/img/chatbot_img/chat_icon.svg" alt="Chatbot Icon" class="chatbot-logo" />
+        <img src="assets/img/chatbot_img/chat_icon.svg" alt="Chatbot Icon" class="chatbot-logo" />
     </div> 
-    <script src="../assets/js/chatbot_js/marked.min.js"></script>
-    <script src="../assets/js/chatbot_js/jspdf.min.js"></script> 
-    <script src="../assets/js/chatbot_js/script.js" defer></script>  
-    <script src="../assets/js/chatbot_js/html2canvas.min.js"></script>
+    <script src="assets/js/chatbot_js/marked.min.js"></script>
+    <script src="assets/js/chatbot_js/jspdf.min.js"></script> 
+    <script src="assets/js/chatbot_js/script.js" defer></script>  
+    <script src="assets/js/chatbot_js/html2canvas.min.js"></script>
   </body>
 </html>

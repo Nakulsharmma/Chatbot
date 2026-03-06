@@ -20,7 +20,10 @@ document.addEventListener("DOMContentLoaded", () => {
   let optionsExpanded = false;
   const SESSION_KEY = "browserSession"; // Key for session tracking
   const CHAT_HISTORY_KEY = "chatHistory";
-
+ // ADD THESE GLOBAL VARIABLES for speech synthesis
+  let isSpeaking = false; // Global flag to track if any message is speaking
+  let currentSpeakingMessage = null; // Global reference to currently speaking message
+  let currentUtterance = null; // Global reference to current utterance
 // On page load
   window.addEventListener("load", () => {
     if (!sessionStorage.getItem(SESSION_KEY)) {
@@ -137,17 +140,34 @@ document.addEventListener("DOMContentLoaded", () => {
     // FAQs: "Check our FAQ section for common queries.",
   };
   const questionImages = {
-    "About C-DOT": "../assets/img/chatbot_img/events.svg",
-    Consultancy: "../assets/img/chatbot_img/consultancy.svg",
-    "6G": "../assets/img/chatbot_img/wifi.svg",
-    "Product Section": "../assets/img/chatbot_img/Sell.svg",
-    "EVP": "../assets/img/chatbot_img/Supplier.svg",
-    FAQs: "../assets/img/chatbot_img/Faq.svg",
-    "Awards and Achievements": "../assets/img/chatbot_img/gallery.svg",
+    "About C-DOT": "assets/img/chatbot_img/events.svg",
+    Consultancy: "assets/img/chatbot_img/consultancy.svg",
+    "6G": "assets/img/chatbot_img/wifi.svg",
+    "Product Section": "assets/img/chatbot_img/Sell.svg",
+    "EVP": "assets/img/chatbot_img/Supplier.svg",
+    FAQs: "assets/img/chatbot_img/Faq.svg",
+    "Awards and Achievements": "assets/img/chatbot_img/gallery.svg",
   };
 
+    function logAvailableVoices() {
+      if (window.speechSynthesis) {
+        // Force voice loading
+        const voices = window.speechSynthesis.getVoices();
+        
+        if (voices.length === 0) {
+          // If no voices yet, wait for them to load
+          window.speechSynthesis.onvoiceschanged = () => {
+            const loadedVoices = window.speechSynthesis.getVoices();
+            console.log("Available voices:", loadedVoices.map(v => `${v.name} (${v.lang})`));
+          };
+        } else {
+          console.log("Available voices:", voices.map(v => `${v.name} (${v.lang})`));
+        }
+      }
+    }
+      logAvailableVoices();
 
-function applyTranslations() {
+  function applyTranslations() {
     const t = translations[lang] || translations["en"];
 
     // Update chatbot name
@@ -282,7 +302,7 @@ function applyTranslations() {
       if(message = "Feedback submitted successfully"){
         popupMessage.innerText = t.thankYou; // Set the message
         const img = document.createElement("img");
-        img.src = "../assets/img/chatbot_img/thumbsup.svg";
+        img.src = "assets/img/chatbot_img/thumbsup.svg";
         img.alt = "Feedback Submit Logo";
         img.className = "shake";
         img.style.Width = "30%"; 
@@ -411,6 +431,7 @@ function applyTranslations() {
       t.inputPlaceholder;
     }, 5000);
   }
+    logAvailableVoices();
 
   // Listen for the Enter key to trigger the action
   document.getElementById("user-input").addEventListener("keydown", (event) => {
@@ -572,9 +593,9 @@ document.getElementById("chat-header").addEventListener("click", (event) => {
     selectionHeader.style.margin = "2%";
     selectionHeader.innerHTML = `
       <div class="selection-actions">
-        <img id="cancel-selection-btn" src="../assets/img/chatbot_img/Chevron Left.svg" alt="Back icon" class="header-selection-btn cancel logo_header_export">
-        <img id="select-all-btn" style="margin-left: auto;" src="../assets/img/chatbot_img/Check All.svg" alt="Check_all icon" class="header-selection-btn logo_header_export">
-        <img id="export-selected-btn" style="margin-left: 5px;" src="../assets/img/chatbot_img/export.svg" alt="export icon" class="header-selection-btn primary logo_header_export">
+        <img id="cancel-selection-btn" src="assets/img/chatbot_img/Chevron Left.svg" alt="Back icon" class="header-selection-btn cancel logo_header_export">
+        <img id="select-all-btn" style="margin-left: auto;" src="assets/img/chatbot_img/Check All.svg" alt="Check_all icon" class="header-selection-btn logo_header_export">
+        <img id="export-selected-btn" style="margin-left: 5px;" src="assets/img/chatbot_img/export.svg" alt="export icon" class="header-selection-btn primary logo_header_export">
         </div>
     `;
     
@@ -1005,7 +1026,7 @@ const populateQuestions = (questions) => {
     const botmessageicon = document.createElement("div");
     botmessageicon.className = sender === "You" ? "user-image" : "bot-image";
     const botimg = document.createElement("img");
-    botimg.src = sender === "You" ? "../assets/img/chatbot_img/User.svg" : "../assets/img/chatbot_img/logo.png"; // Replace with the actual path to your image
+    botimg.src = sender === "You" ? "assets/img/chatbot_img/User.svg" : "assets/img/chatbot_img/logo.png"; // Replace with the actual path to your image
     botimg.alt = "Logo";
     botimg.style.width = sender === "You" ? "20px" : "16px"; 
     botimg.style.height = sender === "You" ? "20px" : "16px";
@@ -1076,7 +1097,7 @@ const populateQuestions = (questions) => {
       }
       messageDiv.setAttribute("data-id", message_Id);
       const copyIcon = document.createElement("img");
-      copyIcon.src = "../assets/img/chatbot_img/copy.svg"; // Replace with the actual path to your image
+      copyIcon.src = "assets/img/chatbot_img/copy.svg"; // Replace with the actual path to your image
       copyIcon.alt = "Copy";
       copyIcon.style.width = "16px"; // Set size of the icon
       copyIcon.style.height = "16px";
@@ -1086,7 +1107,7 @@ const populateQuestions = (questions) => {
       LikeButton.className = "like-button";
 
       const LikeIcon = document.createElement("img");
-      LikeIcon.src = "../assets/img/chatbot_img/like.svg"; // Replace with the actual path to your image
+      LikeIcon.src = "assets/img/chatbot_img/like.svg"; // Replace with the actual path to your image
       LikeIcon.alt = "Like";
       LikeIcon.style.width = "16px"; // Set size of the icon
       LikeIcon.style.height = "16px";
@@ -1096,7 +1117,7 @@ const populateQuestions = (questions) => {
       DislikeButton.className = "dislike-button";
 
       const dislikeIcon = document.createElement("img");
-      dislikeIcon.src = "../assets/img/chatbot_img/dislike.svg"; // Replace with the actual path to your image
+      dislikeIcon.src = "assets/img/chatbot_img/dislike.svg"; // Replace with the actual path to your image
       dislikeIcon.alt = "Dislike";
       dislikeIcon.style.width = "16px"; // Set size of the icon
       dislikeIcon.style.height = "16px";
@@ -1113,48 +1134,207 @@ const populateQuestions = (questions) => {
       DislikeButton.onclick = () => dislikeMessage(query,message.replace(/[=*#@%&]/g), message_Id);
 
 
+
       // Add speaker button for bot messages
       const speakerButton = document.createElement("button");
       speakerButton.className = "speaker-button";
 
       const speakerIcon = document.createElement("img");
-      speakerIcon.src = "../assets/img/chatbot_img/Voice.svg"; // Replace with the actual path to your speaker icon
+      speakerIcon.src = "assets/img/chatbot_img/Voice.svg"; // Replace with the actual path to your speaker icon
       speakerIcon.alt = "Speak";
       speakerIcon.style.width = "16px";
       speakerIcon.style.height = "16px";
       speakerIcon.style.cursor = "pointer";
       speakerButton.appendChild(speakerIcon);
 
-      let isSpeaking = false; // To track if it's currently speaking
-      let currentUtterance = null;
-      // Add speech synthesis functionality
+      // Add speech synthesis functionality with better voice selection
       speakerButton.onclick = () => {
-        if (isSpeaking) {
-          // If currently speaking, stop the speech and update the icon
+        // Get the message div for this speaker button
+        const currentMessageDiv = speakerButton.closest('.bot-message');
+        
+        // If this message is currently speaking, stop it
+        if (isSpeaking && currentSpeakingMessage === currentMessageDiv) {
           window.speechSynthesis.cancel();
-          speakerIcon.src = "../assets/img/chatbot_img/Voice.svg"; // Reset to speaker icon
+          speakerIcon.src = "assets/img/chatbot_img/Voice.svg";
           speakerIcon.alt = "Speak";
           isSpeaking = false;
-        } else {
-          // Create a new utterance and start speaking
-          currentUtterance = new SpeechSynthesisUtterance(message.replace(/[=*#@%&]/g, ""));
-          currentUtterance.lang = "en-US"; // Set language
-          currentUtterance.rate = 1; // Adjust speech rate if needed
-
-          currentUtterance.onend = () => {
-            // When speech ends, reset the button state
-            speakerIcon.src = "../assets/img/chatbot_img/Voice.svg";
-            speakerIcon.alt = "Speak";
-            isSpeaking = false;
-          };
-
-          window.speechSynthesis.speak(currentUtterance);
-          speakerIcon.src = "../assets/img/chatbot_img/mute.svg"; // Change to mute icon
-          speakerIcon.alt = "Mute";
-          isSpeaking = true;
+          currentSpeakingMessage = null;
+          currentUtterance = null;
+          return;
         }
+        
+        // If another message is speaking, stop it first
+        if (isSpeaking) {
+          window.speechSynthesis.cancel();
+          
+          // Find the previously speaking message and reset its icon
+          if (currentSpeakingMessage) {
+            const oldSpeakerButton = currentSpeakingMessage.querySelector('.speaker-button img');
+            if (oldSpeakerButton) {
+              oldSpeakerButton.src = "assets/img/chatbot_img/Voice.svg";
+              oldSpeakerButton.alt = "Speak";
+            }
+          }
+          
+          isSpeaking = false;
+          currentSpeakingMessage = null;
+          currentUtterance = null;
+        }
+        
+        // Get clean text from the actual message content in DOM
+        const messageContentSpan = currentMessageDiv.querySelector('span:first-child');
+        
+        let cleanText;
+        if (messageContentSpan) {
+          // Get text content without HTML (most reliable method)
+          cleanText = messageContentSpan.textContent || messageContentSpan.innerText;
+        } else {
+          // Fallback to the original message with HTML stripped
+          const tempDiv = document.createElement('div');
+          tempDiv.innerHTML = currentMessageDiv.innerHTML;
+          cleanText = tempDiv.textContent || tempDiv.innerText || message;
+        }
+        
+        // Clean up any remaining markdown/formatting artifacts
+        cleanText = cleanText
+          .replace(/\|/g, ' ')      // Replace pipes with spaces
+          .replace(/-{3,}/g, ' ')   // Replace multiple dashes (---) with spaces
+          .replace(/\s+/g, ' ')     // Normalize multiple spaces
+          .replace(/\[.*?\]/g, '')  // Remove markdown links [text]
+          .replace(/\(.*?\)/g, '')  // Remove markdown links (url)
+          .trim();                  // Remove leading/trailing spaces
+        
+        // Create a new utterance
+        currentUtterance = new SpeechSynthesisUtterance(cleanText);
+        
+        // Get available voices and select the best one
+        const voices = window.speechSynthesis.getVoices();
+        
+        // Priority order for voice selection
+        const preferredVoices = [
+          // Indian English voices
+          "Google हिन्दी", 
+          "Hindi India",
+          "hi-IN",
+          // Premium voices (if available)
+          "Microsoft Riya - Hindi (India)",
+          "Microsoft Heera - Hindi (India)",
+          // Fallback to good English voices
+          "Google UK English Female",
+          "Google US English",
+          "Microsoft David", 
+          "Microsoft Zira"
+        ];
+        
+        // Try to find a preferred voice
+        let selectedVoice = null;
+        
+        // First try to find Indian/Hindi voice for Hindi text
+        if (lang === "hi") {
+          selectedVoice = voices.find(voice => 
+            voice.lang.includes('hi-IN') || 
+            voice.name.includes('Hindi') || 
+            voice.name.includes('हिन्दी')
+          );
+        }
+        
+        // If no Hindi voice found or language is English, try preferred English voices
+        if (!selectedVoice) {
+          for (const preferredVoice of preferredVoices) {
+            selectedVoice = voices.find(voice => 
+              voice.name.includes(preferredVoice) || 
+              voice.lang.includes(preferredVoice)
+            );
+            if (selectedVoice) break;
+          }
+        }
+        
+        // If still no preferred voice, try to find any natural-sounding voice
+        if (!selectedVoice) {
+          // Look for female voices first (often sound more natural)
+          selectedVoice = voices.find(voice => 
+            voice.name.includes('Female') || 
+            voice.name.includes('Zira') || 
+            voice.name.includes('Riya')
+          );
+        }
+        
+        // Final fallback - just use the first available voice
+        if (!selectedVoice && voices.length > 0) {
+          selectedVoice = voices[0];
+        }
+        
+        // Apply the selected voice
+        if (selectedVoice) {
+          currentUtterance.voice = selectedVoice;
+          console.log("Using voice:", selectedVoice.name, selectedVoice.lang);
+        }
+        
+        // Optimize speech parameters for clarity
+        currentUtterance.rate = 0.9; // Slightly slower for better clarity
+        currentUtterance.pitch = 1.0; // Normal pitch
+        currentUtterance.volume = 1.0; // Full volume
+        
+        // Set language based on content (helps with pronunciation)
+        if (lang === "hi" || /[\u0900-\u097F]/.test(cleanText)) {
+          currentUtterance.lang = "hi-IN"; // Hindi
+        } else {
+          currentUtterance.lang = "en-IN"; // Indian English
+          // Fallback to en-US if en-IN not available
+          if (!voices.some(v => v.lang === 'en-IN')) {
+            currentUtterance.lang = "en-US";
+          }
+        }
+
+        // Handle speech end
+        currentUtterance.onend = () => {
+          speakerIcon.src = "assets/img/chatbot_img/Voice.svg";
+          speakerIcon.alt = "Speak";
+          isSpeaking = false;
+          currentSpeakingMessage = null;
+          currentUtterance = null;
+        };
+
+        // Handle errors
+        currentUtterance.onerror = (event) => {
+          console.error("Speech synthesis error:", event);
+          speakerIcon.src = "assets/img/chatbot_img/Voice.svg";
+          speakerIcon.alt = "Speak";
+          isSpeaking = false;
+          currentSpeakingMessage = null;
+          currentUtterance = null;
+        };
+
+        // Handle speech pause (if needed)
+        currentUtterance.onpause = () => {
+          speakerIcon.src = "assets/img/chatbot_img/Voice.svg";
+          speakerIcon.alt = "Speak";
+        };
+
+        // Handle speech resume (if needed)
+        currentUtterance.onresume = () => {
+          speakerIcon.src = "assets/img/chatbot_img/mute.svg";
+          speakerIcon.alt = "Mute";
+        };
+
+        // Start speaking
+        window.speechSynthesis.speak(currentUtterance);
+        speakerIcon.src = "assets/img/chatbot_img/mute.svg"; // Change to mute icon
+        speakerIcon.alt = "Mute";
+        isSpeaking = true;
+        currentSpeakingMessage = currentMessageDiv; // Track which message is speaking
       };
 
+      // Important: Load voices when they become available (browsers load them asynchronously)
+      if (window.speechSynthesis) {
+        // Some browsers need this to trigger voice loading
+        window.speechSynthesis.getVoices();
+        
+        // Chrome and some other browsers fire this event when voices are loaded
+        window.speechSynthesis.onvoiceschanged = () => {
+          console.log("Voices loaded:", window.speechSynthesis.getVoices().length);
+        };
+      }
       // Wrap timestamp and copy button together
       const timestampCopyDiv = document.createElement("div");
       timestampCopyDiv.className = "timestamp-copy";
@@ -1178,7 +1358,7 @@ const populateQuestions = (questions) => {
       }
       messageDiv.setAttribute("data-id", message_Id);
       const copyIcon = document.createElement("img");
-      copyIcon.src = "../assets/img/chatbot_img/copy.svg"; 
+      copyIcon.src = "assets/img/chatbot_img/copy.svg"; 
       copyIcon.alt = "Copy";
       copyIcon.style.width = "16px"; 
       copyIcon.style.height = "16px";
@@ -1618,7 +1798,7 @@ const dislikeMessage = (question,answer,messageId) => {
       const botmessageicon = document.createElement("div");
       botmessageicon.className = "bot-image";
       const botimg = document.createElement("img");
-      botimg.src = sender = "../assets/img/chatbot_img/logo.png"; // Replace with the actual path to your image
+      botimg.src = sender = "assets/img/chatbot_img/logo.png"; // Replace with the actual path to your image
       botimg.alt = "Logo";
       botimg.style.width =  "16px"; 
       botimg.style.height =  "16px";
