@@ -2,7 +2,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const optionsDiv = document.querySelector(".options");
   const toggleOptionsBtn = document.getElementById("toggle-options-btn");
   const chatbot = document.getElementById("chatbot");
-  const chatIcon = document.querySelector("#chat-icon img[alt='Chatbot Icon']");
+  const chatIcon = document.querySelector("#chat-icon");
   const minimizedownicon = document.querySelector(
     "#minimize-btn img[alt='minimize down icon']"
   );
@@ -24,6 +24,54 @@ document.addEventListener("DOMContentLoaded", () => {
 // Global variables for speech synthesis
 let isSpeaking = false;
 let currentSpeakingMessage = null;
+let index = 0;
+
+const wrapper = document.querySelector(".slider-wrapper");
+const slides = document.querySelectorAll(".slide");
+
+const totalSlides = slides.length;
+
+function showSlide(){
+    wrapper.style.transform = `translateX(-${index * 100}%)`;
+}
+
+/* Right arrow */
+document.querySelector(".slider-btn.right").onclick = () => {
+
+    index++;
+
+    if(index >= totalSlides){
+        index = 0;   // back to first
+    }
+
+    showSlide();
+};
+
+/* Left arrow */
+document.querySelector(".slider-btn.left").onclick = () => {
+
+    index--;
+
+    if(index < 0){
+        index = totalSlides - 1; // go to last
+    }
+
+    showSlide();
+};
+
+/* Auto rotate */
+
+setInterval(()=>{
+
+    index++;
+
+    if(index >= totalSlides){
+        index = 0;
+    }
+
+    showSlide();
+
+},4000);
 
 // Initialize speech synthesis with voice pre-loading
 if (window.speechSynthesis) {
@@ -1036,7 +1084,7 @@ const populateQuestions = (questions) => {
     if (!chatMessages) {
       chatMessages = document.createElement("div");
       chatMessages.setAttribute("id", "chat-message");
-      chatMessages.style.maxHeight = "370px";
+      chatMessages.style.maxHeight = "491px";
       chatMessages.style.marginBottom = "10px";
       chatBody.prepend(chatMessages);
     }
@@ -1975,7 +2023,7 @@ userInput.addEventListener("input", () => {
         }
     } else {
         // Restore default height for desktop
-        chatBody.style.height = "359px"; // Reset to original height
+        chatBody.style.height = "480px"; // Reset to original height
     }
 }
 

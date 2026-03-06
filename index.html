@@ -33,8 +33,29 @@
         <div id="chat-body" class="chat-body" aria-live="polite" role="log">
           <div class="options-container">
             <div class="options">
-                <img src = "assets/img/chatbot_img/cdot.svg" alt="Cover image" class="cover_img">
-                <!-- Questions will be dynamically loaded here -->
+          <div class="chat-slider">
+
+            <div class="slider-wrapper">
+
+              <div class="slide active">
+                <img src="assets/img/chatbot_img/EOI-Adv.jpg">
+              </div>
+
+              <div class="slide">
+                <img src="assets/img/chatbot_img/5G-1.jpeg">
+              </div>
+
+              <div class="slide">
+                <img src="assets/img/chatbot_img/pariksha_pe_charcha2026.jpg">
+              </div>
+
+            </div>
+
+            <button class="slider-btn left">&#10094;</button>
+            <button class="slider-btn right">&#10095;</button>
+
+          </div>               
+           <!-- Questions will be dynamically loaded here -->
             </div>
           </div>
         </div>
@@ -95,9 +116,45 @@
         </div>
         </div>
     </div>     
-    <div id="chat-icon">
-        <img src="assets/img/chatbot_img/chat_icon.svg" alt="Chatbot Icon" class="chatbot-logo" />
-    </div> 
+<div id="chat-icon">
+  <div class="chatbot-icon" id="chatbotIcon">
+
+    <div class="glow-ring"></div>
+    <div class="rotating-glow"></div>
+
+    <div class="icon-container">
+      <div class="inner-container">
+        <img src="assets/img/chatbot_img/ai-avatar.png" class="cdot-image">
+        <div class="shine-overlay"></div>
+        <div class="radial-pulse"></div>
+      </div>
+    </div>
+
+    <div class="sparkle sparkle-top">✨</div>
+    <div class="sparkle sparkle-bottom">✨</div>
+
+    <div class="active-badge">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="white">
+        <path d="M13 2L3 14h8l-1 8 10-12h-8l1-8z"/>
+      </svg>
+    </div>
+
+    <div class="particle particle-1"></div>
+    <div class="particle particle-2"></div>
+    <div class="particle particle-3"></div>
+    <div class="particle particle-4"></div>
+    <div class="particle particle-5"></div>
+    <div class="particle particle-6"></div>
+
+    <div class="tooltip">
+      CDOT AI Assistant
+      <div class="tooltip-arrow"></div>
+    </div>
+
+    <div class="ripple"></div>
+
+  </div>
+</div>
     <script src="assets/js/chatbot_js/marked.min.js"></script>
     <script src="assets/js/chatbot_js/jspdf.min.js"></script> 
     <script src="assets/js/chatbot_js/script.js" defer></script>  
