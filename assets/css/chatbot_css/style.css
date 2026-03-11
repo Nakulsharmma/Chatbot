@@ -55,6 +55,135 @@ align-items: center;
 gap: 10px;
 }
 
+
+/* Tooltip for Chat Icon */
+#chat-icon {
+    position: relative;
+    cursor: pointer;
+}
+
+#chat-icon:hover::after {
+    content: "CDOT AI Assistant";
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    /* Match your chatbot's blue theme */
+    background: linear-gradient(135deg, #0056A7, #003B75); /* C-DOT blue gradient */
+    color: white;
+    padding: 10px 16px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    white-space: nowrap;
+    margin-bottom: 12px;
+    z-index: 1000;
+    box-shadow: 0 4px 15px rgba(0, 86, 167, 0.3);
+    letter-spacing: 0.3px;
+    animation: tooltipFadeIn 0.3s ease;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Add a small arrow to the tooltip (matching the blue color) */
+#chat-icon:hover::before {
+    content: "";
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border-width: 8px;
+    border-style: solid;
+    border-color: #0056A7 transparent transparent transparent;
+    margin-bottom: 4px;
+    z-index: 1000;
+    filter: drop-shadow(0 2px 2px rgba(0,0,0,0.1));
+}
+
+/* Tooltip fade-in animation */
+@keyframes tooltipFadeIn {
+    from {
+        opacity: 0;
+        transform: translateX(-50%) translateY(8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+    }
+}
+
+/* Optional: Add a subtle glow effect on hover */
+#chat-icon:hover {
+    filter: drop-shadow(0 0 8px rgba(0, 86, 167, 0.5));
+    transition: filter 0.3s ease;
+}
+
+/* Mobile responsive tooltip */
+@media (max-width: 768px) {
+    #chat-icon:hover::after {
+        white-space: normal;
+        width: max-content;
+        max-width: 180px;
+        text-align: center;
+        line-height: 1.4;
+        padding: 8px 12px;
+        font-size: 13px;
+        bottom: 100%;
+        margin-bottom: 10px;
+    }
+    
+    #chat-icon:hover::before {
+        border-width: 6px;
+    }
+}
+
+/* If you want a darker version that matches your footer */
+/* Uncomment this if you prefer the darker style from your footer */
+/*
+#chat-icon:hover::after {
+    background: linear-gradient(135deg, #2C3E50, #1A2634);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+#chat-icon:hover::before {
+    border-color: #2C3E50 transparent transparent transparent;
+}
+*/  
+
+/* Alternative: Match your chatbot header style */
+#chat-icon:hover::after {
+    content: "CDOT AI Assistant";
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: linear-gradient(135deg, #ff9933, #138808);;  /* White background like your header */
+    color: #ffffff;     /* C-DOT blue text */
+    padding: 10px 16px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    white-space: nowrap;
+    margin-bottom: 12px;
+    z-index: 1000;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+    animation: tooltipFadeIn 0.3s ease;
+}
+
+#chat-icon:hover::before {
+    content: "";
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border-width: 8px;
+    border-style: solid;
+    border-color: white transparent transparent transparent;
+    margin-bottom: 4px;
+    z-index: 1000;
+    filter: drop-shadow(0 2px 2px rgba(0,0,0,0.1));
+}
 #chat-header .chatbot-logo {
 width: 30px;
 height: 30px;
