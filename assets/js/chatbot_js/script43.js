@@ -73,155 +73,29 @@ setInterval(()=>{
 
 },4000);
 
-// ─── Speech Synthesis: Robust cross-browser implementation ───────────────────
-// Preload voices so they are ready before the user clicks speak
-let _cachedVoices = [];
-function _loadVoices() {
-  _cachedVoices = window.speechSynthesis ? window.speechSynthesis.getVoices() : [];
-}
+// Initialize speech synthesis with voice pre-loading
 if (window.speechSynthesis) {
-  _loadVoices();
-  window.speechSynthesis.onvoiceschanged = _loadVoices;
-}
-
-/**
- * Pick the best available female Indian-English voice.
- * Priority: en-IN female > en-IN any > en-GB female > en-US female > first available
- */
-function _pickIndianFemaleVoice() {
-  const voices = _cachedVoices.length ? _cachedVoices : window.speechSynthesis.getVoices();
-
-  const femaleKeywords = ['female', 'woman', 'heera', 'priya', 'aditi', 'raveena',
-                          'veena', 'lekha', 'neerja', 'zira'];
-  const score = (v) => {
-    let s = 0;
-    const n = v.name.toLowerCase();
-    const l = v.lang.toLowerCase();
-    if (l === 'en-in') s += 100;
-    else if (l.startsWith('en-in')) s += 90;
-    if (femaleKeywords.some(k => n.includes(k))) s += 50;
-    if (l === 'en-gb') s += 10;
-    if (l.startsWith('en')) s += 5;
-    return s;
+  // Pre-load voices
+  window.speechSynthesis.getVoices();
+  
+  // Handle voice loading
+  window.speechSynthesis.onvoiceschanged = function() {
+    const voices = window.speechSynthesis.getVoices();
+    console.log(`Loaded ${voices.length} voices`);
+    
+    // Log all voices for debugging (optional)
+    voices.forEach(voice => {
+      console.log(`Voice: ${voice.name} (${voice.lang})`);
+    });
   };
-
-  const sorted = [...voices].sort((a, b) => score(b) - score(a));
-  return sorted[0] || null;
-}
-
-// Chrome bug fix: speech stops after ~15s. Keep it alive by resuming every 10s.
-let _chromePauseKeepAlive = null;
-function _startKeepAlive() {
-  _stopKeepAlive();
-  _chromePauseKeepAlive = setInterval(() => {
-    if (window.speechSynthesis.speaking && !window.speechSynthesis.paused) {
-      window.speechSynthesis.pause();
-      window.speechSynthesis.resume();
+  
+  // Keep speech synthesis active (fix for Chrome)
+  setInterval(function() {
+    if (!window.speechSynthesis.speaking) {
+      window.speechSynthesis.cancel(); // Reset any stuck state
     }
   }, 10000);
 }
-function _stopKeepAlive() {
-  if (_chromePauseKeepAlive) {
-    clearInterval(_chromePauseKeepAlive);
-    _chromePauseKeepAlive = null;
-  }
-}
-
-// Track which button is currently speaking
-let _activeSpeakerBtn = null;
-let _activeSpeakerIcon = null;
-const VOICE_ACTIVE_SRC = "assets/img/chatbot_img/Voice.svg"; // reuse same icon, just tint via class
-
-/**
- * Speak text aloud. Toggles off if already speaking this message.
- * @param {string} text - plain text to speak
- * @param {HTMLElement} btn  - the speaker button element
- * @param {HTMLImageElement} icon - the icon inside the button
- */
-function speakMessage(text, btn, icon) {
-  if (!window.speechSynthesis) {
-    console.warn("Speech synthesis not supported in this browser.");
-    return;
-  }
-
-  // If this button is already speaking → stop
-  if (_activeSpeakerBtn === btn) {
-    window.speechSynthesis.cancel();
-    _stopKeepAlive();
-    _resetSpeakerUI(_activeSpeakerBtn, _activeSpeakerIcon);
-    _activeSpeakerBtn = null;
-    _activeSpeakerIcon = null;
-    return;
-  }
-
-  // Stop any previous speaker
-  if (_activeSpeakerBtn) {
-    window.speechSynthesis.cancel();
-    _stopKeepAlive();
-    _resetSpeakerUI(_activeSpeakerBtn, _activeSpeakerIcon);
-  }
-
-  // Mark new active button
-  _activeSpeakerBtn = btn;
-  _activeSpeakerIcon = icon;
-  btn.classList.add("speaker-active");
-  btn.title = "Stop speaking";
-
-  const utterance = new SpeechSynthesisUtterance(text);
-
-  // Apply best Indian female voice
-  const voice = _pickIndianFemaleVoice();
-  if (voice) {
-    utterance.voice = voice;
-    utterance.lang = voice.lang;
-  } else {
-    utterance.lang = "en-IN"; // hint to OS even without a matched voice object
-  }
-
-  // Smooth, natural speech settings
-  utterance.rate = 0.92;   // slightly slower than default for clarity
-  utterance.pitch = 1.1;   // slightly higher pitch → sounds more feminine
-  utterance.volume = 1.0;
-
-  utterance.onstart = () => {
-    _startKeepAlive();
-  };
-
-  utterance.onend = () => {
-    _stopKeepAlive();
-    _resetSpeakerUI(btn, icon);
-    if (_activeSpeakerBtn === btn) {
-      _activeSpeakerBtn = null;
-      _activeSpeakerIcon = null;
-    }
-  };
-
-  utterance.onerror = (e) => {
-    // 'interrupted' fires when we manually cancel — not a real error
-    if (e.error !== "interrupted" && e.error !== "canceled") {
-      console.warn("Speech error:", e.error);
-    }
-    _stopKeepAlive();
-    _resetSpeakerUI(btn, icon);
-    if (_activeSpeakerBtn === btn) {
-      _activeSpeakerBtn = null;
-      _activeSpeakerIcon = null;
-    }
-  };
-
-  // Cancel any leftover speech before starting (Firefox needs this)
-  window.speechSynthesis.cancel();
-  // Small delay so cancel() fully flushes before we speak (Chrome quirk)
-  setTimeout(() => {
-    window.speechSynthesis.speak(utterance);
-  }, 100);
-}
-
-function _resetSpeakerUI(btn, icon) {
-  if (btn) btn.classList.remove("speaker-active");
-  if (btn) btn.title = "Read aloud";
-}
-// ─────────────────────────────────────────────────────────────────────────────
 // On page load
   window.addEventListener("load", () => {
     if (!sessionStorage.getItem(SESSION_KEY)) {
@@ -1336,7 +1210,6 @@ const populateQuestions = (questions) => {
 // Add speaker button for bot messages
 const speakerButton = document.createElement("button");
 speakerButton.className = "speaker-button";
-speakerButton.title = "Read aloud";
 
 const speakerIcon = document.createElement("img");
 speakerIcon.src = "assets/img/chatbot_img/Voice.svg";
@@ -1346,16 +1219,53 @@ speakerIcon.style.height = "16px";
 speakerIcon.style.cursor = "pointer";
 speakerButton.appendChild(speakerIcon);
 
-// Wire up the click handler — reads the bot message aloud
-speakerButton.addEventListener("click", function(e) {
-  e.stopPropagation();
-  const cleanText = message
-    .replace(/<br\s*\/?>/gi, ". ")
-    .replace(/<[^>]*>/g, "")
-    .replace(/[=*#@%&]/g, "")
-    .trim();
-  speakMessage(cleanText, speakerButton, speakerIcon);
-});
+// Add this function to ensure voices are loaded before speaking
+function ensureVoicesLoaded() {
+  return new Promise((resolve) => {
+    let voices = window.speechSynthesis.getVoices();
+    if (voices.length > 0) {
+      resolve(voices);
+    } else {
+      window.speechSynthesis.onvoiceschanged = () => {
+        voices = window.speechSynthesis.getVoices();
+        resolve(voices);
+      };
+    }
+  });
+}
+
+// Update the voice loading section
+if (window.speechSynthesis) {
+  // Pre-load voices
+  ensureVoicesLoaded().then(voices => {
+    console.log(`Loaded ${voices.length} voices`);
+    
+    // Log available Indian voices for debugging
+    const indianVoices = voices.filter(v => 
+      v.lang.includes('IN') || 
+      v.name.includes('India') || 
+      v.name.includes('Hindi')
+    );
+    console.log("Indian voices available:", indianVoices.map(v => `${v.name} (${v.lang})`));
+  });
+  
+  // Keep speech synthesis active (fix for Chrome)
+  setInterval(function() {
+    if (!window.speechSynthesis.speaking) {
+      window.speechSynthesis.cancel(); // Reset any stuck state
+    }
+  }, 10000);
+}
+      // Important: Load voices when they become available (browsers load them asynchronously)
+      if (window.speechSynthesis) {
+        // Some browsers need this to trigger voice loading
+        window.speechSynthesis.getVoices();
+        
+        // Chrome and some other browsers fire this event when voices are loaded
+        window.speechSynthesis.onvoiceschanged = () => {
+          console.log("Voices loaded:", window.speechSynthesis.getVoices().length);
+        };
+      }
       // Wrap timestamp and copy button together
       const timestampCopyDiv = document.createElement("div");
       timestampCopyDiv.className = "timestamp-copy";

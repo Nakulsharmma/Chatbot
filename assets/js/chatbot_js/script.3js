@@ -1336,7 +1336,6 @@ const populateQuestions = (questions) => {
 // Add speaker button for bot messages
 const speakerButton = document.createElement("button");
 speakerButton.className = "speaker-button";
-speakerButton.title = "Read aloud";
 
 const speakerIcon = document.createElement("img");
 speakerIcon.src = "assets/img/chatbot_img/Voice.svg";
@@ -1346,16 +1345,53 @@ speakerIcon.style.height = "16px";
 speakerIcon.style.cursor = "pointer";
 speakerButton.appendChild(speakerIcon);
 
-// Wire up the click handler — reads the bot message aloud
-speakerButton.addEventListener("click", function(e) {
-  e.stopPropagation();
-  const cleanText = message
-    .replace(/<br\s*\/?>/gi, ". ")
-    .replace(/<[^>]*>/g, "")
-    .replace(/[=*#@%&]/g, "")
-    .trim();
-  speakMessage(cleanText, speakerButton, speakerIcon);
-});
+// Add this function to ensure voices are loaded before speaking
+function ensureVoicesLoaded() {
+  return new Promise((resolve) => {
+    let voices = window.speechSynthesis.getVoices();
+    if (voices.length > 0) {
+      resolve(voices);
+    } else {
+      window.speechSynthesis.onvoiceschanged = () => {
+        voices = window.speechSynthesis.getVoices();
+        resolve(voices);
+      };
+    }
+  });
+}
+
+// Update the voice loading section
+if (window.speechSynthesis) {
+  // Pre-load voices
+  ensureVoicesLoaded().then(voices => {
+    console.log(`Loaded ${voices.length} voices`);
+    
+    // Log available Indian voices for debugging
+    const indianVoices = voices.filter(v => 
+      v.lang.includes('IN') || 
+      v.name.includes('India') || 
+      v.name.includes('Hindi')
+    );
+    console.log("Indian voices available:", indianVoices.map(v => `${v.name} (${v.lang})`));
+  });
+  
+  // Keep speech synthesis active (fix for Chrome)
+  setInterval(function() {
+    if (!window.speechSynthesis.speaking) {
+      window.speechSynthesis.cancel(); // Reset any stuck state
+    }
+  }, 10000);
+}
+      // Important: Load voices when they become available (browsers load them asynchronously)
+      if (window.speechSynthesis) {
+        // Some browsers need this to trigger voice loading
+        window.speechSynthesis.getVoices();
+        
+        // Chrome and some other browsers fire this event when voices are loaded
+        window.speechSynthesis.onvoiceschanged = () => {
+          console.log("Voices loaded:", window.speechSynthesis.getVoices().length);
+        };
+      }
       // Wrap timestamp and copy button together
       const timestampCopyDiv = document.createElement("div");
       timestampCopyDiv.className = "timestamp-copy";
