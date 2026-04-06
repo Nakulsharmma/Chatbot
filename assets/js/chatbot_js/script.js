@@ -1,1947 +1,916 @@
-document.addEventListener("DOMContentLoaded", () => {
-  const optionsDiv = document.querySelector(".options");
-  const toggleOptionsBtn = document.getElementById("toggle-options-btn");
-  const chatbot = document.getElementById("chatbot");
-  const chatIcon = document.querySelector("#chat-icon");
-  const minimizedownicon = document.querySelector(
-    "#minimize-btn img[alt='minimize down icon']"
-  );
-  const optionsBtns = document.getElementById("close-btn");
-  const userInput = document.getElementById("user-input");
-  const sendBtn = document.getElementById("send-btn");
-  const micBtn = document.getElementById("mic-btn");
-  const chatBody = document.getElementById("chat-body");
-  const chatMessage = document.querySelector("#chat-message"); // Chat message container
-  const chatMessages = document.createElement("div");
-  const optionsButtons = document.querySelectorAll(".options");
-  const arrowButton = document.getElementById("toggle-options-btn");
-  const cover_img = document.querySelector(".cover_img"); // Chat message container
-  let isFirstInteraction = true;
-  let optionsExpanded = false;
-  const SESSION_KEY = "browserSession"; // Key for session tracking
-  const CHAT_HISTORY_KEY = "chatHistory";
- // ADD THESE GLOBAL VARIABLES for speech synthesis
-// Global variables for speech synthesis
-let isSpeaking = false;
-let currentSpeakingMessage = null;
-let index = 0;
-
-const wrapper = document.querySelector(".slider-wrapper");
-const slides = document.querySelectorAll(".slide");
-
-const totalSlides = slides.length;
-
-function showSlide(){
-    wrapper.style.transform = `translateX(-${index * 100}%)`;
-}
-
-/* Right arrow */
-document.querySelector(".slider-btn.right").onclick = () => {
-
-    index++;
-
-    if(index >= totalSlides){
-        index = 0;   // back to first
-    }
-
-    showSlide();
+/* ═══════════════════════════════════════════════════════════
+   BILINGUAL TRANSLATIONS
+═══════════════════════════════════════════════════════════ */
+const TRANSLATIONS = {
+  en: {
+    botName: 'CIVA',
+    hdrSub: 'CDOT intelligence virtual assistant',
+    inputPlaceholder: 'Ask me anything…',
+    readMore: 'Read More',
+    readLess: 'Read Less',
+    feedbackTitle: '📝 Share your feedback',
+    feedbackSub: 'Help us improve CIVA with your thoughts.',
+    feedbackPlaceholder: 'Describe the issue or suggestion…',
+    submitFeedback: 'Submit Feedback',
+    messageCopied: 'Copied to clipboard!',
+    likedMsg: 'Thanks for your feedback!',
+    clearChatConfirm: 'Clear chat history and close?',
+    selectMessageAlert: 'Please select at least one message to export.',
+    serviceUnavailable: 'The chatbot service is currently unavailable. Please try again later.',
+    noInformation: 'The context provided does not contain information related to',
+    micListening: 'Listening…',
+    micDenied: 'Microphone access denied.',
+    speechNotSupported: 'Speech recognition not supported.',
+    exportFullLabel: '💬 Export Chat',
+    exportSelLabel: '📄 User + CIVA Messages',
+    exportSelBtn: 'Select Messages to Export',
+    todayLabel: 'Today',
+    selCount: (n) => `${n} selected`,
+    chips: { about:'About C-DOT', products:'Products', consult:'Consultancy', awards:'Awards', faqs:'FAQs' },
+    sqChips: ['Products','Career','Board Members','Awards & Accolades','Consultation','About C-DOT','Mission & Vision']
+  },
+  hi: {
+    botName: 'सी-बॉट',
+    hdrSub: 'ऑनलाइन · सी-डॉट AI सहायक',
+    inputPlaceholder: 'यहाँ अपना संदेश लिखें…',
+    readMore: 'और पढ़ें',
+    readLess: 'कम पढ़ें',
+    feedbackTitle: '📝 अपनी प्रतिक्रिया दें',
+    feedbackSub: 'आपका फीडबैक CIVA को बेहतर बनाने में मदद करता है।',
+    feedbackPlaceholder: 'समस्या या सुझाव यहाँ लिखें…',
+    submitFeedback: 'प्रतिक्रिया भेजें',
+    messageCopied: 'संदेश क्लिपबोर्ड पर कॉपी किया गया!',
+    likedMsg: 'आपकी प्रतिक्रिया के लिए धन्यवाद!',
+    clearChatConfirm: 'चैट इतिहास साफ करके बंद करें?',
+    selectMessageAlert: 'कृपया निर्यात के लिए कम से कम एक संदेश चुनें।',
+    serviceUnavailable: 'चैटबॉट सेवा वर्तमान में उपलब्ध नहीं है। कृपया बाद में पुनः प्रयास करें।',
+    noInformation: 'प्रदान किए गए संदर्भ में इससे संबंधित कोई जानकारी नहीं है',
+    micListening: 'सुन रहा हूँ…',
+    micDenied: 'माइक्रोफोन एक्सेस अस्वीकृत।',
+    speechNotSupported: 'स्पीच रिकग्निशन समर्थित नहीं है।',
+    exportFullLabel: '💬 पूरी चैट निर्यात',
+    exportFullBtn: 'पूरी बातचीत निर्यात करें',
+    exportSelLabel: '📄 उपयोगकर्ता + CIVA संदेश',
+    exportSelBtn: 'निर्यात के लिए संदेश चुनें',
+    todayLabel: 'आज',
+    selCount: (n) => `${n} चुना गया`,
+    chips: { about:'C-DOT के बारे में', products:'उत्पाद', consult:'परामर्श', awards:'पुरस्कार', faqs:'FAQs' },
+    sqChips: ['उत्पाद','करियर','बोर्ड सदस्य','पुरस्कार एवं सम्मान','परामर्श','C-DOT के बारे में','मिशन और दृष्टि']
+  }
 };
 
-/* Left arrow */
-document.querySelector(".slider-btn.left").onclick = () => {
-
-    index--;
-
-    if(index < 0){
-        index = totalSlides - 1; // go to last
-    }
-
-    showSlide();
-};
-
-/* Auto rotate */
-
-setInterval(()=>{
-
-    index++;
-
-    if(index >= totalSlides){
-        index = 0;
-    }
-
-    showSlide();
-
-},4000);
-
-// ─── Speech Synthesis: Robust cross-browser implementation ───────────────────
-// Preload voices so they are ready before the user clicks speak
+/* ═══════════════════════════════════════════════════════════
+   STATE
+═══════════════════════════════════════════════════════════ */
+let chatOpen = false, isMaximized = false, inChat = false;
+let alertResolve = null;
+let _activeSpeakerBtn = null;
 let _cachedVoices = [];
-function _loadVoices() {
-  _cachedVoices = window.speechSynthesis ? window.speechSynthesis.getVoices() : [];
+let recognition, micActive = false;
+let selectionMode = false;
+const lang = window.lang || 'en';
+const T = TRANSLATIONS[lang] || TRANSLATIONS['en'];
+
+/* ── Thread / token management ── */
+const getThreadId = () => {
+  let id = localStorage.getItem('thread_id');
+  if (!id) { id = `${Math.floor(Math.random()*1000000)}`; localStorage.setItem('thread_id', id); }
+  return id;
+};
+const getToken = () => localStorage.getItem('authToken');
+
+async function authenticateAndStoreToken() {
+  try {
+    const fd = new FormData();
+    fd.append('email','admin@cdot.in');
+    fd.append('password','admin');
+    const r = await fetch('http://chatbot.cdot.in/api/auth-token/', { method:'POST', body:fd });
+    if (r.ok) {
+      const d = await r.json();
+      localStorage.setItem('authToken', d.access_token);
+      return d.access_token;
+    }
+  } catch(e) { console.error('Auth error:', e); }
+  return null;
 }
+
+/* ═══════════════════════════════════════════════════════════
+   APPLY TRANSLATIONS ON LOAD
+═══════════════════════════════════════════════════════════ */
+function applyTranslations() {
+  document.getElementById('hdr-name').textContent = T.botName;
+  document.getElementById('hdr-sub').textContent = T.hdrSub;
+  document.getElementById('user-input').placeholder = T.inputPlaceholder;
+  document.getElementById('fb-title').textContent = T.feedbackTitle;
+  document.getElementById('fb-sub').textContent = T.feedbackSub;
+  document.getElementById('feedback-text').placeholder = T.feedbackPlaceholder;
+  document.getElementById('submit-feedback').textContent = T.submitFeedback;
+  document.getElementById('today-divider').textContent = T.todayLabel;
+  const elLbl = document.getElementById('lbl-export-full'); if (elLbl) elLbl.textContent = T.exportFullLabel;
+  const elSel = document.getElementById('lbl-export-sel'); if (elSel) elSel.textContent = T.exportSelLabel;
+  const elSelBtn = document.getElementById('btn-export-sel'); if (elSelBtn) elSelBtn.textContent = T.exportSelBtn;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   ALERT SYSTEM
+═══════════════════════════════════════════════════════════ */
+function cdotAlert(msg, title='Notice', icon='ℹ️') {
+  return new Promise(res => {
+    document.getElementById('alert-msg').textContent = msg;
+    document.getElementById('alert-title').textContent = title;
+    document.getElementById('alert-icon').textContent = icon;
+    document.getElementById('alert-cancel').style.display = 'none';
+    document.getElementById('alert-overlay').style.display = 'flex';
+    alertResolve = v => { document.getElementById('alert-overlay').style.display='none'; res(v); };
+  });
+}
+function cdotConfirm(msg, title='Confirm', icon='⚠️') {
+  return new Promise(res => {
+    document.getElementById('alert-msg').textContent = msg;
+    document.getElementById('alert-title').textContent = title;
+    document.getElementById('alert-icon').textContent = icon;
+    document.getElementById('alert-cancel').style.display = 'inline-block';
+    document.getElementById('alert-overlay').style.display = 'flex';
+    alertResolve = v => { document.getElementById('alert-overlay').style.display='none'; res(v); };
+  });
+}
+
+/* ═══════════════════════════════════════════════════════════
+   CHAT VISIBILITY
+═══════════════════════════════════════════════════════════ */
+function toggleChat() {
+  chatOpen = !chatOpen;
+  document.getElementById('chatbot').classList.toggle('hidden', !chatOpen);
+}
+function toggleMaximize() {
+  isMaximized = !isMaximized;
+  const c = document.getElementById('chatbot');
+  const btn = document.getElementById('maximize-btn');
+  if (isMaximized) {
+    const backdrop = document.createElement('div');
+    backdrop.id = 'maximize-backdrop';
+    backdrop.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.55);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);z-index:9998;animation:fadeIn .2s ease';
+    backdrop.onclick = () => toggleMaximize();
+    document.body.appendChild(backdrop);
+    c.style.position='fixed'; c.style.top='50%'; c.style.left='50%';
+    c.style.transform='translate(-50%, -50%)'; c.style.bottom='auto'; c.style.right='auto';
+    c.style.width='min(960px, 94vw)'; c.style.height='min(88vh, 900px)';
+    c.style.maxHeight='88vh'; c.style.borderRadius='18px';
+    c.style.boxShadow='0 30px 80px rgba(0,0,0,.45)'; c.style.zIndex='9999';
+    btn.innerHTML = `<svg viewBox="0 0 24 24"><path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16h3a2 2 0 0 1 2 2v3"/></svg>`;
+    btn.title = 'Restore';
+  } else {
+    const bd = document.getElementById('maximize-backdrop');
+    if (bd) bd.remove();
+    c.style.cssText = '';
+    btn.innerHTML = `<svg viewBox="0 0 24 24"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>`;
+    btn.title = 'Maximize';
+  }
+}
+async function clearAndClose() {
+  const ok = await cdotConfirm(T.clearChatConfirm,'Clear Chat','🗑️');
+  if (ok) {
+    toggleChat(); showWelcome();
+    document.getElementById('chat-messages').innerHTML=`<div class="date-divider">${T.todayLabel}</div>`;
+    localStorage.removeItem('chatHistory');
+    try { await resetThreadIdAPI(); } catch(e){}
+  }
+}
+async function resetThreadIdAPI() {
+  const threadId = getThreadId();
+  let token = getToken();
+  if (!token) token = await authenticateAndStoreToken();
+  if (token && threadId) {
+    await fetch(`http://chatbot.cdot.in/api/clear-chat-history?thread_id=${threadId}`,{
+      method:'GET', headers:{Authorization:`Bearer ${token}`}
+    });
+    localStorage.removeItem('authToken');
+    localStorage.removeItem('thread_id');
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   SCREEN SWITCHING
+═══════════════════════════════════════════════════════════ */
+function showWelcome() {
+  document.getElementById('welcome-screen').style.display='flex';
+  document.getElementById('chat-screen').style.display='none';
+  document.getElementById('back-btn').style.display='none';
+  document.getElementById('export-btn-wrap').style.display='none';
+  document.getElementById('suggested-questions').style.display='none';
+  cancelSelection();
+  inChat = false;
+}
+function enterChat() {
+  if (inChat) return;
+  document.getElementById('welcome-screen').style.display='none';
+  document.getElementById('chat-screen').style.display='flex';
+  document.getElementById('back-btn').style.display='flex';
+  document.getElementById('export-btn-wrap').style.display='block';
+  document.getElementById('suggested-questions').style.display='flex';
+  inChat = true;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   TILE & CHIP CLICK HANDLERS
+═══════════════════════════════════════════════════════════ */
+document.querySelectorAll('.tile[data-query]').forEach(tile => {
+  tile.addEventListener('click', () => sendQuery(tile.getAttribute('data-query')));
+});
+document.querySelectorAll('.sq-chip[data-query]').forEach(chip => {
+  chip.addEventListener('click', () => sendQuery(chip.getAttribute('data-query')));
+});
+
+/* ═══════════════════════════════════════════════════════════
+   SEND QUERY — STREAMING API
+═══════════════════════════════════════════════════════════ */
+async function sendQuery(q) {
+  if (!chatOpen) toggleChat();
+  enterChat();
+  if (selectionMode) cancelSelection();
+  appendMsg('user', q);
+  setInputLock(true);
+  const typingId = appendTyping();
+  try {
+    let token = getToken();
+    if (!token) token = await authenticateAndStoreToken();
+    const threadId = getThreadId();
+    const response = await fetch('http://chatbot.cdot.in/api/chatbot/', {
+      method:'POST',
+      headers: { Authorization:`Bearer ${token}`, 'Content-Type':'application/json' },
+      body: JSON.stringify({ human_text: q, thread_id: threadId })
+    });
+    removeTyping(typingId);
+    if (!response.ok) throw new Error(`API Error: ${response.status}`);
+    const msgId = 'msg-' + Date.now();
+    const { row, contentSpan } = appendStreamingBubble(msgId);
+    const wrap = document.getElementById('chat-messages');
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder('utf-8');
+    let fullText = '';
+    while (true) {
+      const { value, done } = await reader.read();
+      if (done) break;
+      const chunk = decoder.decode(value, { stream: true });
+      fullText += chunk;
+      contentSpan.innerHTML = parseMarkdown(fullText);
+      contentSpan.classList.add('streaming-cursor');
+      wrap.scrollTop = wrap.scrollHeight;
+    }
+    contentSpan.classList.remove('streaming-cursor');
+    if (fullText.trim().endsWith('NO')) {
+      fullText = `${T.noInformation} "${q}". ${lang==='hi' ? 'कृपया एक परिष्कृत प्रश्न के साथ पुनः प्रयास करें।' : 'Please try again with a refined question.'}`;
+      contentSpan.innerHTML = parseMarkdown(fullText);
+    }
+    finaliseBubble(row, contentSpan, fullText, q, msgId);
+    wrap.scrollTop = wrap.scrollHeight;
+    saveToHistory('Bot', fullText, q, msgId);
+  } catch (err) {
+    console.error('API error:', err);
+    removeTyping(typingId);
+    appendMsg('bot', T.serviceUnavailable, q);
+  } finally {
+    setInputLock(false);
+    document.getElementById('user-input').focus();
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   MESSAGE RENDERING
+═══════════════════════════════════════════════════════════ */
+function appendMsg(sender, rawContent, query='', msgId=null, ts=null, skipHistory=false) {
+  const wrap = document.getElementById('chat-messages');
+  const id = msgId || ('msg-' + Date.now());
+  const html = (sender === 'bot') ? parseMarkdown(rawContent) : rawContent;
+  const row = document.createElement('div');
+  row.className = 'msg-row ' + sender;
+  const av = document.createElement('div');
+  av.className = 'msg-avatar ' + (sender==='user' ? 'user-av' : '');
+  av.innerHTML = sender==='bot'
+    ? '<img src="assets/img/chatbot_img/bot.jpeg" alt="CIVA">'
+    : '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>';
+  const bub = document.createElement('div');
+  bub.className = 'bubble';
+  bub.setAttribute('data-id', id);
+  const contentSpan = document.createElement('span');
+  contentSpan.innerHTML = html;
+  bub.appendChild(contentSpan);
+  const wordCount = html.replace(/<[^>]*>/g,'').split(/\s+/).length;
+  if (wordCount > 45) addReadMoreToggle(bub, contentSpan, html);
+  if (sender === 'bot') {
+    bub.appendChild(buildMetaBar(html, rawContent, query, id, ts));
+  } else {
+    bub.appendChild(buildUserMetaBar(rawContent, id, ts));
+  }
+  row.append(av, bub);
+  wrap.appendChild(row);
+  wrap.scrollTop = wrap.scrollHeight;
+  if (!skipHistory && sender === 'user') saveToHistory('You', rawContent, '', id, ts);
+}
+
+function appendStreamingBubble(msgId) {
+  const wrap = document.getElementById('chat-messages');
+  const row = document.createElement('div');
+  row.className = 'msg-row bot';
+  const av = document.createElement('div');
+  av.className = 'msg-avatar';
+  av.innerHTML = '<img src="assets/img/chatbot_img/bot.jpeg" alt="CIVA">';
+  const bub = document.createElement('div');
+  bub.className = 'bubble';
+  bub.setAttribute('data-id', msgId);
+  const contentSpan = document.createElement('span');
+  bub.appendChild(contentSpan);
+  row.append(av, bub);
+  wrap.appendChild(row);
+  return { row, contentSpan };
+}
+
+function finaliseBubble(row, contentSpan, rawText, query, msgId) {
+  const bub = row.querySelector('.bubble');
+  const parsedHtml = parseMarkdown(rawText);
+  contentSpan.innerHTML = parsedHtml;
+  const wordCount = parsedHtml.replace(/<[^>]*>/g,'').split(/\s+/).length;
+  if (wordCount > 45) addReadMoreToggle(bub, contentSpan, parsedHtml);
+  bub.appendChild(buildMetaBar(parsedHtml, rawText, query, msgId));
+}
+
+function addReadMoreToggle(bub, contentSpan, fullHtml) {
+  let expanded = false;
+  const short = trimHTML(fullHtml, 45);
+  contentSpan.innerHTML = short;
+  const rmBtn = document.createElement('button');
+  rmBtn.className = 'read-more-btn';
+  rmBtn.textContent = T.readMore;
+  rmBtn.onclick = () => {
+    expanded = !expanded;
+    contentSpan.innerHTML = expanded ? fullHtml : short;
+    rmBtn.textContent = expanded ? T.readLess : T.readMore;
+  };
+  bub.appendChild(rmBtn);
+}
+
+function buildMetaBar(html, rawText, query, msgId, ts=null) {
+  const meta = document.createElement('div');
+  meta.className = 'bubble-meta';
+  const time = document.createElement('span');
+  time.className = 'meta-time';
+  time.textContent = 'just now';
+  time.dataset.ts = ts || Date.now();
+  const spacer = document.createElement('span');
+  spacer.className = 'meta-spacer';
+  const plainText = stripMarkdown(rawText || html);
+  const copyBtn = mkMetaBtn('M8 4H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-2M8 4h8a2 2 0 0 1 2 2v2M8 4a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2','Copy', () => {
+    navigator.clipboard?.writeText(plainText);
+    cdotAlert(T.messageCopied,'Copied','✅');
+  });
+  const likeBtn = mkMetaBtn('M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3H14zm-7 11H6.7A2.23 2.23 0 0 1 5 18V11a2 2 0 0 1 2-2h.3','Like',() => {
+    if (!likeBtn.classList.contains('liked')) {
+      likeBtn.classList.add('liked');
+      submitLikeDislike(query, plainText, 1, msgId);
+      cdotAlert(T.likedMsg,'Liked 👍','✅');
+    }
+  });
+  const dislikeBtn = mkMetaBtn('M10 15v4a3 3 0 0 0 3 3l4-9V2H5.72a2 2 0 0 0-2 1.7l-1.38 9a2 2 0 0 0 2 2.3H10zm7-13h2.67A2.31 2.31 0 0 1 22 4v7a2 2 0 0 1-2 2h-3','Dislike',() => {
+    openFeedback(query, plainText, msgId);
+  });
+  const speakerBtn = document.createElement('button');
+  speakerBtn.className = 'meta-btn';
+  speakerBtn.title = 'Read aloud';
+  speakerBtn.innerHTML = `
+    <span class="speaker-icon-play"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg></span>
+    <span class="speaker-icon-stop"><svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="6" width="12" height="12" rx="2"/></svg></span>`;
+  speakerBtn.onclick = () => queueSpeak(plainText, speakerBtn);
+  meta.append(time, spacer, copyBtn, likeBtn, dislikeBtn, speakerBtn);
+  return meta;
+}
+
+function buildUserMetaBar(rawText, msgId, ts=null) {
+  const meta = document.createElement('div');
+  meta.className = 'bubble-meta';
+  const time = document.createElement('span');
+  time.className = 'meta-time';
+  time.textContent = 'just now';
+  time.dataset.ts = ts || Date.now();
+  const spacer = document.createElement('span');
+  spacer.className = 'meta-spacer';
+  const copyBtn = mkMetaBtn('M8 4H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-2M8 4h8a2 2 0 0 1 2 2v2M8 4a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2','Copy', () => {
+    navigator.clipboard?.writeText(rawText);
+    cdotAlert(T.messageCopied,'Copied','✅');
+  });
+  meta.append(time, spacer, copyBtn);
+  return meta;
+}
+
+function stripMarkdown(raw) {
+  if (!raw) return '';
+  return raw
+    .replace(/<br\s*\/?>/gi, ' ').replace(/<[^>]*>/g, '')
+    .replace(/\*{1,3}|_{1,3}/g, '').replace(/^#{1,6}\s+/gm, '')
+    .replace(/^[-*_]{3,}$/gm, '').replace(/^[-*+•]\s+/gm, '')
+    .replace(/^\d+\.\s+/gm, '').replace(/`{1,3}[^`]*`{1,3}/g, '')
+    .replace(/^>\s?/gm, '').replace(/~~(.*?)~~/g, '$1')
+    .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1').replace(/https?:\/\/\S+/g, '')
+    .replace(/\n{2,}/g, '. ').replace(/\n/g, ' ').replace(/\s{2,}/g, ' ').trim();
+}
+
+function mkMetaBtn(pathD, title, onClick) {
+  const btn = document.createElement('button');
+  btn.className = 'meta-btn';
+  btn.title = title;
+  btn.innerHTML = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="${pathD}"/></svg>`;
+  btn.onclick = onClick;
+  return btn;
+}
+
+function trimHTML(html, wordLimit) {
+  const plain = html.replace(/<br\s*\/?>/gi,' ').replace(/<[^>]*>/g,'');
+  const words = plain.split(/\s+/).filter(Boolean);
+  if (words.length <= wordLimit) return html;
+  let count = 0, result = '', inTag = false, tagBuf = '';
+  const openTags = [];
+  const selfClose = /^<(br|hr|img|input|meta|link)([\s>]|\/)/i;
+  for (let i = 0; i < html.length; i++) {
+    const ch = html[i];
+    if (ch === '<') { inTag = true; tagBuf = '<'; }
+    else if (inTag) {
+      tagBuf += ch;
+      if (ch === '>') {
+        inTag = false; result += tagBuf;
+        if (!selfClose.test(tagBuf)) {
+          if (tagBuf[1] === '/') { openTags.pop(); }
+          else { const m = tagBuf.match(/^<([a-z][a-z0-9]*)/i); if (m) openTags.push(m[1].toLowerCase()); }
+        }
+        tagBuf = '';
+      }
+    } else {
+      result += ch;
+      if (/\s/.test(ch)) {
+        const w = result.replace(/<[^>]*>/g,'').trim().split(/\s+/).filter(Boolean).length;
+        if (w >= wordLimit) {
+          [...openTags].reverse().forEach(t => { result += `</${t}>`; });
+          return result + '…';
+        }
+      }
+    }
+  }
+  return result;
+}
+
+function parseMarkdown(raw) {
+  if (!raw) return '';
+  let msg = raw.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+  msg = msg.replace(/```[\w]*\n?([\s\S]*?)```/g, (_, code) =>
+    `<pre style="background:rgba(0,86,167,.07);border:1px solid var(--border);border-radius:8px;padding:10px 12px;overflow-x:auto;font-size:12px;font-family:monospace;white-space:pre-wrap;margin:6px 0">${escHtml(code.trim())}</pre>`
+  );
+  msg = msg.replace(/^#### (.+)$/gm, '<h5 style="font-size:12.5px;font-weight:700;color:var(--brand-dark);margin:7px 0 3px">$1</h5>');
+  msg = msg.replace(/^### (.+)$/gm,  '<h4 style="font-size:13px;font-weight:700;color:var(--brand-dark);margin:8px 0 4px">$1</h4>');
+  msg = msg.replace(/^## (.+)$/gm,   '<h3 style="font-size:14px;font-weight:700;color:var(--brand-dark);margin:8px 0 4px">$1</h3>');
+  msg = msg.replace(/^# (.+)$/gm,    '<h2 style="font-size:15px;font-weight:800;color:var(--brand-dark);margin:8px 0 4px">$1</h2>');
+  msg = msg.replace(/^[-*_]{3,}$/gm, '<hr style="border:none;border-top:1px solid var(--border);margin:8px 0">');
+  msg = msg.replace(/^(\d+)\.\s+(.+)$/gm, '<_oli>$2</_oli>');
+  msg = msg.replace(/^[-*+•]\s+(.+)$/gm, '<_uli>$1</_uli>');
+  msg = msg.replace(/(<_oli>[\s\S]*?<\/_oli>\n?)+/g, m => {
+    const items = [...m.matchAll(/<_oli>([\s\S]*?)<\/_oli>/g)].map(x => `<li style="margin-bottom:4px">${x[1]}</li>`).join('');
+    return `<ol style="margin:6px 0 6px 20px;padding:0">${items}</ol>`;
+  });
+  msg = msg.replace(/(<_uli>[\s\S]*?<\/_uli>\n?)+/g, m => {
+    const items = [...m.matchAll(/<_uli>([\s\S]*?)<\/_uli>/g)].map(x => `<li style="margin-bottom:4px">${x[1]}</li>`).join('');
+    return `<ul style="margin:6px 0 6px 18px;padding:0;list-style:disc">${items}</ul>`;
+  });
+  msg = msg.replace(/\*\*\*([\s\S]*?)\*\*\*/g, '<strong><em>$1</em></strong>');
+  msg = msg.replace(/\*\*([\s\S]*?)\*\*/g,     '<strong>$1</strong>');
+  msg = msg.replace(/__([\s\S]*?)__/g,          '<strong>$1</strong>');
+  msg = msg.replace(/\*([\s\S]*?)\*/g,          '<em>$1</em>');
+  msg = msg.replace(/_([\s\S]*?)_/g,            '<em>$1</em>');
+  msg = msg.replace(/~~([\s\S]*?)~~/g,          '<s>$1</s>');
+  msg = msg.replace(/`([^`\n]+)`/g,
+    '<code style="background:rgba(0,86,167,.1);border-radius:4px;padding:1px 5px;font-size:12px;font-family:monospace;word-break:break-all">$1</code>'
+  );
+  const LINK_STYLE = 'color:var(--brand);text-decoration:underline;text-underline-offset:2px;word-break:break-all';
+  msg = msg.replace(/\[([^\]]+)\]\((https?:\/\/[^)]+)\)/g, `<a href="$2" target="_blank" rel="noopener" style="${LINK_STYLE}">$1</a>`);
+  msg = msg.replace(/href="(https?:\/\/[^"]+)"/g, (m, u) => `href="${u.replace(/https?/g,'PROTO')}"`);
+  msg = msg.replace(/(^|[\s\n(,;])(https?:\/\/[^\s<)"'\]]+)/g, (_, pre, url) => `${pre}<a href="${url}" target="_blank" rel="noopener" style="${LINK_STYLE}">${url}</a>`);
+  msg = msg.replace(/href="([^"]+PROTO[^"]+)"/g, (_, u) => `href="${u.replace(/PROTO/g,'https')}"`);
+  msg = msg.replace(/^&gt;\s?(.+)$/gm, '<blockquote style="border-left:3px solid var(--accent);padding:4px 10px;margin:4px 0;color:var(--text-2);font-style:italic;background:rgba(0,194,224,.05);border-radius:0 6px 6px 0">$1</blockquote>');
+  msg = msg.replace(/^>\s?(.+)$/gm,    '<blockquote style="border-left:3px solid var(--accent);padding:4px 10px;margin:4px 0;color:var(--text-2);font-style:italic;background:rgba(0,194,224,.05);border-radius:0 6px 6px 0">$1</blockquote>');
+  msg = msg.replace(/\n/g, '<br>');
+  msg = msg.replace(/(<\/(?:h[2-5]|ul|ol|pre|hr|blockquote)>)<br>/g, '$1');
+  msg = msg.replace(/<br>(<(?:ul|ol|pre|h[2-5]|blockquote))/g, '$1');
+  return msg;
+}
+
+function escHtml(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+/* ═══════════════════════════════════════════════════════════
+   TYPING INDICATOR
+═══════════════════════════════════════════════════════════ */
+function appendTyping() {
+  const wrap = document.getElementById('chat-messages');
+  const id = 'typing-' + Date.now();
+  const row = document.createElement('div');
+  row.className = 'msg-row bot'; row.id = id;
+  const av = document.createElement('div');
+  av.className = 'msg-avatar';
+  av.innerHTML = '<img src="assets/img/chatbot_img/bot.jpeg" alt="CIVA">';
+  const bub = document.createElement('div');
+  bub.className = 'bubble';
+  bub.innerHTML = '<div class="typing-bubble"><span></span><span></span><span></span></div>';
+  row.append(av, bub);
+  wrap.appendChild(row);
+  wrap.scrollTop = wrap.scrollHeight;
+  return id;
+}
+function removeTyping(id) { const el=document.getElementById(id); if(el) el.remove(); }
+
+/* ═══════════════════════════════════════════════════════════
+   INPUT / SEND
+═══════════════════════════════════════════════════════════ */
+function setInputLock(locked) {
+  const inp = document.getElementById('user-input');
+  const send = document.getElementById('send-btn');
+  const mic = document.getElementById('mic-btn');
+  inp.disabled = locked; send.disabled = locked; mic.disabled = locked;
+  mic.style.opacity = locked ? '0.45' : '';
+  mic.style.cursor = locked ? 'not-allowed' : '';
+  document.querySelectorAll('.sq-chip').forEach(chip => {
+    chip.style.pointerEvents = locked ? 'none' : '';
+    chip.style.opacity = locked ? '0.45' : '';
+  });
+}
+function sendFromInput() {
+  const inp = document.getElementById('user-input');
+  const q = inp.value.trim();
+  if (!q) return;
+  inp.value = '';
+  sendQuery(q);
+}
+document.getElementById('send-btn').onclick = sendFromInput;
+document.getElementById('user-input').addEventListener('keydown', e => {
+  if (e.key === 'Enter') { e.preventDefault(); sendFromInput(); }
+});
+
+/* ═══════════════════════════════════════════════════════════
+   SPEECH SYNTHESIS
+═══════════════════════════════════════════════════════════ */
 if (window.speechSynthesis) {
-  _loadVoices();
-  window.speechSynthesis.onvoiceschanged = _loadVoices;
+  _cachedVoices = speechSynthesis.getVoices();
+  speechSynthesis.onvoiceschanged = () => { _cachedVoices = speechSynthesis.getVoices(); };
 }
 
-/**
- * Pick the best available female Indian-English voice.
- * Priority: en-IN female > en-IN any > en-GB female > en-US female > first available
- */
-function _pickIndianFemaleVoice() {
-  const voices = _cachedVoices.length ? _cachedVoices : window.speechSynthesis.getVoices();
-
-  const femaleKeywords = ['female', 'woman', 'heera', 'priya', 'aditi', 'raveena',
-                          'veena', 'lekha', 'neerja', 'zira'];
-  const score = (v) => {
+function pickVoice() {
+  const synth = window.speechSynthesis;
+  if (!synth) return null;
+  const voices = synth.getVoices();
+  if (voices.length) _cachedVoices = voices;
+  const pool = _cachedVoices;
+  if (!pool.length) return null;
+  const curLang = _currentLang || window.lang || 'en';
+  const score = v => {
     let s = 0;
     const n = v.name.toLowerCase();
     const l = v.lang.toLowerCase();
-    if (l === 'en-in') s += 100;
-    else if (l.startsWith('en-in')) s += 90;
-    if (femaleKeywords.some(k => n.includes(k))) s += 50;
-    if (l === 'en-gb') s += 10;
-    if (l.startsWith('en')) s += 5;
+    if (curLang === 'hi') { if (l === 'hi-in') s += 500; else if (l.startsWith('hi')) s += 400; }
+    if (l === 'en-in') s += 400;
+    if (l.startsWith('en-in')) s += 380;
+    const femaleIndian = ['aditi','priya','heera','raveena','veena','lekha','neerja','sunita','kajal','kalpana','swara','divya'];
+    if (femaleIndian.some(k => n.includes(k))) s += 300;
+    if (n.includes('google') && (n.includes('female') || femaleIndian.some(k => n.includes(k)))) s += 200;
+    if (n.includes('google')) s += 80;
+    if (n.includes('neural') || n.includes('natural') || n.includes('enhanced')) s += 120;
+    const femaleGeneric = ['female','woman','girl','aria','zira','susan','karen','samantha','victoria','fiona','moira'];
+    if (femaleGeneric.some(k => n.includes(k))) s += 60;
+    if (l === 'en-gb') s += 20;
+    if (l === 'en-au') s += 15;
+    if (l.startsWith('en')) s += 10;
+    const male = ['david','mark','daniel','alex','tom','james','oliver','george','rishi'];
+    if (male.some(k => n.includes(k))) s -= 200;
     return s;
   };
-
-  const sorted = [...voices].sort((a, b) => score(b) - score(a));
-  return sorted[0] || null;
+  const ranked = [...pool].sort((a, b) => score(b) - score(a));
+  return ranked[0] || null;
 }
 
-// Chrome bug fix: speech stops after ~15s. Keep it alive by resuming every 10s.
-let _chromePauseKeepAlive = null;
-function _startKeepAlive() {
-  _stopKeepAlive();
-  _chromePauseKeepAlive = setInterval(() => {
-    if (window.speechSynthesis.speaking && !window.speechSynthesis.paused) {
-      window.speechSynthesis.pause();
-      window.speechSynthesis.resume();
-    }
-  }, 10000);
-}
-function _stopKeepAlive() {
-  if (_chromePauseKeepAlive) {
-    clearInterval(_chromePauseKeepAlive);
-    _chromePauseKeepAlive = null;
-  }
-}
+let _keepAlive = null;
 
-// Track which button is currently speaking
-let _activeSpeakerBtn = null;
-let _activeSpeakerIcon = null;
-const VOICE_ACTIVE_SRC = "assets/img/chatbot_img/Voice.svg"; // reuse same icon, just tint via class
-
-/**
- * Speak text aloud. Toggles off if already speaking this message.
- * @param {string} text - plain text to speak
- * @param {HTMLElement} btn  - the speaker button element
- * @param {HTMLImageElement} icon - the icon inside the button
- */
-function speakMessage(text, btn, icon) {
-  if (!window.speechSynthesis) {
-    console.warn("Speech synthesis not supported in this browser.");
-    return;
-  }
-
-  // If this button is already speaking → stop
-  if (_activeSpeakerBtn === btn) {
-    window.speechSynthesis.cancel();
-    _stopKeepAlive();
-    _resetSpeakerUI(_activeSpeakerBtn, _activeSpeakerIcon);
-    _activeSpeakerBtn = null;
-    _activeSpeakerIcon = null;
-    return;
-  }
-
-  // Stop any previous speaker
-  if (_activeSpeakerBtn) {
-    window.speechSynthesis.cancel();
-    _stopKeepAlive();
-    _resetSpeakerUI(_activeSpeakerBtn, _activeSpeakerIcon);
-  }
-
-  // Mark new active button
+function queueSpeak(text, btn) {
+  if (_activeSpeakerBtn === btn) { _stopSpeaker(); return; }
+  _stopSpeaker();
+  if (!window.speechSynthesis) return;
   _activeSpeakerBtn = btn;
-  _activeSpeakerIcon = icon;
-  btn.classList.add("speaker-active");
-  btn.title = "Stop speaking";
-
-  const utterance = new SpeechSynthesisUtterance(text);
-
-  // Apply best Indian female voice
-  const voice = _pickIndianFemaleVoice();
-  if (voice) {
-    utterance.voice = voice;
-    utterance.lang = voice.lang;
-  } else {
-    utterance.lang = "en-IN"; // hint to OS even without a matched voice object
-  }
-
-  // Smooth, natural speech settings
-  utterance.rate = 0.92;   // slightly slower than default for clarity
-  utterance.pitch = 1.1;   // slightly higher pitch → sounds more feminine
-  utterance.volume = 1.0;
-
-  utterance.onstart = () => {
-    _startKeepAlive();
+  btn.classList.add('speaker-active');
+  btn.title = 'Stop';
+  const curLang = _currentLang || window.lang || 'en';
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = curLang === 'hi' ? 'hi-IN' : 'en-IN';
+  u.rate = 0.92; u.pitch = 1.0; u.volume = 1;
+  const v = pickVoice();
+  if (v) { u.voice = v; u.lang = v.lang; }
+  const _done = () => {
+    clearInterval(_keepAlive);
+    btn.classList.remove('speaker-active');
+    btn.title = 'Read aloud';
+    if (_activeSpeakerBtn === btn) _activeSpeakerBtn = null;
   };
-
-  utterance.onend = () => {
-    _stopKeepAlive();
-    _resetSpeakerUI(btn, icon);
-    if (_activeSpeakerBtn === btn) {
-      _activeSpeakerBtn = null;
-      _activeSpeakerIcon = null;
-    }
+  u.onend = _done; u.onerror = _done;
+  u.onstart = () => {
+    _keepAlive = setInterval(() => {
+      if (window.speechSynthesis.speaking && !window.speechSynthesis.paused) {
+        window.speechSynthesis.pause(); window.speechSynthesis.resume();
+      }
+    }, 10000);
   };
-
-  utterance.onerror = (e) => {
-    // 'interrupted' fires when we manually cancel — not a real error
-    if (e.error !== "interrupted" && e.error !== "canceled") {
-      console.warn("Speech error:", e.error);
-    }
-    _stopKeepAlive();
-    _resetSpeakerUI(btn, icon);
-    if (_activeSpeakerBtn === btn) {
-      _activeSpeakerBtn = null;
-      _activeSpeakerIcon = null;
-    }
-  };
-
-  // Cancel any leftover speech before starting (Firefox needs this)
   window.speechSynthesis.cancel();
-  // Small delay so cancel() fully flushes before we speak (Chrome quirk)
-  setTimeout(() => {
-    window.speechSynthesis.speak(utterance);
-  }, 100);
+  setTimeout(() => window.speechSynthesis.speak(u), 120);
 }
 
-function _resetSpeakerUI(btn, icon) {
-  if (btn) btn.classList.remove("speaker-active");
-  if (btn) btn.title = "Read aloud";
+function _stopSpeaker() {
+  if (window.speechSynthesis) window.speechSynthesis.cancel();
+  clearInterval(_keepAlive);
+  if (_activeSpeakerBtn) {
+    _activeSpeakerBtn.classList.remove('speaker-active');
+    _activeSpeakerBtn.title = 'Read aloud';
+    _activeSpeakerBtn = null;
+  }
 }
-// ─────────────────────────────────────────────────────────────────────────────
-// On page load
-  window.addEventListener("load", () => {
-    if (!sessionStorage.getItem(SESSION_KEY)) {
-      // If session is new, initialize the session key
-      sessionStorage.setItem(SESSION_KEY, Date.now());
-    }
-    loadChatFromLocalStorage(); // Load chat history from localStorage
-  });
 
-    const translations = {
-    en: {
-      botName: "C-BOT",
-      welcome: "Welcome to C-BOT!",
-      inputPlaceholder: "Type your message here...",
-      feedbackPlaceholder: "Write your feedback here...",
-      feedbackHeader: "Apologies for any inconvenience",
-      feedbackText: "Your feedback is highly appreciated, as it helps us enhance our processes.",
-      submitFeedback: "Submit Feedback",
-      poweredBy: "Powered by",
-      companyname: "C-DOT",
-      exportTooltip: "Export Chat",
-      exportChat: "Export Chat",
-      exportMessages: "Export Messages",
-      clearChatConfirm: "Do you want to clear chat history and close the chatbot?",
-      selectMessageAlert: "Please select at least one message to export.",
-      thankYou: "Thank You",
-      microphoneAccess: "Please Allow microphone...",
-      microphoneDenied: "Microphone access denied.",
-      microphoneListening: "Speak up, I'm listening...",
-      speechNotSupported: "Speech recognition is not supported in this browser.",
-      readMore: "Read More",
-      readLess: "Read Less",
-      messageCopied: "Message copied to clipboard!",
-      serviceUnavailable: "The chatbot service is currently unavailable. Please try again later.",
-      noInformation: "The context provided does not contain any information related to",
-
-      chatData: {
-        "About C-DOT": "About C-DOT",
-        "Product Section": "Product Section",
-        "Awards and Achievements": "Awards and Achievements",
-        "EVP": "EVP",
-        "Consultancy": "Consultancy"
-      }
-    },
-
-    hi: {
-      botName: "सी-बॉट",
-      welcome: "सी-बॉट में आपका स्वागत है!",
-      inputPlaceholder: "यहाँ अपना संदेश लिखें...",
-      feedbackPlaceholder: "अपनी प्रतिक्रिया यहाँ लिखें...",
-      feedbackHeader: "किसी भी असुविधा के लिए क्षमा करें",
-      feedbackText: "आपका फीडबैक हमारे लिए बहुत मूल्यवान है, यह हमें अपनी प्रक्रिया बेहतर बनाने में मदद करता है।",
-      submitFeedback: "प्रतिक्रिया भेजें",
-      poweredBy: "द्वारा संचालित",
-      companyname: "सी-डॉट",
-      exportTooltip: "चैट निर्यात करें",
-      exportChat: "चैट निर्यात करें",
-      exportMessages: "संदेश निर्यात करें",
-      clearChatConfirm: "क्या आप चैट इतिहास साफ करना चाहते हैं और चैटबॉट को बंद करना चाहते हैं?",
-      selectMessageAlert: "कृपया निर्यात करने के लिए कम से कम एक संदेश चुनें।",
-      thankYou: "धन्यवाद",
-      microphoneAccess: "कृपया माइक्रोफोन की अनुमति दें...",
-      microphoneDenied: "माइक्रोफोन एक्सेस अस्वीकृत।",
-      microphoneListening: "बोलिए, मैं सुन रहा हूँ...",
-      speechNotSupported: "यह ब्राउज़र स्पीच रिकग्निशन का समर्थन नहीं करता है।",
-      readMore: "और पढ़ें",
-      readLess: "कम पढ़ें",
-      messageCopied: "संदेश क्लिपबोर्ड पर कॉपी किया गया!",
-      serviceUnavailable: "चैटबॉट सेवा वर्तमान में उपलब्ध नहीं है। कृपया बाद में पुनः प्रयास करें।",
-      noInformation: "प्रदान किए गए संदर्भ में इससे संबंधित कोई जानकारी नहीं है",
-
-      chatData: {
-        "About C-DOT": "सी-डॉट के बारे में",
-        "Product Section": "उत्पाद अनुभाग",
-        "Awards and Achievements": "पुरस्कार और उपलब्धियां",
-        "EVP": "ई.वी.पी",
-        "Consultancy": "परामर्श"
-      }
-    }
+/* ═══════════════════════════════════════════════════════════
+   SPEECH RECOGNITION
+═══════════════════════════════════════════════════════════ */
+const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+if (SpeechRecognition) {
+  recognition = new SpeechRecognition();
+  recognition.continuous = false;
+  recognition.interimResults = true;
+  recognition.lang = lang === 'hi' ? 'hi-IN' : 'en-IN';
+  let finalT = '';
+  recognition.onresult = e => {
+    let t = '';
+    for (let i=e.resultIndex; i<e.results.length; i++) t+=e.results[i][0].transcript;
+    document.getElementById('user-input').value = t;
+    if (e.results[e.results.length-1].isFinal) { finalT = t; }
   };
-
-  const questionKeyMapping = {
-  "en": {
-    "About C-DOT": "About C-DOT",
-    "Consultancy": "Consultancy",
-    "6G": "6G",
-    "Product Section": "Product Section",
-    "EVP": "EVP",
-    "FAQs": "FAQs",
-    "Awards and Achievements": "Awards and Achievements"
-  },
-  "hi": {
-    "About C-DOT": "सी-डॉट के बारे में",
-    "Consultancy": "परामर्श",
-    "6G": "6G",
-    "Product Section": "उत्पाद अनुभाग",
-    "EVP": "ई.वी.पी",
-    "FAQs": "FAQs",
-    "Awards and Achievements": "पुरस्कार और उपलब्धियां"
-  }
-};
-  // Get lang value from PHP (fallback to English if not provided)
-  let lang = window.lang || "en";
-  let activeChatData = (translations[lang] || translations["en"]).chatData;
-    const chatData = {
-    "About C-DOT": "C-DOT is an R&D organization under the Government of India.",
-    // "6 G": "6G is the future of wireless communication technology.",
-    "Product Section":
-    "Wireless technology enables communication without physical cables.",
-    "Awards and Achievements": "Explore the gallery for event photos and updates.",
-    "EVP": "PM-WANI is an initiative to provide Wi-Fi access across India.",
-    Consultancy:
-      "C-DOT provides consultancy services for telecommunication technology.",
-    // FAQs: "Check our FAQ section for common queries.",
+  recognition.onend = () => {
+    document.getElementById('mic-btn').classList.remove('active');
+    document.getElementById('user-input').placeholder = T.inputPlaceholder;
+    micActive = false;
+    if (finalT.trim()) { sendFromInput(); finalT=''; }
   };
-  const questionImages = {
-    "About C-DOT": "assets/img/chatbot_img/events.png",
-    Consultancy: "assets/img/chatbot_img/consultancy.png",
-    "6G": "assets/img/chatbot_img/wifi.png",
-    "Product Section": "assets/img/chatbot_img/Sell.png",
-    "EVP": "assets/img/chatbot_img/Supplier.png",
-    FAQs: "assets/img/chatbot_img/Faq.png",
-    "Awards and Achievements": "assets/img/chatbot_img/gallery.png",
+  recognition.onerror = e => {
+    document.getElementById('mic-btn').classList.remove('active');
+    document.getElementById('user-input').placeholder = e.error==='not-allowed' ? T.micDenied : T.inputPlaceholder;
+    micActive = false;
   };
-
-    function logAvailableVoices() {
-      if (window.speechSynthesis) {
-        // Force voice loading
-        const voices = window.speechSynthesis.getVoices();
-        
-        if (voices.length === 0) {
-          // If no voices yet, wait for them to load
-          window.speechSynthesis.onvoiceschanged = () => {
-            const loadedVoices = window.speechSynthesis.getVoices();
-            // console.log("Available voices:", loadedVoices.map(v => `${v.name} (${v.lang})`));
-          };
-        } else {
-          // console.log("Available voices:", voices.map(v => `${v.name} (${v.lang})`));
-        }
-      }
-    }
-      logAvailableVoices();
-
-  function applyTranslations() {
-    const t = translations[lang] || translations["en"];
-
-    // Update chatbot name
-    const logoSectionSpan = document.querySelector(".logo-section span");
-    if (logoSectionSpan) logoSectionSpan.textContent = t.botName;
-
-    // Change input placeholder
-    document.getElementById("user-input").setAttribute("placeholder", t.inputPlaceholder);
-
-    // Change feedback popup content
-    const feedbackHeader = document.querySelector(".feedback-header");
-    if (feedbackHeader) feedbackHeader.textContent = t.feedbackHeader;
-
-    const feedbackText = document.querySelector(".feedback-heading-text");
-    if (feedbackText) feedbackText.textContent = t.feedbackText;
-
-    const submitBtn = document.getElementById("submit-feedback");
-    if (submitBtn) submitBtn.textContent = t.submitFeedback;
-
-    // Change footer text
-    document.querySelectorAll(".foottext").forEach(el => {
-      el.textContent = t.poweredBy;
-    });
-
-
-    document.querySelectorAll(".foottextcdot").forEach(el => {
-      el.textContent = t.companyname;
-    });
-    
-    const feedbackTextarea = document.getElementById("feedback-text");
-    if (feedbackTextarea) feedbackTextarea.setAttribute("placeholder", t.feedbackPlaceholder);
-
-    const exportTooltip = document.querySelector(".tooltip");
-    if (exportTooltip) exportTooltip.textContent = t.exportTooltip;
-
-    // Update chat data with translations
-    Object.keys(t.chatData).forEach(key => {
-      if (chatData[key]) {
-        // Only update the question keys, not the response values
-        // We need to keep the English responses but use Hindi question text
-        const newKey = t.chatData[key];
-        if (newKey !== key) {
-          // Move the value to the new key and delete the old key
-          chatData[newKey] = chatData[key];
-          delete chatData[key];
-        }
-      }
-    });
-          // Also update the questionImages to use translated keys
-    const translatedQuestionImages = {};
-    Object.keys(questionImages).forEach(key => {
-      const translatedKey = t.chatData[key] || key;
-      translatedQuestionImages[translatedKey] = questionImages[key];
-    });
-    
-    // Replace the original questionImages with the translated version
-    Object.keys(translatedQuestionImages).forEach(key => {
-      questionImages[key] = translatedQuestionImages[key];
-    });
-  }
-
-  // Apply tra
-  applyTranslations();
-
-  document.getElementById("close-feedback").addEventListener("click", function() {
-    let popup = document.getElementById("feedback-popup");
-    popup.style.bottom = "-300px";
-    document.getElementById("chat-body").classList.remove("backdrop");
-    setTimeout(() => popup.style.display = "none", 300);
-  });
-
-  const textarea = document.getElementById("feedback-text");
-  const submitButton = document.getElementById("submit-feedback");
-  const popupMessage = document.getElementById("confirmation-popup"); // Popup message element
-
-  // Textarea validation
-  if (textarea) {
-      textarea.addEventListener("input", function () {
-          updateSubmitButtonState();
-      });
-  } else {
-      console.error("Textarea not found!");
-  }
-
-  function updateSubmitButtonState() {
-    const feedbackText = textarea.value.trim(); 
-    const wordCount = feedbackText.split(/\s+/).filter(word => word.length > 0).length; // Count words
-    
-      if (wordCount >= 1) {
-          submitButton.removeAttribute("disabled");
-          submitButton.classList.add("enabled");
-      } else {
-          submitButton.setAttribute("disabled", "true");
-          submitButton.classList.remove("enabled");
-      }
-  }
-  const getThreadId = () => {
-    let threadId = localStorage.getItem("thread_id");
-    if (!threadId) {
-      threadId = `${Math.floor(Math.random() * 1000000)}`; // Generate random ID
-      localStorage.setItem("thread_id", threadId);
-    }
-    return threadId;
-  };
-  async function authenticateAndStoreToken(email, password) {
-    try {
-      const formData = new FormData();
-      formData.append("email", email);
-      formData.append("password", password);
-      const response = await fetch("http://chatbot.cdot.in/api/auth-token/", 
-        {
-          method: "POST",
-          body: formData,
-        }
-      );
-
-      if (response.ok) {
-        const data = await response.json();
-        const token = data.access_token;
-        localStorage.setItem("authToken", token); // Store token in localStorage
-        return token;
-      } else {
-        console.error("Failed to fetch token:", await response.text());
-      }
-    } catch (error) {
-      console.error("Error during authentication:", error);
-    }
-  }
-
-  function showPopup(message) {
-      const t = translations[lang] || translations["en"];
-      if(message = "Feedback submitted successfully"){
-        popupMessage.innerText = t.thankYou; // Set the message
-        const img = document.createElement("img");
-        img.src = "assets/img/chatbot_img/thumbsup.svg";
-        img.alt = "Feedback Submit Logo";
-        img.className = "shake";
-        img.style.Width = "30%"; 
-        img.style.display = "block"; 
-        img.style.margin = "3px auto"; // Center image
-        popupMessage.appendChild(img);
-        popupMessage.style.display = "block"; // Show popup
-      }
-
-      // Auto-close popup after 2 seconds
-  }
-
-  // Submit feedback
-  
-
-
-
-  const SpeechRecognition =
-    window.SpeechRecognition || window.webkitSpeechRecognition;
-  let recognition;
-
-  if (SpeechRecognition) {
-    recognition = new SpeechRecognition();
-    recognition.continuous = true; // Keep recognition active for longer speeches
-    recognition.interimResults = true; // Show intermediate results as the speech is recognized
-
-    let micBtn = document.getElementById("mic-btn");
-    let inputField = document.getElementById("user-input");
-    let recognitionTimeout;
-    const t = translations[lang] || translations["en"];
-    const originalPlaceholder = t.inputPlaceholder;
-    let permissionGranted = false; // Track whether permission has been granted
-
-    const triggerEnterAction = () => {
-      const userText = userInput.value.trim();
-      if (userText !== "") {
-        moveChatMessageBelowInput();
-        createchatmessage();
-        handleUserQuery(userText);
-        userInput.value = ""; // Clear input
-      }
-    };
-
-    // Function to reset microphone UI state
-    const resetMic = () => {
-      micBtn.classList.remove("active");
-      inputField.placeholder = originalPlaceholder; // Restore the original placeholder
-      clearTimeout(recognitionTimeout);
-    };
-
-    // Function to request permission and start listening
-    const requestPermissionAndStart = () => {
-      inputField.placeholder = t.microphoneAccess;
-      recognition.start(); // Start recognition, browser will request permission
-      console.log("Requesting microphone permission...");
-    };
-
-    // Start listening when the mic button is clicked
-    micBtn.addEventListener("click", () => {
-      if (micBtn.classList.contains("active")) {
-        recognition.stop(); // Stop recognition if already active
-        resetMic();
-        triggerEnterAction(); // Trigger Enter action on mic stop
-      } else if (!permissionGranted) {
-        requestPermissionAndStart(); // Request permission and start recognition
-      } else {
-        recognition.start(); // Start speech recognition
-        micBtn.classList.add("active"); // Highlight mic button
-        inputField.placeholder = t.microphoneListening; // Change placeholder
-        console.log("Speech recognition started...");
-      }
-    });
-
-    // Event when permission is granted, and recognition starts
-    recognition.onaudiostart = () => {
-      permissionGranted = true;
-      micBtn.classList.add("active");
-      inputField.placeholder =  t.microphoneListening;
-      console.log("Microphone access granted.");
-    };
-
-    // Event when speech is recognized
-    recognition.onresult = (event) => {
-      let transcript = "";
-      // Iterate through results and append the transcript
-      for (let i = event.resultIndex; i < event.results.length; i++) {
-        transcript += event.results[i][0].transcript;
-      }
-      // Update the input field with the recognized speech
-      inputField.value = transcript;
-
-      // Reset the inactivity timeout
-      clearTimeout(recognitionTimeout);
-      recognitionTimeout = setTimeout(() => {
-        recognition.stop(); // Stop recognition after 3 seconds of inactivity
-        resetMic();
-        triggerEnterAction(); // Trigger Enter action on inactivity stop
-        console.log("Speech recognition stopped due to inactivity.");
-      }, 3000);
-    };
-
-    // Event when speech recognition ends
-    recognition.onend = () => {
-      resetMic();
-      triggerEnterAction(); // Trigger Enter action when recognition ends
-      console.log("Speech recognition ended.");
-    };
-
-    // Handle errors
-    recognition.onerror = (event) => {
-      if (event.error === "not-allowed" || event.error === "denied") {
-        inputField.placeholder = t.microphoneDenied;
-        console.error("Microphone permission denied.");
-      } else {
-        console.error("Speech recognition error: ", event.error);
-      }
-      resetMic();
-    };
-  } else {
-    console.log("Speech recognition is not supported in this browser.");
-    const t = translations[lang] || translations["en"];
-    document.getElementById("user-input").placeholder =
-       t.speechNotSupported;
-    setTimeout(() => {
-      document.getElementById("user-input").placeholder =
-      t.inputPlaceholder;
-    }, 5000);
-  }
-    logAvailableVoices();
-
-  // Listen for the Enter key to trigger the action
-  document.getElementById("user-input").addEventListener("keydown", (event) => {
-    disableMessageSelection();
-    if (event.key === "Enter") {
-      event.preventDefault(); // Prevent default form submission if necessary
-      triggerEnterAction(); // Trigger Enter action on key press
-    }
-  });
-
-document.getElementById("chat-header").addEventListener("click", (event) => {
-    // Only work on mobile devices (screen width less than 768px)
-    if (window.innerWidth > 768) {
-        // Prevent collapsing when clicking inside the '.option' div
-        if (!event.target.closest(".option")) {
-            disableMessageSelection();
-            document.getElementById("chatbot").classList.toggle("chat-collapsed");
-        }
-    }
-});
-  document.addEventListener("click", (event) => {
-    const chatbot = document.getElementById("chatbot");
-
-    // Check if the clicked element is outside the chatbot
-    if (!chatbot.contains(event.target) && !chatIcon.contains(event.target)) {
-          if (window.innerWidth > 768) {
-        disableMessageSelection();
-        chatbot.classList.add("chat-collapsed"); // Minimize the chatbot
-          }
-    }
-  });
-
- 
-  
-
-  chatbot.style.display = "none";
-  chatIcon.style.display = "block";
-  arrowButton.style.display = "none";
-  // Function to toggle chatbot visibility
-  const toggleChatbotVisibility = (showChatbot) => {
-    if (showChatbot) {
-      chatbot.style.display = "block";
-      chatIcon.style.display = "none";
-    } else {
-      chatbot.style.display = "none";
-      chatIcon.style.display = "block";
-    }
-  };
-  const toggleOptions = () => {
-    optionsExpanded = !optionsExpanded;
-    if (optionsExpanded) {
-      optionsDiv.classList.add("expanded");
-      toggleOptionsBtn.classList.remove("arrow-up");
-      toggleOptionsBtn.classList.add("arrow-down");
-    } else {
-      optionsDiv.classList.remove("expanded");
-      toggleOptionsBtn.classList.remove("arrow-down");
-      toggleOptionsBtn.classList.add("arrow-up");
-    }
-  };
-
-
-
-  async function resetThreadId () {
-    const threadId = localStorage.getItem("thread_id");
-    const token = localStorage.getItem("authToken");
-    if (!token) {
-      const email = "admin@cdot.in";
-      const password = "admin";
-      token  = await authenticateAndStoreToken(email, password);
-    }
-
-    const response = await fetch(
-      `http://chatbot.cdot.in/api/clear-chat-history?thread_id=${threadId}`,
-      {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
-    localStorage.removeItem("authToken"); // Clear the token
-    localStorage.removeItem("thread_id");
-  };
-
-  // Chat JSON data
-
-
-  // Event listeners for chat icons
-  chatIcon.addEventListener("click", () => {
-    toggleChatbotVisibility(true); // Show the chatbot
-    scrollToBottom(); // Scroll to the bottom
-  });
-
-  minimizedownicon.addEventListener("click", () => toggleChatbotVisibility(false));
-
-
-  // Event listeners for the close buttons in chatbot header
-  const exportBtn = document.getElementById("export-btn");
-  exportBtn.addEventListener("click", (e) => {
-    e.stopPropagation();
-    e.preventDefault();
-    showExportOptions();
-  });
-  // exportBtn.addEventListener("click", () => {
-  //   // if (confirm("Do you want to export the chat?")) {
-  //     exportChat();
-  //   // }
-  // });
-  function showExportOptions() {
-    const dropdown = document.getElementById("export-popup-content");
-    const t = translations[lang] || translations["en"];
-    dropdown.innerHTML = `
-      <div class="export-options">
-        <button id="export-full-chat" class="export-option-btn">${t.exportChat}</button>
-        <button id="export-selected" class="export-option-btn">${t.exportMessages}</button>
-      </div>
-    `;
-    
-    const closeDropdown = (e) => {
-      if (!dropdown.contains(e.target) && e.target !== exportBtn) {
-        dropdown.innerHTML = '';
-        document.removeEventListener("click", closeDropdown);
-      }
-    };
-  
-    setTimeout(() => {
-      document.addEventListener("click", closeDropdown);
-    }, 0);
-    
-    document.getElementById("export-full-chat").addEventListener("click", (e) => {
-      e.stopPropagation();
-      dropdown.innerHTML = '';
-      exportChat();
-    });
-    
-    document.getElementById("export-selected").addEventListener("click", (e) => {
-      e.stopPropagation();
-      dropdown.innerHTML = '';
-      enableMessageSelection();
-    });
-    dropdown.addEventListener("click", (e) => {
-      e.stopPropagation();
-    });
-  }
-
-  function enableMessageSelection() {
-    // Hide original header content
-    const headerContent = document.querySelector(".logo-section");
-    if (headerContent) headerContent.style.display = "none";
-    
-    const headerContentButtons = document.querySelector(".option"); // Changed from #header-optiions-button
-    if (headerContentButtons) headerContentButtons.style.display = "none";
-
-    // Create selection header
-    const selectionHeader = document.createElement("div");
-    selectionHeader.className = "selection-header";
-    selectionHeader.style.width = "100%";
-    selectionHeader.style.margin = "2%";
-    selectionHeader.innerHTML = `
-      <div class="selection-actions">
-        <img id="cancel-selection-btn" src="assets/img/chatbot_img/Chevron Left.svg" alt="Back icon" class="header-selection-btn cancel logo_header_export">
-        <img id="select-all-btn" style="margin-left: auto;" src="assets/img/chatbot_img/Check All.svg" alt="Check_all icon" class="header-selection-btn logo_header_export">
-        <img id="export-selected-btn" style="margin-left: 5px;" src="assets/img/chatbot_img/export.svg" alt="export icon" class="header-selection-btn primary logo_header_export">
-        </div>
-    `;
-    
-    document.getElementById("chat-header").appendChild(selectionHeader);
-
-    // Add checkboxes to all messages
-    const userMessages = document.querySelectorAll(".user-message");
-    userMessages.forEach(msg => {
-        if (!msg.querySelector(".export-checkbox")) {
-            const checkbox = document.createElement("input");
-            checkbox.type = "checkbox";
-            checkbox.className = "export-checkbox";
-            checkbox.checked = false;
-            checkbox.style.marginRight = "10px";
-            checkbox.addEventListener("click", (e) => e.stopPropagation());
-
-            // Link answer on click
-            checkbox.addEventListener("change", () => {
-                const nextSibling = msg.nextElementSibling;
-                if (nextSibling && nextSibling.classList.contains("bot-message")) {
-                    nextSibling.classList.toggle("linked-selected", checkbox.checked);
-                }
-            });
-
-            msg.insertBefore(checkbox, msg.firstChild);
-        }
-    });
-
-    // Add event listeners
-    document.getElementById("select-all-btn").addEventListener("click", function(e) {
-        e.stopPropagation();
-        document.querySelectorAll(".export-checkbox").forEach(checkbox => {
-            checkbox.checked = true;
-        });
-    });
-
-    // Note: You had deselect-all-btn in the HTML but not in your new header
-    // Either add the button or remove this event listener
-    const deselectAllBtn = document.getElementById("deselect-all-btn");
-    if (deselectAllBtn) {
-        deselectAllBtn.addEventListener("click", function(e) {
-            e.stopPropagation();
-            document.querySelectorAll(".export-checkbox").forEach(checkbox => {
-                checkbox.checked = false;
-            });
-        });
-    }
-
-    document.getElementById("export-selected-btn").addEventListener("click", function(e) {
-        e.stopPropagation();
-        const selectedMessages = [];
-        const messages = document.querySelectorAll(".user-message, .bot-message");
-        
-        messages.forEach((msg, index) => {
-            const checkbox = msg.querySelector(".export-checkbox");
-            if (checkbox && checkbox.checked) {
-              const sender = "You";
-              const messageText = msg.textContent.trim();
-              selectedMessages.push({ index, sender, message: messageText });
-          
-              // Include next bot message if exists
-              const next = msg.nextElementSibling;
-              if (next && next.classList.contains("bot-message")) {
-                  selectedMessages.push({
-                      index: Array.from(messages).indexOf(next),
-                      sender: "Bot",
-                      message: next.textContent.trim()
-                  });
-              }
-          }          
-        });
-        
-        const t = translations[lang] || translations["en"];
-        if (selectedMessages.length === 0) {
-            alert(t.selectMessageAlert);
-            return;
-        }
-        
-        exportChat(selectedMessages.map(msg => msg.index));
-        disableMessageSelection();
-    });
-
-    document.getElementById("cancel-selection-btn").addEventListener("click", function(e) {
-        e.stopPropagation();
-        disableMessageSelection();
-    });
 }
-  
-    // Add cancel button
-
-    function disableMessageSelection() {
-      // Remove all checkboxes
-      document.querySelectorAll(".export-checkbox").forEach(checkbox => {
-        checkbox.remove();
-      });
-      
-      // Remove selection header
-      const selectionHeader = document.querySelector(".selection-header");
-      if (selectionHeader) selectionHeader.remove();
-      
-      // Show original header content
-      const headerContent = document.querySelector(".logo-section");
-      headerContent.style.display = "flex";
-      const headerContentbutton = document.querySelector("#header-optiions-button");
-      headerContentbutton.style.display = "flex";
-    }
-
-  optionsBtns.addEventListener("click", () => {
-    const t = translations[lang] || translations["en"];
-    if (confirm(t.clearChatConfirm)) {
-      localStorage.removeItem("chatHistory"); // Clear chat history
-      resetThreadId();
-      const chatMessages = document.getElementById("chat-message");
-      if (chatMessages) {
-        chatMessages.innerHTML = "";
-        chatMessages.remove();
-      }
-      toggleChatbotVisibility(false);
-      resetOptions();
-    }
-  });
-
-  window.addEventListener("beforeunload", resetThreadId);
-
-  const resetOptions = () => {
-    isFirstInteraction = true;
-    optionsExpanded = false;
-    optionsDiv.classList.remove("expanded");
-    cover_img.style.display = "block";
-    toggleOptionsBtn.classList.remove("arrow-down");
-    toggleOptionsBtn.classList.add("arrow-up");
-    arrowButton.style.display = "none"; // Hide the arrow button when chatbot is closed
-    const inputSection = document.querySelector(".options-container");
-    optionsDiv.classList.remove("options-side");
-    chatBody.classList.add("chat-body");
-    const optionsallButtons = document.querySelectorAll(".optionallbuttoncommon");
-    const optionbuttonimg = document.querySelectorAll(".optionbuttonimg");
-    optionbuttonimg.forEach((img) => {
-      if (img.classList.contains("option-button-img-down")) {
-        img.classList.replace("option-button-img-down", "option-button-img");
-      }
-    });
-    optionsallButtons.forEach((button) => {
-      if (button.classList.contains("option-all-button-down")) {
-        button.classList.replace("option-all-button-down", "option-all-button");
-      }
-    });
-    if (inputSection && optionsDiv) {
-      inputSection.appendChild(optionsDiv); // Move the options div back to its original position
-    }
-  };
-
-  const moveChatMessageBelowInput = () => {
-    if (isFirstInteraction) {
-      const optionsallButtons = document.querySelectorAll(".optionallbuttoncommon");
-      const optionbuttonimg = document.querySelectorAll(".optionbuttonimg");
-      optionbuttonimg.forEach((img) => {
-        if (img.classList.contains("option-button-img")) {
-          img.classList.replace("option-button-img", "option-button-img-down");
-        }
-      });
-      optionsallButtons.forEach((button) => {
-        if (button.classList.contains("option-all-button")) {
-          button.classList.replace("option-all-button", "option-all-button-down");
-        }
-      });
-      const inputSection = document.querySelector(".chat-footer");
-      if (inputSection && optionsDiv) {
-        inputSection.insertBefore(optionsDiv, inputSection.firstChild);
-        chatBody.classList.remove("chat-body");
-        isFirstInteraction = false; // Ensure it only happens on/.,ujhty5ytj/.ce
-        cover_img.style.display = "none";
-      } else {
-        console.error("Options or Input Section not found.");
-      }
-    }
-    arrowButton.style.display = "block";
-    optionsDiv.classList.add("options-side");
-    toggleOptionsBtn.addEventListener("click", toggleOptions);
-  };
-
-  // Event Listener for User Input Send Button
-  sendBtn.addEventListener("click", () => {
-    const userText = userInput.value.trim();
-    if (userText !== "") {
-      moveChatMessageBelowInput();
-      createchatmessage();
-      handleUserQuery(userText);
-      userInput.value = ""; // Clear input
-    }
-  });
-
-  // Chat log div
-  const createchatmessage = () => {
-    let chatMessages = document.getElementById("chat-message");
-
-    if (!chatMessages) {
-      // Only create the div if it doesn't already exist
-      chatMessages = document.createElement("div");
-      chatMessages.setAttribute("id", "chat-message");
-      chatMessages.style.marginBottom = "10px";
-      chatBody.prepend(chatMessages);
-    }
-  };
-
-  // Populate questions in the options div
-const populateQuestions = (questions) => {
-  questions.forEach((question) => {
-    const button = document.createElement("button");
-    button.classList.add("option-all-button");
-    button.classList.add("optionallbuttoncommon");
-    button.setAttribute("aria-label", `Option for ${question}`);
-    
-    const span = document.createElement("span");
-    span.classList.add("option-button-text");
-    span.textContent = question;
-
-    button.appendChild(span);
-
-    // Find the original English key for the translated question
-    let imageKey = question;
-    if (lang !== "en") {
-      // Find the English key that maps to this Hindi question
-      for (const [englishKey, hindiValue] of Object.entries(questionKeyMapping["hi"])) {
-        if (hindiValue === question) {
-          imageKey = englishKey;
-          break;
-        }
-      }
-    }
-
-    if (questionImages[imageKey]) {
-      const img = document.createElement("img");
-      img.src = questionImages[imageKey];
-      img.alt = `${question} image`;
-      img.classList.add("option-button-img");
-      img.classList.add("optionbuttonimg");
-      button.appendChild(img);
-    }
-    
-    optionsDiv.appendChild(button);
-    disableMessageSelection();
-    
-    // Add click listener to each button
-    button.addEventListener("click", () => handleUserQuery(question));
-  });
+document.getElementById('mic-btn').onclick = () => {
+  if (!SpeechRecognition) { cdotAlert(T.speechNotSupported,'Not Supported','🎤'); return; }
+  if (micActive) { recognition.stop(); return; }
+  recognition.start();
+  micActive = true;
+  document.getElementById('mic-btn').classList.add('active');
+  document.getElementById('user-input').placeholder = T.micListening;
 };
 
-  // Load questions and add them to options
-  const loadQuestions = async () => {
-    try {
-      const response = {
-        questions: Object.keys(chatData),
-      };
-      populateQuestions(response.questions);
-    } catch (error) {
-      console.error("Error loading questions:", error);
-    }
-  };
-  loadQuestions();
-
-  window.submitFeedback = function () {
-    const feedbackText = textarea.value.trim();
-    let feedback_question = document.getElementById("question-text");
-    let feedback_answer = document.getElementById("answer-text");
-    let feedback_message = document.getElementById("message-text");
-    const question = feedback_question.value.trim();
-    const answer = feedback_answer.value.trim();
-    const messageId = feedback_message.value.trim();
-    let threadId = localStorage.getItem("thread_id");
-    let token = localStorage.getItem("authToken");
-    submitFeedbackToAPI(question,answer,0,token, feedbackText, threadId,messageId);
-  };
-
-  function submitFeedbackToAPI(question,answer,rating,token, feedbackText, threadId,messageId) {
-    fetch("http://chatbot.cdot.in/api/submit-feedback/", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`
-      },
-      body: JSON.stringify(
-        { question:question,
-          answer:answer,
-          feedback_type: rating, 
-          feedback: feedbackText, 
-          thread_id: threadId })
-    })
-    .then(response => response.json())
-    .then(data => {
-      showPopup("Feedback submitted successfully");
-      removeFeedbackButtons(messageId);
-      saveRemovedButtons(messageId);
-      
-      if(rating == 0){
-        textarea.value = "";
-        submitButton.setAttribute("disabled", "true");
-        submitButton.classList.remove("enabled");
-        setTimeout(() => {
-          popupMessage.style.display = "none";
-           document.getElementById("feedback-popup").style.display = "none";
-           document.getElementById("chat-body").classList.remove("backdrop");
-        }, 2000);
-      }
-      setTimeout(() => {
-        popupMessage.style.display = "none";
-         document.getElementById("chat-body").classList.remove("backdrop");
-      }, 2000);    
-      })
-    .catch(error => {
-      console.error("Error submitting feedback:", error);
+/* ═══════════════════════════════════════════════════════════
+   LIKE / DISLIKE API
+═══════════════════════════════════════════════════════════ */
+async function submitLikeDislike(question, answer, rating, messageId) {
+  let token = getToken();
+  if (!token) token = await authenticateAndStoreToken();
+  const threadId = getThreadId();
+  try {
+    await fetch('http://chatbot.cdot.in/api/submit-feedback/', {
+      method:'POST',
+      headers:{ 'Content-Type':'application/json', Authorization:`Bearer ${token}` },
+      body: JSON.stringify({ question, answer, feedback_type:rating, feedback:'', thread_id:threadId })
     });
-  }
+  } catch(e) { console.error('Feedback API error:', e); }
+}
 
-  const saveRemovedButtons = (messageId) => {
-      let removedButtons = JSON.parse(localStorage.getItem("removedButtons")) || [];
-      
-      if (!removedButtons.includes(messageId)) {
-          removedButtons.push(messageId);
-          localStorage.setItem("removedButtons", JSON.stringify(removedButtons));
-      }
-  };
+/* ═══════════════════════════════════════════════════════════
+   FEEDBACK POPUP
+═══════════════════════════════════════════════════════════ */
+function openFeedback(q, a, id) {
+  document.getElementById('fb-question').value = q;
+  document.getElementById('fb-answer').value = a;
+  document.getElementById('fb-msgid').value = id;
+  document.getElementById('feedback-popup').classList.add('open');
+}
+function closeFeedback() {
+  document.getElementById('feedback-popup').classList.remove('open');
+}
+document.getElementById('feedback-text').oninput = function() {
+  document.getElementById('submit-feedback').disabled = this.value.trim().length < 2;
+};
+function submitFeedback() {
+  const feedbackText = document.getElementById('feedback-text').value.trim();
+  const question = document.getElementById('fb-question').value;
+  const answer = document.getElementById('fb-answer').value;
+  const threadId = getThreadId();
+  const token = getToken();
+  fetch('http://chatbot.cdot.in/api/submit-feedback/', {
+    method:'POST',
+    headers:{ 'Content-Type':'application/json', Authorization:`Bearer ${token}` },
+    body: JSON.stringify({ question, answer, feedback_type:0, feedback:feedbackText, thread_id:threadId })
+  }).catch(e => console.error('Feedback submit error:', e));
+  cdotAlert('Thank you for your feedback! We\'ll use it to improve CIVA.','Feedback Received','🙏');
+  closeFeedback();
+  document.getElementById('feedback-text').value = '';
+  document.getElementById('submit-feedback').disabled = true;
+}
 
-
-  
-
-  const copyMessage = (message) => {
-    const t = translations[lang] || translations["en"];
-    if (navigator.clipboard && navigator.clipboard.writeText) {
-      navigator.clipboard
-        .writeText(message)
-        .then(() => alert(t.messageCopied))
-        .catch((err) => console.error("Failed to copy message:", err));
-    } else {
-      // Fallback for unsupported browsers
-      const textArea = document.createElement("textarea");
-      textArea.value = message;
-      textArea.style.position = "fixed"; // Avoid scrolling
-      document.body.appendChild(textArea);
-      textArea.focus();
-      textArea.select();
-      try {
-        document.execCommand("copy");
-        alert(t.messageCopied);
-      } catch (err) {
-        console.error("Fallback: Unable to copy", err);
-      }
-      document.body.removeChild(textArea);
-    }
-  };  
-
-  const calculateTimeLapse = (timestamp) => {
-    const now = new Date();
-    const messageTime = new Date(timestamp);
-    const timeDiff = Math.floor((now - messageTime) / 1000); // Difference in seconds
-
-    if (timeDiff < 60) return "just now";
-    if (timeDiff < 3600) return `${Math.floor(timeDiff / 60)} min ago`;
-    if (timeDiff < 86400) return `${Math.floor(timeDiff / 3600)} hr ago`;
-    if (timeDiff < 172800) return `1 day ago`;
-    return `${Math.floor(timeDiff / 86400)} days ago`;
-  };
-
-  const updateTimestamps = () => {
-    const timestampElements = document.querySelectorAll(".timestamp");
-    timestampElements.forEach((element) => {
-      const timestamp = element.getAttribute("data-timestamp");
-      if (timestamp) {
-        element.textContent = calculateTimeLapse(timestamp);
-      }
-    });
-  };
-
-  const parseMarkdown = (message) => {
-    // First, convert <br> tags to newlines for proper markdown processing
-    message = message.replace(/[=*#@%&]/g, "");
-    
-    // Convert line breaks to HTML
-    message = message.replace(/\n/g, '<br>');
-    
-    // Simple markdown parsing for bold text
-    message = message.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-    
-    // Simple markdown parsing for italic text
-    message = message.replace(/\*(.*?)\*/g, '<em>$1</em>');
-    
-    // Handle lists
-    message = message.replace(/^- (.*?)(<br>|$)/g, '<li>$1</li>');
-    message = message.replace(/(<li>.*<\/li>)/s, '<ul>$1</ul>');
-    
-  
-    // Parse the markdown safely
-    if (typeof marked.marked === "function") {
-      return marked.marked(message);
-    } else if (typeof marked === "function") {
-      return marked(message);
-    } else {
-      console.error("Marked.js is not loaded correctly.");
-      return message; // Return raw text if marked.js fails
-    }
-  };
-  
-  
-
-  const appendMessage = (
-    sender,
-    message,
-    timestamp = null,
-    skipLocalStorage = false, 
-    query = "",
-    message_Id,
-  ) => {
-    let chatMessages = document.getElementById("chat-message");
-
-    if (!chatMessages) {
-      chatMessages = document.createElement("div");
-      chatMessages.setAttribute("id", "chat-message");
-      chatMessages.style.maxHeight = "491px";
-      chatMessages.style.marginBottom = "10px";
-      chatBody.prepend(chatMessages);
-    }
-
-    //   if (!messageDiv) {
-    const messageDiv = document.createElement("div");
-    const now = new Date();
-    const messageTimestamp = timestamp || now.toISOString();
-    // const timeString = timestamp || now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-    const timeLapse = calculateTimeLapse(messageTimestamp);
-    const botmessageicon = document.createElement("div");
-    botmessageicon.className = sender === "You" ? "user-image" : "bot-image";
-    const botimg = document.createElement("img");
-    botimg.src = sender === "You" ? "assets/img/chatbot_img/User.svg" : "assets/img/chatbot_img/bot.jpeg"; // Replace with the actual path to your image
-    botimg.alt = "Logo";
-    botimg.style.width = sender === "You" ? "20px" : "16px"; 
-    botimg.style.height = sender === "You" ? "20px" : "16px";
-    botimg.style.cursor = "pointer"
-    botmessageicon.appendChild(botimg);
-    // Set class based on sender
-    messageDiv.className = sender === "You" ? "user-message" : "bot-message";
-    messageDiv.role = "article";
-
-
-    // Function to truncate a message
-    const truncateMessage = (msg, wordLimit) => {
-      const words = msg.split(" ");
-      if (words.length > wordLimit) {
-        return {
-          truncated: words.slice(0, wordLimit).join(" ") + " ...",
-          original: msg,
-          isTruncated: true,
-        };
-      }
-      return { truncated: null, original: msg, isTruncated: false };
-    };
-    // Add message content
-    const messageContent = document.createElement("span");
-    const { truncated, original, isTruncated } = truncateMessage(message, 40);
-    messageContent.innerHTML = isTruncated ? parseMarkdown(truncated) : parseMarkdown(original);
-    messageDiv.appendChild(messageContent);
-
-    if (isTruncated) {
-      const t = translations[lang] || translations["en"];
-      const toggleButton = document.createElement("button");
-      toggleButton.textContent = t.readMore;
-      toggleButton.style.border = "none";
-      toggleButton.style.backgroundColor = "transparent";
-      toggleButton.style.color = "blue";
-      toggleButton.style.cursor = "pointer";
-      toggleButton.style.marginLeft = "5px";
-
-      let isExpanded = false; // Track toggle state
-
-      toggleButton.addEventListener("click", () => {
-        if (isExpanded) {
-          messageContent.innerHTML = parseMarkdown(truncated);
-          toggleButton.textContent = t.readMore;
-        } else {
-          messageContent.innerHTML = parseMarkdown(original);
-          toggleButton.textContent = t.readLess;
-        }
-        isExpanded = !isExpanded; // Toggle the state
-      });
-
-      messageDiv.appendChild(toggleButton);
-    }
-
-    // Add timestamp
-
-    if (sender !== "You") {
-      // Add copy button for bot messages
-      const timestampDiv = document.createElement("div");
-      timestampDiv.className = "timestamp";
-      timestampDiv.textContent = timeLapse;
-      timestampDiv.setAttribute("data-timestamp", messageTimestamp);
-      const copyButton = document.createElement("button");
-      copyButton.className = "copy-button";
-
-      if(!message_Id){
-      var message_Id = `message-${Date.now()}`;
-      }
-      messageDiv.setAttribute("data-id", message_Id);
-      const copyIcon = document.createElement("img");
-      copyIcon.src = "assets/img/chatbot_img/copy.svg"; // Replace with the actual path to your image
-      copyIcon.alt = "Copy";
-      copyIcon.style.width = "16px"; // Set size of the icon
-      copyIcon.style.height = "16px";
-      copyIcon.style.cursor = "pointer"
-
-      const LikeButton = document.createElement("button");
-      LikeButton.className = "like-button";
-
-      const LikeIcon = document.createElement("img");
-      LikeIcon.src = "assets/img/chatbot_img/like.svg"; // Replace with the actual path to your image
-      LikeIcon.alt = "Like";
-      LikeIcon.style.width = "16px"; // Set size of the icon
-      LikeIcon.style.height = "16px";
-      LikeIcon.style.cursor = "pointer"
-
-      const DislikeButton = document.createElement("button");
-      DislikeButton.className = "dislike-button";
-
-      const dislikeIcon = document.createElement("img");
-      dislikeIcon.src = "assets/img/chatbot_img/dislike.svg"; // Replace with the actual path to your image
-      dislikeIcon.alt = "Dislike";
-      dislikeIcon.style.width = "16px"; // Set size of the icon
-      dislikeIcon.style.height = "16px";
-      dislikeIcon.style.cursor = "pointer"
-
-      copyButton.appendChild(copyIcon);
-      LikeButton.appendChild(LikeIcon);
-      DislikeButton.appendChild(dislikeIcon);
-
-      copyButton.onclick = () => copyMessage(message.replace(/[=*#@%&]/g, ""));
-
-      LikeButton.onclick = () => likeMessage(query,message.replace(/[=*#@%&]/g), message_Id);
-
-      DislikeButton.onclick = () => dislikeMessage(query,message.replace(/[=*#@%&]/g), message_Id);
-
-
-// Add speaker button for bot messages
-const speakerButton = document.createElement("button");
-speakerButton.className = "speaker-button";
-speakerButton.title = "Read aloud";
-
-const speakerIcon = document.createElement("img");
-speakerIcon.src = "assets/img/chatbot_img/Voice.svg";
-speakerIcon.alt = "Speak";
-speakerIcon.style.width = "16px";
-speakerIcon.style.height = "16px";
-speakerIcon.style.cursor = "pointer";
-speakerButton.appendChild(speakerIcon);
-
-// Wire up the click handler — reads the bot message aloud
-speakerButton.addEventListener("click", function(e) {
+/* ═══════════════════════════════════════════════════════════
+   EXPORT
+═══════════════════════════════════════════════════════════ */
+function toggleExportMenu(e) {
   e.stopPropagation();
-  const cleanText = message
-    .replace(/<br\s*\/?>/gi, ". ")
-    .replace(/<[^>]*>/g, "")
-    .replace(/[=*#@%&]/g, "")
-    .trim();
-  speakMessage(cleanText, speakerButton, speakerIcon);
+  const menu = document.getElementById('export-menu');
+  menu.style.display = menu.style.display==='none'||!menu.style.display ? 'block' : 'none';
+}
+document.addEventListener('click', () => {
+  const menu = document.getElementById('export-menu');
+  if (menu) menu.style.display = 'none';
 });
-      // Wrap timestamp and copy button together
-      const timestampCopyDiv = document.createElement("div");
-      timestampCopyDiv.className = "timestamp-copy";
-      timestampCopyDiv.appendChild(timestampDiv);
-      timestampCopyDiv.appendChild(copyButton);
-      timestampCopyDiv.appendChild(LikeButton);
-      timestampCopyDiv.appendChild(DislikeButton);
-      timestampCopyDiv.appendChild(speakerButton);
 
-      messageDiv.appendChild(timestampCopyDiv);
-      messageDiv.appendChild(botmessageicon);
-    } else {
-      const timestampDiv = document.createElement("div");
-      timestampDiv.className = "timestampquery";
-      timestampDiv.textContent = timeLapse;
-      timestampDiv.setAttribute("data-timestamp", messageTimestamp);
-      const copyButton = document.createElement("button");
-      copyButton.className = "copy-button-query";
-      if(!message_Id){
-        var message_Id = `message-${Date.now()}`;
-      }
-      messageDiv.setAttribute("data-id", message_Id);
-      const copyIcon = document.createElement("img");
-      copyIcon.src = "assets/img/chatbot_img/copy.svg"; 
-      copyIcon.alt = "Copy";
-      copyIcon.style.width = "16px"; 
-      copyIcon.style.height = "16px";
-      copyIcon.style.cursor = "pointer";
-      copyButton.appendChild(copyIcon);
-      copyButton.onclick = () => copyMessage(message.replace(/[=*#@%&]/g, ""));
-      const timestampCopyDiv = document.createElement("div");
-      timestampCopyDiv.className = "timestamp-copy";
-      timestampCopyDiv.appendChild(timestampDiv);
-      timestampCopyDiv.appendChild(copyButton);
-      messageDiv.appendChild(timestampCopyDiv);
-      messageDiv.appendChild(timestampDiv);
-      messageDiv.appendChild(botmessageicon);
-    }
-
-    // Add the new message to the chat container
-    chatMessages.appendChild(messageDiv);
-
-    // Scroll to the latest message
-    chatMessages.scrollTop = chatMessages.scrollHeight;
-
-    if (!skipLocalStorage) {
-      const storedChat = JSON.parse(localStorage.getItem("chatHistory")) || [];
-      storedChat.push({ sender, message, timestamp: messageTimestamp, query,message_Id });
-      localStorage.setItem("chatHistory", JSON.stringify(storedChat));
-    }
-  };
-
-  const removeFeedbackButtons = (messageId) => {
-    const messageDiv = document.querySelector(`.bot-message[data-id="${messageId}"]`);
-    if (messageDiv) {
-        const likeButton = messageDiv.querySelector(".like-button");
-        const dislikeButton = messageDiv.querySelector(".dislike-button");
-        const copyButton = messageDiv.querySelector(".copy-button");
-
-        if (likeButton) likeButton.remove();
-        if (dislikeButton) dislikeButton.remove();
-
-        // ✅ Add class to copy button's parent div
-        if (copyButton) {
-              copyButton.classList.add("remove_feedback_button");
+function startSelectiveExport() {
+  document.getElementById('export-menu').style.display = 'none';
+  selectionMode = true;
+  document.getElementById('selection-header').classList.add('active');
+  updateSelCount();
+  document.querySelectorAll('.msg-row').forEach((row, idx) => {
+    row.classList.add('selectable');
+    row.dataset.selIdx = idx;
+    if (!row.querySelector('.msg-checkbox')) {
+      const cb = document.createElement('input');
+      cb.type = 'checkbox'; cb.className = 'msg-checkbox';
+      cb.addEventListener('change', () => {
+        row.classList.toggle('selected', cb.checked);
+        const next = row.nextElementSibling;
+        if (next && next.classList.contains('bot')) {
+          next.classList.toggle('selected', cb.checked);
+          const nextCb = next.querySelector('.msg-checkbox');
+          if (nextCb) nextCb.checked = cb.checked;
         }
-    }
-};
-
-
-  const likeMessage = (question,answer,messageId) => {
-    event.stopPropagation(); 
-    console.log("question:",question);
-    console.log("answer:",answer);
-    console.log("Message ID:", messageId); // Debugging log
-    document.getElementById("chat-body").classList.add("backdrop");
-    let threadId = localStorage.getItem("thread_id");
-    let token = localStorage.getItem("authToken");
-    submitFeedbackToAPI(question,answer,1,token, "", threadId,messageId);
-}
-
-const dislikeMessage = (question,answer,messageId) => {
-  let feedback_question = document.getElementById("question-text");
-  let feedback_answer = document.getElementById("answer-text");
-  let feedback_message = document.getElementById("message-text");
-  feedback_question.value = question;
-  feedback_answer.value = answer;
-  feedback_message.value = messageId;  
-  let popup = document.getElementById("feedback-popup");
-  popup.style.bottom = "5px";
-  popup.style.display = "block";
-  document.getElementById("chat-body").classList.add("backdrop");
-}
-
-  setInterval(() => {
-    updateTimestamps();
-  }, 60000);
-
-  const sanitizeInput = (input) => {
-    const div = document.createElement("div");
-    div.textContent = input; // Prevent script injection
-    return div.innerHTML;
-  };
-  function scrollToBottom() {
-    const chatMessageContainer = document.getElementById("chat-message");
-    chatMessageContainer.scrollTop = chatMessageContainer.scrollHeight;
-  }
-  const loadChatFromLocalStorage = () => {
-    const storedChat = JSON.parse(localStorage.getItem("chatHistory")) || [];
-    const removedButtons = JSON.parse(localStorage.getItem("removedButtons")) || [];
-
-    if (storedChat.length > 0) { 
-      storedChat.forEach((chat) => {
-        // const sanitizedMessage = sanitizeInput(chat.message);
-        appendMessage(chat.sender, chat.message, chat.timestamp, true,chat.query,chat.message_Id);
-        
-        setTimeout(() => {
-          if (chat.message_Id && removedButtons.includes(chat.message_Id)) {
-            removeFeedbackButtons(chat.message_Id);
-          }
-        }, 100);
+        updateSelCount();
       });
-      moveChatMessageBelowInput();
-      setTimeout(() => {
-        const chatMessages = document.getElementById("chat-message");
-        if (chatMessages) {
-          chatMessages.scrollTop = chatMessages.scrollHeight;
-        }
-      }, 0);
-    }
-    updateTimestamps();
-    // scrollToBottom();
-  };
-
-  // Replace the exportChat function with this improved version
-  const exportChat = (selectedIndices = null) => {
-    // Create a temporary div to hold the chat content
-    const tempDiv = document.createElement('div');
-    tempDiv.style.position = 'absolute';
-    tempDiv.style.left = '-9999px';
-    tempDiv.style.width = '800px';
-    tempDiv.style.padding = '20px';
-    tempDiv.style.fontFamily = 'Noto Sans Devanagari, Arial, sans-serif';
-    tempDiv.style.backgroundColor = 'white';
-    tempDiv.style.color = 'black';
-    
-    // Add title
-    const title = document.createElement('h1');
-    title.textContent = 'Chat Export';
-    title.style.textAlign = 'center';
-    title.style.marginBottom = '20px';
-    title.style.fontFamily = 'Noto Sans Devanagari, Arial, sans-serif';
-    tempDiv.appendChild(title);
-    
-    // Get chat history
-    const chatMessages = JSON.parse(localStorage.getItem("chatHistory")) || [];
-    
-    // If selectedIndices is provided, filter messages
-    const messagesToExport = selectedIndices 
-      ? chatMessages.filter((_, index) => selectedIndices.includes(index))
-      : chatMessages;
-    
-    // Add each message to the temp div
-    messagesToExport.forEach((msg) => {
-      const messageDiv = document.createElement('div');
-      messageDiv.style.marginBottom = '15px';
-      messageDiv.style.fontFamily = 'Noto Sans Devanagari, Arial, sans-serif';
-      
-      const senderSpan = document.createElement('strong');
-      senderSpan.textContent = `[${new Date(msg.timestamp).toLocaleString()}] ${msg.sender}: `;
-      senderSpan.style.fontFamily = 'Noto Sans Devanagari, Arial, sans-serif';
-      
-      const messageSpan = document.createElement('span');
-      // Remove HTML tags and format for PDF export
-
-      // Remove <br> tags and replace with newlines for better formatting
-      let cleanMessage = msg.message.replace(/<br\s*\/?>/gi, '\n').replace(/[=*#$%]/g, "").trim();
-      
-      messageSpan.textContent = cleanMessage;
-      messageSpan.style.fontFamily = 'Noto Sans Devanagari, Arial, sans-serif';
-      messageSpan.style.whiteSpace = 'pre-line'; // Preserve newlines
-      
-      messageDiv.appendChild(senderSpan);
-      messageDiv.appendChild(messageSpan);
-      tempDiv.appendChild(messageDiv);
-    });
-    
-    // Add to document
-    document.body.appendChild(tempDiv);
-    
-    // Convert to canvas then to PDF with higher quality
-    html2canvas(tempDiv, {
-      scale: 2, // Higher resolution
-      useCORS: true,
-      logging: false,
-      backgroundColor: '#ffffff'
-    }).then(canvas => {
-      const imgData = canvas.toDataURL('image/jpeg', 0.9);
-      const { jsPDF } = window.jspdf;
-      const doc = new jsPDF('p', 'mm', 'a4');
-      
-      const imgWidth = 190;
-      const pageHeight = 280;
-      const imgHeight = canvas.height * imgWidth / canvas.width;
-      let heightLeft = imgHeight;
-      let position = 10;
-      
-      // Add first page
-      doc.addImage(imgData, 'JPEG', 10, position, imgWidth, imgHeight);
-      heightLeft -= pageHeight;
-      
-      // Add additional pages if needed
-      while (heightLeft >= 0) {
-        position = heightLeft - imgHeight + 10;
-        doc.addPage();
-        doc.addImage(imgData, 'JPEG', 10, position, imgWidth, imgHeight);
-        heightLeft -= pageHeight;
-      }
-      
-      // Save the PDF
-      doc.save('chat_export.pdf');
-      
-      // Clean up
-      document.body.removeChild(tempDiv);
-    }).catch(error => {
-      console.error('Error generating PDF:', error);
-      document.body.removeChild(tempDiv);
-      
-      // Fallback to text-based PDF if html2canvas fails
-      fallbackExport(selectedIndices);
-    });
-  };
-
-  // Fallback export function if html2canvas fails
-  const fallbackExport = (selectedIndices = null) => {
-    const { jsPDF } = window.jspdf;
-    const doc = new jsPDF();
-    
-    // Set general styles and margins
-    const marginLeft = 15;
-    const marginRight = 15;
-    const pageWidth = doc.internal.pageSize.width;
-    const pageHeight = doc.internal.pageSize.height;
-    const maxLineWidth = pageWidth - marginLeft - marginRight;
-    const lineHeight = 10;
-    const sectionSpacing = 5;
-    let yPosition = 20;
-
-    // Title
-    doc.setFont("helvetica", "bold");
-    doc.setFontSize(14);
-    doc.text("Chat Export", pageWidth / 2, yPosition, { align: "center" });
-    yPosition += 15;
-
-    // Get chat history
-    const chatMessages = JSON.parse(localStorage.getItem("chatHistory")) || [];
-    
-    // If selectedIndices is provided, filter messages
-    const messagesToExport = selectedIndices 
-      ? chatMessages.filter((_, index) => selectedIndices.includes(index))
-      : chatMessages;
-
-    const cleanText = (text) => {
-      // Remove <br> tags and replace with spaces for better text flow
-      return text.replace(/<br\s*\/?>/gi, ' ').replace(/[=*#$%]/g, "").trim();
-    };
-    // Process and format each message
-    messagesToExport.forEach((msg) => {
-      const sender = msg.sender;
-      const message = cleanText(msg.message);
-      const timestamp = new Date(msg.timestamp).toLocaleString();
-
-      // Set sender and timestamp styles
-      doc.setFont("helvetica", "bold");
-      doc.setFontSize(12);
-      doc.setTextColor(40, 40, 40);
-
-      const formattedHeader = `[${timestamp}] ${sender}:`;
-      doc.text(formattedHeader, marginLeft, yPosition);
-
-      // Wrap and add the message text
-      doc.setFont("helvetica", "normal");
-      doc.setFontSize(11);
-      doc.setTextColor(60, 60, 60);
-
-      // For Hindi text, we need to handle it differently
-      if (lang === "hi") {
-        // Try to use a different approach for Hindi text
-        try {
-          // Split Hindi text into chunks that fit the page width
-          const hindiTextChunks = splitHindiText(message, maxLineWidth, doc);
-          
-          hindiTextChunks.forEach((chunk) => {
-            if (yPosition + lineHeight > pageHeight - 10) {
-              doc.addPage();
-              yPosition = 20;
-            }
-            doc.text(chunk, marginLeft, yPosition);
-            yPosition += lineHeight;
-          });
-        } catch (error) {
-          console.error("Error rendering Hindi text:", error);
-          // Fallback to regular text splitting
-          const wrappedMessage = doc.splitTextToSize(message, maxLineWidth);
-          yPosition += lineHeight;
-          wrappedMessage.forEach((line) => {
-            if (yPosition + lineHeight > pageHeight - 10) {
-              doc.addPage();
-              yPosition = 20;
-            }
-            doc.text(line, marginLeft, yPosition);
-            yPosition += lineHeight;
-          });
-        }
-      } else {
-        // Regular text handling for English
-        const wrappedMessage = doc.splitTextToSize(message, maxLineWidth);
-        yPosition += lineHeight;
-        wrappedMessage.forEach((line) => {
-          if (yPosition + lineHeight > pageHeight - 10) {
-            doc.addPage();
-            yPosition = 20;
-          }
-          doc.text(line, marginLeft, yPosition);
-          yPosition += lineHeight;
-        });
-      }
-
-      yPosition += sectionSpacing;
-    });
-
-    // Save the PDF
-    doc.save("chat_export_fallback.pdf");
-  };
-
-  // Helper function to split Hindi text properly
-  function splitHindiText(text, maxWidth, doc) {
-    const words = text.split(' ');
-    const lines = [];
-    let currentLine = '';
-    
-    for (let i = 0; i < words.length; i++) {
-      const word = words[i];
-      const testLine = currentLine ? currentLine + ' ' + word : word;
-      const testWidth = doc.getTextWidth(testLine);
-      
-      if (testWidth > maxWidth && currentLine !== '') {
-        lines.push(currentLine);
-        currentLine = word;
-      } else {
-        currentLine = testLine;
-      }
-    }
-    
-    if (currentLine) {
-      lines.push(currentLine);
-    }
-    
-    return lines;
-  }
-
-
-
-  // Append a temporary message and return its unique ID
-  const appendTemporaryMessage = (sender, message) => {
-    const chatMessages = document.getElementById("chat-message");
-
-    const tempMessageDiv = document.createElement("div");
-    const tempMessageId = `temp-${Date.now()}`; // Unique ID for the temporary message
-    tempMessageDiv.id = tempMessageId;
-    tempMessageDiv.className =
-      sender === "You" ? "user-message" : "bot-message";
-    tempMessageDiv.innerHTML = parseMarkdown(message);
-
-    chatMessages.appendChild(tempMessageDiv);
-    chatMessages.scrollTop = chatMessages.scrollHeight; // Scroll to the latest message
-
-    return tempMessageId; // Return the ID for further manipulation
-  };
-
-  // Remove a temporary message by its ID
-  const removeTemporaryMessage = (messageId) => {
-    const tempMessageDiv = document.getElementById(messageId);
-    if (tempMessageDiv) {
-      tempMessageDiv.remove();
-    }
-  };
-
-
-
-  // Handle user query
-  const handleUserQuery = async (query) => {
-    disableMessageSelection();
-    let isUserScrolling = false; // Flag to track user scrolling
-    let autoScrollTimeout;
-    // Disable user input and buttons
-    const disableElements = (state) => {
-      userInput.disabled = state;
-      sendBtn.disabled = state;
-      micBtn.disabled = state;
-      userInput.style.backgroundColor = state ? "#d3d3d3" : "";
-      userInput.style.color = state ? "#a9a9a9" : "";
-      userInput.style.cursor = state ? "not-allowed" : "";
-  
-      const optionsAllButtons = document.querySelectorAll(".optionallbuttoncommon");
-      optionsAllButtons.forEach((button) => {
-        button.disabled = state;
-        button.style.backgroundColor = state ? "#d3d3d3" : "";
-        button.style.color = state ? "#a9a9a9" : "";
-      });
-    };
-    if (!isFirstInteraction) {
-    const chatMessage = document.getElementById("chat-message");
-    chatMessage.addEventListener("scroll", () => {
-      clearTimeout(autoScrollTimeout);
-      isUserScrolling = true;
-  
-      autoScrollTimeout = setTimeout(() => {
-        isUserScrolling = false; // Reset after user stops interacting
-      }, 2000); // Adjust timeout as needed
-    });
-  
-    const scrollToBottom = () => {
-      if (!isUserScrolling) {
-        chatMessage.scrollTop = chatMessage.scrollHeight;
-      }
-    };
-  }
-  
-    disableElements(true);
-  
-    if (chatData[query]) {
-      moveChatMessageBelowInput();
-      createchatmessage();
-    }
-  
-    appendMessage("You", query);
-    const chatMessage = document.getElementById("chat-message");
-    chatMessage.addEventListener("scroll", () => {
-      clearTimeout(autoScrollTimeout);
-      isUserScrolling = true;
-  
-      autoScrollTimeout = setTimeout(() => {
-        isUserScrolling = false; // Reset after user stops interacting
-      }, 2000); // Adjust timeout as needed
-    });
-  
-    const scrollToBottom = () => {
-      if (!isUserScrolling) {
-        chatMessage.scrollTop = chatMessage.scrollHeight;
-      }
-    };
-    const threadId = getThreadId();
-    const streamingMessageId = appendTemporaryMessage("Bot", "");
-  
-    try {
-      const typingIndicator = document.createElement("div");
-      typingIndicator.className = "typing-indicator";
-      typingIndicator.innerHTML = `<span>.</span><span>.</span><span>.</span>`;
-      document.getElementById(streamingMessageId).appendChild(typingIndicator);
-      const botmessageicon = document.createElement("div");
-      botmessageicon.className = "bot-image";
-      const botimg = document.createElement("img");
-      botimg.src = sender = "assets/img/chatbot_img/bot.jpeg"; // Replace with the actual path to your image
-      botimg.alt = "Logo";
-      botimg.style.width =  "16px"; 
-      botimg.style.height =  "16px";
-      botimg.style.cursor = "pointer"
-      botmessageicon.appendChild(botimg);
-      document.getElementById(streamingMessageId).appendChild(botmessageicon);
-  
-      let token = localStorage.getItem("authToken");
-      if (!token) {
-        const email = "admin@cdot.in";
-        const password = "admin";
-        token = await authenticateAndStoreToken(email, password);
-      }
-  
-      const response = await fetch("http://chatbot.cdot.in/api/chatbot/", {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          human_text: query,
-          thread_id: threadId,
-        }),
-      });
-  
-      if (!response.ok) {
-        throw new Error(`API Error: ${response.status} ${response.statusText}`);
-      }
-      const reader = response.body.getReader();
-      const decoder = new TextDecoder("utf-8");
-      let streamingMessage = "";
-      while (true) {
-        const { value, done } = await reader.read();
-        if (done) break;
-  
-        const chunk = decoder.decode(value, { stream: true });
-        streamingMessage += chunk;
-  
-        const tempMessageDiv = document.querySelector(`#${streamingMessageId} > div.typing-indicator`);
-        if (tempMessageDiv) {
-          tempMessageDiv.innerHTML = parseMarkdown(streamingMessage);
-          scrollToBottom();
-          document.querySelector(`.typing-indicator`).style.display = "unset";
-        }
-      }
-  
-      if (streamingMessage.trim().endsWith("NO")) {
-        const t = translations[lang] || translations["en"];
-        streamingMessage = `${t.noInformation} "${query}". ${lang === "hi" ? "कृपया एक परिष्कृत प्रश्न के साथ पुनः प्रयास करें या कोई अन्य प्रश्न पूछें।" : "Therefore, please try again with a refined question or ask a different question."}`;
-      }
-  
-      removeTemporaryMessage(streamingMessageId);
-      appendMessage("Bot", streamingMessage, null, false,query);
-    } catch (error) {
-      console.error("Error calling the API:", error);
-      removeTemporaryMessage(streamingMessageId);
-      const t = translations[lang] || translations["en"];
-
-      appendMessage("Bot", t.serviceUnavailable);
-    } finally {
-      disableElements(false);
-  
-      setTimeout(() => {
-        userInput.focus();
-      }, 50);
-  
-      scrollToBottom();
-    }
-  };
-
-  userInput.addEventListener("keydown", (event) => {
-    if (event.key === "Enter") {
-      event.preventDefault(); // Prevent the default behavior (e.g., form submission)
-      const query = userInput.value.trim();
-
-      if (query) {
-        moveChatMessageBelowInput();
-        createchatmessage();
-        handleUserQuery(query);
-        userInput.value = ""; // Clear the input field after sending
-      }
+      row.insertBefore(cb, row.firstChild);
     }
   });
-userInput.addEventListener("input", () => {
-  userInput.value = userInput.value.replace(
-    /[^\u0900-\u097Fa-zA-Z0-9\s.,?!-]/g,
-    ""
-  );
-});
-
-  function adjustChatBodyHeight() {
-    const chatBody = document.getElementById('chat-body');
-    const visualViewportHeight = window.visualViewport.height; // Get the actual height of the visible viewport
-
-    // Check if the search bar (browser navbar) is visible or hidden
-    const isNavbarVisible = visualViewportHeight < window.innerHeight;
-
-    if (isMobileView()) {
-        // Apply height adjustments for mobile view
-        if (isNavbarVisible) {
-            chatBody.style.height = `calc(${visualViewportHeight}px - 378px - env(safe-area-inset-bottom))`;
-        } else {
-            chatBody.style.height = `calc(${visualViewportHeight}px - 318px - env(safe-area-inset-bottom))`;
-        }
-    } else {
-        // Restore default height for desktop
-        chatBody.style.height = "480px"; // Reset to original height
-    }
 }
 
-// Function to check if the viewport is mobile
-function isMobileView() {
-    return window.innerWidth <= 768; // Adjust the breakpoint as needed
+function updateSelCount() {
+  const n = document.querySelectorAll('.msg-row.selected').length;
+  document.getElementById('sel-count').textContent = T.selCount(n);
+}
+function selectAll() {
+  document.querySelectorAll('.msg-row.selectable').forEach(row => {
+    row.classList.add('selected');
+    const cb = row.querySelector('.msg-checkbox');
+    if (cb) cb.checked = true;
+  });
+  updateSelCount();
+}
+function cancelSelection() {
+  selectionMode = false;
+  document.getElementById('selection-header').classList.remove('active');
+  document.querySelectorAll('.msg-row').forEach(row => {
+    row.classList.remove('selectable','selected');
+    const cb = row.querySelector('.msg-checkbox');
+    if (cb) cb.remove();
+  });
+}
+function exportSelected() {
+  const selected = [...document.querySelectorAll('.msg-row.selected')];
+  if (!selected.length) { cdotAlert(T.selectMessageAlert,'No Selection','📋'); return; }
+  let html = `<!DOCTYPE html><html><head><meta charset="UTF-8"><style>body{font-family:Arial,sans-serif;max-width:700px;margin:40px auto;color:#1a2233;font-size:14px}h1{color:#0056A7;border-bottom:2px solid #0056A7;padding-bottom:8px;font-size:20px}.ts{color:#888;font-size:11px;margin-bottom:20px}.msg{margin:10px 0;padding:10px 14px;border-radius:10px;max-width:80%}.bot-msg{background:#e8f4fd;border:1px solid #c5e0f5;margin-right:auto}.user-msg{background:#0056A7;color:#fff;margin-left:auto;text-align:right}.sender{font-size:10px;font-weight:700;margin-bottom:4px;opacity:.7;text-transform:uppercase;letter-spacing:.5px}hr{border:none;border-top:1px solid #e2e8f0;margin:16px 0}</style></head><body><h1>CIVA – Selected Messages Export</h1><div class="ts">Exported on ${new Date().toLocaleString()}</div><hr>`;
+  selected.forEach(row => {
+    const isUser = row.classList.contains('user');
+    const bub = row.querySelector('.bubble');
+    if (!bub) return;
+    const clone = bub.cloneNode(true);
+    clone.querySelectorAll('button,.bubble-meta,.msg-checkbox').forEach(b=>b.remove());
+    html += `<div class="msg ${isUser?'user-msg':'bot-msg'}"><div class="sender">${isUser?'You':'CIVA'}</div><div>${clone.innerHTML}</div></div>`;
+  });
+  html += `</body></html>`;
+  const win = window.open('','_blank','width=800,height=600');
+  win.document.write(html); win.document.close();
+  win.onload = () => { win.print(); };
+  cancelSelection();
 }
 
-// Run on load
-adjustChatBodyHeight();
+function exportChatAsPDF() {
+  document.getElementById('export-menu').style.display = 'none';
+  const msgs = [...document.querySelectorAll('.msg-row')];
+  let html = `<!DOCTYPE html><html><head><meta charset="UTF-8"><style>body{font-family:Arial,sans-serif;max-width:700px;margin:40px auto;color:#1a2233;font-size:14px}h1{color:#0056A7;border-bottom:2px solid #0056A7;padding-bottom:8px;font-size:20px}.ts{color:#888;font-size:11px;margin-bottom:20px}.msg{margin:10px 0;padding:10px 14px;border-radius:10px;max-width:80%}.bot-msg{background:#e8f4fd;border:1px solid #c5e0f5;margin-right:auto}.user-msg{background:#0056A7;color:#fff;margin-left:auto;text-align:right}.sender{font-size:10px;font-weight:700;margin-bottom:4px;opacity:.7;text-transform:uppercase;letter-spacing:.5px}hr{border:none;border-top:1px solid #e2e8f0;margin:16px 0}</style></head><body><h1>CIVA – Chat Export</h1><div class="ts">Exported on ${new Date().toLocaleString()}</div><hr>`;
+  msgs.forEach(row => {
+    const isUser = row.classList.contains('user');
+    const bub = row.querySelector('.bubble');
+    if (!bub) return;
+    const clone = bub.cloneNode(true);
+    clone.querySelectorAll('button,.bubble-meta').forEach(b=>b.remove());
+    html += `<div class="msg ${isUser?'user-msg':'bot-msg'}"><div class="sender">${isUser?'You':'CIVA'}</div><div>${clone.innerHTML}</div></div>`;
+  });
+  html += `</body></html>`;
+  const win = window.open('','_blank','width=800,height=600');
+  win.document.write(html); win.document.close();
+  win.onload = () => { win.print(); };
+}
 
-// Run whenever the viewport changes
-window.visualViewport.addEventListener('resize', adjustChatBodyHeight);
-window.addEventListener('resize', adjustChatBodyHeight);
+/* ═══════════════════════════════════════════════════════════
+   LANGUAGE TOGGLE
+═══════════════════════════════════════════════════════════ */
+let _currentLang = window.lang || 'en';
 
-});
+function toggleLanguage() {
+  _currentLang = _currentLang === 'en' ? 'hi' : 'en';
+  window.lang = _currentLang;
+  const T2 = TRANSLATIONS[_currentLang] || TRANSLATIONS['en'];
+  document.getElementById('lang-label').textContent = _currentLang === 'en' ? 'हिंदी' : 'English';
+  document.getElementById('hdr-name').textContent = T2.botName;
+  document.getElementById('hdr-sub').textContent = T2.hdrSub;
+  document.getElementById('user-input').placeholder = T2.inputPlaceholder;
+  document.getElementById('fb-title').textContent = T2.feedbackTitle;
+  document.getElementById('fb-sub').textContent = T2.feedbackSub;
+  document.getElementById('feedback-text').placeholder = T2.feedbackPlaceholder;
+  document.getElementById('submit-feedback').textContent = T2.submitFeedback;
+  document.getElementById('today-divider').textContent = T2.todayLabel;
+  const el2Lbl = document.getElementById('lbl-export-full'); if (el2Lbl) el2Lbl.textContent = T2.exportFullLabel;
+  const el2Sel = document.getElementById('lbl-export-sel'); if (el2Sel) el2Sel.textContent = T2.exportSelLabel;
+  const el2SelBtn = document.getElementById('btn-export-sel'); if (el2SelBtn) el2SelBtn.textContent = T2.exportSelBtn;
+  const tileMap = {
+    'tile-about-lbl':    _currentLang==='hi'?'C-DOT के बारे में':'About C-DOT',
+    'tile-about-desc':   _currentLang==='hi'?'C-DOT का टेलीकॉम अनुसंधान, दृष्टि और इतिहास।':'Explore C-DOT\'s telecom research, vision for India & history.',
+    'tile-products-lbl': _currentLang==='hi'?'उत्पाद':'Products',
+    'tile-products-desc':_currentLang==='hi'?'50+ स्वदेशी C-DOT उत्पाद और प्रणालियाँ।':'50+ homegrown C-DOT products & systems.',
+    'tile-awards-lbl':   _currentLang==='hi'?'पुरस्कार एवं सम्मान':'Awards & Accolades',
+    'tile-awards-desc':  _currentLang==='hi'?'C-DOT की उपलब्धियाँ और पुरस्कार।':'Recognitions & achievements of C-DOT.',
+    'tile-board-lbl':    _currentLang==='hi'?'बोर्ड सदस्य':'Board Members',
+    'tile-board-desc':   _currentLang==='hi'?'C-DOT का नेतृत्व और शासन बोर्ड।':'C-DOT\'s leadership & governance board.',
+    'tile-consult-lbl':  _currentLang==='hi'?'परामर्श':'Consultation',
+    'tile-consult-desc': _currentLang==='hi'?'विशेषज्ञ परियोजना प्रबंधन और तकनीकी सलाह।':'Expert project management & global technical advisory.',
+    'tile-career-lbl':   _currentLang==='hi'?'करियर':'Career',
+    'tile-career-desc':  _currentLang==='hi'?'C-DOT में शामिल हों – अवसर और रिक्तियाँ।':'Join C-DOT – opportunities & openings.',
+    'tile-mission-lbl':  _currentLang==='hi'?'मिशन और दृष्टि':'Mission & Vision',
+    'tile-mission-desc': _currentLang==='hi'?'कनेक्टिविटी और डिजिटल भारत की हमारी रूपरेखा।':'Our blueprint for connectivity & India\'s digital future.',
+    'tile-research-lbl': _currentLang==='hi'?'अनुसंधान एवं विकास':'R&D',
+    'tile-research-desc':_currentLang==='hi'?'C-DOT में नवाचार और दूरसंचार अनुसंधान।':'Innovation & telecom research at C-DOT.',
+    'tile-news-lbl':     _currentLang==='hi'?'समाचार':'News',
+    'tile-news-desc':    _currentLang==='hi'?'नवीनतम अपडेट और घोषणाएँ।':'Latest updates & announcements.',
+  };
+  Object.entries(tileMap).forEach(([id, text]) => {
+    const el = document.getElementById(id); if (el) el.textContent = text;
+  });
+  const sqLabels = T2.sqChips || [];
+  document.querySelectorAll('#suggested-questions .sq-chip').forEach((chip, i) => {
+    if (sqLabels[i]) chip.textContent = sqLabels[i];
+  });
+  if (recognition) recognition.lang = _currentLang === 'hi' ? 'hi-IN' : 'en-IN';
+}
 
+/* ═══════════════════════════════════════════════════════════
+   LOCAL STORAGE — CHAT HISTORY
+═══════════════════════════════════════════════════════════ */
+function saveToHistory(sender, message, query='', msgId=null, ts=null) {
+  const stored = JSON.parse(localStorage.getItem('chatHistory')||'[]');
+  stored.push({ sender, message, query, message_Id: msgId||('msg-'+Date.now()), timestamp: ts||new Date().toISOString() });
+  localStorage.setItem('chatHistory', JSON.stringify(stored));
+}
+
+function loadChatFromLocalStorage() {
+  const stored = JSON.parse(localStorage.getItem('chatHistory') || '[]');
+  if (!stored.length) { showWelcome(); return; }
+  enterChat();
+  const wrap = document.getElementById('chat-messages');
+  wrap.innerHTML = `<div class="date-divider" id="today-divider">${T.todayLabel}</div>`;
+  stored.forEach(item => {
+    const sender = (item.sender === 'You' || item.sender === 'user') ? 'user' : 'bot';
+    const ts = item.timestamp ? new Date(item.timestamp).getTime() : Date.now();
+    appendMsg(sender, item.message, item.query || '', item.message_Id || null, ts, true);
+  });
+  wrap.scrollTop = wrap.scrollHeight;
+  chatOpen = false;
+  document.getElementById('chatbot').classList.add('hidden');
+}
+
+/* ═══════════════════════════════════════════════════════════
+   TIMESTAMP UPDATER
+═══════════════════════════════════════════════════════════ */
+function calcTimeLapse(ts) {
+  const diff = Math.floor((Date.now() - ts) / 1000);
+  if (diff < 60) return 'just now';
+  if (diff < 3600) return Math.floor(diff/60) + 'm ago';
+  if (diff < 86400) return Math.floor(diff/3600) + 'h ago';
+  return Math.floor(diff/86400) + 'd ago';
+}
+setInterval(() => {
+  document.querySelectorAll('.meta-time[data-ts]').forEach(el => {
+    el.textContent = calcTimeLapse(+el.dataset.ts);
+  });
+}, 30000);
+
+/* ═══════════════════════════════════════════════════════════
+   INIT
+═══════════════════════════════════════════════════════════ */
+applyTranslations();
+loadChatFromLocalStorage();
