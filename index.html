@@ -1,216 +1,205 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>CIVA – C-DOT AI Assistant</title>
 <link rel="stylesheet" href="assets/css/chatbot_css/style.css">
-</head>
-<body>
+<script>window.lang = '<?php echo $lang; ?>';</script>
 
-<script>
-  window.lang = window.lang || 'en';
-</script>
 
 <!-- ── CHAT LAUNCHER ────────────────────────── -->
-<div id="chat-launcher">
-  <div id="chat-label" onclick="toggleChat()">
-    <div class="cl-title">Chat with CIVA</div>
-    <div class="cl-sub">Your Telecom Guide</div>
+<div id="civa-chat-launcher">
+  <div id="civa-chat-label" onclick="toggleChat()">
+    <div class="civa-cl-title" id="civa-cl-title">Chat with CIVA</div>
+    <div class="civa-cl-sub" id="civa-cl-sub">Your Telecom Guide</div>
   </div>
-  <div id="chat-icon" onclick="toggleChat()">
+  <div id="civa-chat-icon" onclick="toggleChat()">
     <img src="assets/img/chatbot_img/bot.jpeg" alt="CIVA">
   </div>
 </div>
 
 <!-- ── CHATBOT ─────────────────────────────── -->
-<div id="chatbot" class="hidden">
+<div id="civa-chatbot" class="civa-hidden" style="display:none">
 
   <!-- HEADER -->
-  <div id="chat-header">
-    <img src="assets/img/chatbot_img/bot.jpeg" alt="CIVA" class="header-avatar">
-    <div class="header-info">
-      <div class="header-title-civa" id="hdr-name">CIVA</div>
-      <div class="header-subtitle"><span class="status-dot"></span><span id="hdr-sub">CDOT intelligence virtual assistant</span></div>
+  <div id="civa-chat-header">
+    <img src="assets/img/chatbot_img/bot.jpeg" alt="CIVA" class="civa-header-avatar">
+    <div class="civa-header-info">
+      <div class="civa-header-title-civa" id="civa-hdr-name">CIVA</div>
+      <div class="civa-header-subtitle"><span class="civa-status-dot"></span><span id="civa-hdr-sub">CDOT intelligent virtual assistant</span></div>
     </div>
-    <div class="header-actions">
-      <button class="h-btn" id="lang-toggle-btn" title="Switch Language" onclick="toggleLanguage()" style="width:auto;padding:0 8px;font-size:11px;font-weight:700;letter-spacing:.3px;border-radius:8px;">
-        <span id="lang-label">हिंदी</span>
+    <div class="civa-header-actions">
+      <button class="civa-h-btn" id="civa-lang-toggle-btn" title="Switch Language" onclick="toggleLanguage()" style="width:auto;padding:0 8px;font-size:11px;font-weight:700;letter-spacing:.3px;border-radius:8px;">
+        <span id="civa-lang-label">हिंदी</span>
       </button>
-      <button class="h-btn" id="back-btn" style="display:none" title="Back" onclick="showWelcome()">
+      <button class="civa-h-btn" id="civa-back-btn" style="display:none" title="Back" onclick="showWelcome()">
         <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
       </button>
-      <button class="h-btn" id="maximize-btn" title="Maximize" onclick="toggleMaximize()">
+      <button class="civa-h-btn" id="civa-maximize-btn" title="Maximize" onclick="toggleMaximize()">
         <svg viewBox="0 0 24 24"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
       </button>
-      <div id="export-btn-wrap" style="display:none;position:relative">
-        <button class="h-btn" id="export-btn" title="Export" onclick="toggleExportMenu(event)">
+      <div id="civa-export-btn-wrap" style="display:none;position:relative">
+        <button class="civa-h-btn" id="civa-export-btn" title="Export" onclick="toggleExportMenu(event)">
           <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
         </button>
-        <div id="export-menu">
-          <div style="padding:8px 12px 4px;font-size:10px;font-weight:700;color:var(--text-3);letter-spacing:.5px;text-transform:uppercase;border-bottom:1px solid var(--border)">Export Options</div>
-          <div class="export-section-label" id="lbl-export-full">💬 Export Chat</div>
-          <button class="export-opt-btn" onclick="exportChatAsPDF()" id="btn-export-pdf">📄 Export Chat</button>
-          <div style="border-top:1px solid var(--border)">
-            <div class="export-section-label" id="lbl-export-sel">📄 User + CIVA Messages</div>
-            <button class="export-opt-btn" onclick="startSelectiveExport()" id="btn-export-sel">Select Messages to Export</button>
+        <div id="civa-export-menu">
+          <div id="civa-export-options-lbl" style="padding:8px 12px 4px;font-size:10px;font-weight:700;color:var(--civa-text-3);letter-spacing:.5px;text-transform:uppercase;border-bottom:1px solid var(--civa-border)">Export Options</div>
+          <div class="civa-export-section-label" id="civa-lbl-export-full">💬 Export Chat</div>
+          <button class="civa-export-opt-btn" onclick="exportChatAsPDF()" id="civa-btn-export-pdf">📄 Export Chat</button>
+          <div style="border-top:1px solid var(--civa-border)">
+            <div class="civa-export-section-label" id="civa-lbl-export-sel">📄 User + CIVA Messages</div>
+            <button class="civa-export-opt-btn" onclick="startSelectiveExport()" id="civa-btn-export-sel">Select Messages to Export</button>
           </div>
         </div>
       </div>
-      <button class="h-btn" title="Minimize" onclick="toggleChat()">
+      <button class="civa-h-btn" id="civa-minimize-btn" title="Minimize" onclick="toggleChat()">
         <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/></svg>
       </button>
-      <button class="h-btn" title="Close" onclick="clearAndClose()">
+      <button class="civa-h-btn" id="civa-close-btn" title="Close" onclick="clearAndClose()">
         <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
       </button>
     </div>
   </div>
 
   <!-- Selection mode bar -->
-  <div id="selection-header">
-    <span class="sel-info" id="sel-count">0 selected</span>
-    <button class="sel-btn secondary" onclick="selectAll()">Select All</button>
-    <button class="sel-btn secondary" onclick="cancelSelection()">Cancel</button>
-    <button class="sel-btn" onclick="exportSelected()">Export</button>
+  <div id="civa-selection-header">
+    <span class="civa-sel-info" id="civa-sel-count">0 selected</span>
+    <button class="civa-sel-btn civa-secondary" id="civa-sel-btn-all" onclick="selectAll()">Select All</button>
+    <button class="civa-sel-btn civa-secondary" id="civa-sel-btn-cancel" onclick="cancelSelection()">Cancel</button>
+    <button class="civa-sel-btn" id="civa-sel-btn-export" onclick="exportSelected()">Export</button>
   </div>
 
   <!-- BODY -->
-  <div id="chat-body">
+  <div id="civa-chat-body">
 
     <!-- WELCOME SCREEN -->
-    <div id="welcome-screen">
-      <div id="tile-grid">
+    <div id="civa-welcome-screen">
+      <div id="civa-tile-grid">
 
         <!-- Products — col1 rows 1-2 tall -->
-        <button class="tile t-products t-slot-about" data-query="Products of C-DOT">
-          <div class="t-orb"></div>
-          <div class="t-icon"><svg width="30" height="30" viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg></div>
-          <div class="t-title" id="tile-about-lbl">Products</div>
-          <div class="t-desc" id="tile-about-desc">50+ homegrown C-DOT products &amp; systems.</div>
+        <button class="civa-tile civa-t-products civa-t-slot-about" data-query="Product Section">
+          <span class="civa-t-orb"></span>
+          <span class="civa-t-icon"><svg width="30" height="30" viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg></span>
+          <span class="civa-t-title" id="civa-tile-products-lbl">Products</span>
+          <span class="civa-t-desc" id="civa-tile-products-desc">50+ homegrown C-DOT products &amp; systems.</span>
         </button>
 
         <!-- Mission & Vision — col2 row1 -->
-        <button class="tile t-mission t-slot-mission" data-query="Mission & Vision">
-          <div class="t-orb"></div>
-          <div class="t-icon"><svg width="22" height="22" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
-          <div class="t-title" id="tile-mission-lbl">Mission &amp; Vision</div>
-          <div class="t-desc" id="tile-mission-desc">Our blueprint for connectivity &amp; India's digital future.</div>
+        <button class="civa-tile civa-t-mission civa-t-slot-mission" data-query="Mission & Vision">
+          <span class="civa-t-orb"></span>
+          <span class="civa-t-icon"><svg width="22" height="22" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></span>
+          <span class="civa-t-title" id="civa-tile-mission-lbl">Mission &amp; Vision</span>
+          <span class="civa-t-desc" id="civa-tile-mission-desc">Our blueprint for connectivity &amp; India's digital future.</span>
         </button>
 
         <!-- About C-DOT — col3 row1 -->
-        <button class="tile t-about t-slot-products" data-query="About C-DOT">
-          <div class="t-orb"></div>
-          <div class="t-icon"><svg width="22" height="22" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div>
-          <div class="t-title" id="tile-products-lbl">About C-DOT</div>
-          <div class="t-desc" id="tile-products-desc">India's premier telecom R&amp;D organisation.</div>
+        <button class="civa-tile civa-t-about civa-t-slot-products" data-query="About C-DOT">
+          <span class="civa-t-orb"></span>
+          <span class="civa-t-icon"><svg width="22" height="22" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></span>
+          <span class="civa-t-title" id="civa-tile-about-lbl">About C-DOT</span>
+          <span class="civa-t-desc" id="civa-tile-about-desc">India's premier telecom R&amp;D organisation.</span>
         </button>
 
         <!-- Board Members — col2 row2 -->
-        <button class="tile t-evp t-slot-board" data-query="Board Members">
-          <div class="t-orb"></div>
-          <div class="t-icon"><svg width="22" height="22" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
-          <div class="t-title" id="tile-board-lbl">Board Members</div>
-          <div class="t-desc" id="tile-board-desc">C-DOT's leadership &amp; governance board.</div>
+        <button class="civa-tile civa-t-evp civa-t-slot-board" data-query="Board Members">
+          <span class="civa-t-orb"></span>
+          <span class="civa-t-icon"><svg width="22" height="22" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span>
+          <span class="civa-t-title" id="civa-tile-board-lbl">Board Members</span>
+          <span class="civa-t-desc" id="civa-tile-board-desc">C-DOT's leadership &amp; governance board.</span>
         </button>
 
         <!-- Consultation — col3 row2 -->
-        <button class="tile t-consult t-slot-consult" data-query="Consultancy">
-          <div class="t-orb"></div>
-          <div class="t-icon"><svg width="22" height="22" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
-          <div class="t-title" id="tile-consult-lbl">Consultation</div>
-          <div class="t-desc" id="tile-consult-desc">Expert project management &amp; global advisory.</div>
+        <button class="civa-tile civa-t-consult civa-t-slot-consult" data-query="Consultancy">
+          <span class="civa-t-orb"></span>
+          <span class="civa-t-icon"><svg width="22" height="22" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span>
+          <span class="civa-t-title" id="civa-tile-consult-lbl">Consultation</span>
+          <span class="civa-t-desc" id="civa-tile-consult-desc">Expert project management &amp; global advisory.</span>
         </button>
 
         <!-- Awards — col1-2 row3 (photo) -->
-        <button class="tile t-photo t-awards-photo t-slot-awards" data-query="Awards and Accolades">
-          <div class="t-title" id="tile-awards-lbl">Awards &amp; Accolades</div>
-          <div class="t-desc" id="tile-awards-desc">Recognitions &amp; achievements of C-DOT.</div>
+        <button class="civa-tile civa-t-photo civa-t-awards-photo civa-t-slot-awards" data-query="Awards and Accolades">
+          <span class="civa-t-title" id="civa-tile-awards-lbl">Awards &amp; Accolades</span>
+          <span class="civa-t-desc" id="civa-tile-awards-desc">Recognitions &amp; achievements of C-DOT.</span>
         </button>
 
         <!-- Career — col3 row3 (photo) -->
-        <button class="tile t-photo t-career-photo t-slot-career" data-query="Career at C-DOT">
-          <div class="t-title" id="tile-career-lbl">Career</div>
-          <div class="t-desc" id="tile-career-desc">Join C-DOT – opportunities &amp; openings.</div>
+        <button class="civa-tile civa-t-photo civa-t-career-photo civa-t-slot-career" data-query="Career at C-DOT">
+          <span class="civa-t-title" id="civa-tile-career-lbl">Career</span>
+          <span class="civa-t-desc" id="civa-tile-career-desc">Join C-DOT – opportunities &amp; openings.</span>
         </button>
 
         <!-- R&D — col1 row4 -->
-        <button class="tile t-research t-slot-research" data-query="Research and Development at C-DOT">
-          <div class="t-orb"></div>
-          <div class="t-icon"><svg width="20" height="20" viewBox="0 0 24 24"><path d="M9 3H5a2 2 0 0 0-2 2v4m6-6h10a2 2 0 0 1 2 2v4M9 3v18m0 0h10a2 2 0 0 0 2-2v-4M9 21H5a2 2 0 0 1-2-2v-4m0 0h18"/></svg></div>
-          <div class="t-title" id="tile-research-lbl">R&amp;D</div>
-          <div class="t-desc" id="tile-research-desc">Innovation &amp; telecom research at C-DOT.</div>
+        <button class="civa-tile civa-t-research civa-t-slot-research" data-query="Research and Development at C-DOT">
+          <span class="civa-t-orb"></span>
+          <span class="civa-t-icon"><svg width="20" height="20" viewBox="0 0 24 24"><path d="M9 3H5a2 2 0 0 0-2 2v4m6-6h10a2 2 0 0 1 2 2v4M9 3v18m0 0h10a2 2 0 0 0 2-2v-4M9 21H5a2 2 0 0 1-2-2v-4m0 0h18"/></svg></span>
+          <span class="civa-t-title" id="civa-tile-research-lbl">R&amp;D</span>
+          <span class="civa-t-desc" id="civa-tile-research-desc">Innovation &amp; telecom research at C-DOT.</span>
         </button>
 
         <!-- News — col2-3 row4 -->
-        <button class="tile t-news t-slot-news" data-query="News and Updates of C-DOT">
-          <div class="t-orb"></div>
-          <div class="t-icon"><svg width="20" height="20" viewBox="0 0 24 24"><path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2Zm0 0a2 2 0 0 1-2-2v-9c0-1.1.9-2 2-2h2"/><path d="M18 14h-8"/><path d="M15 18h-5"/><path d="M10 6h8v4h-8V6Z"/></svg></div>
-          <div class="t-title" id="tile-news-lbl">News</div>
-          <div class="t-desc" id="tile-news-desc">Latest updates &amp; announcements.</div>
+        <button class="civa-tile civa-t-news civa-t-slot-news" data-query="News and Updates of C-DOT">
+          <span class="civa-t-orb"></span>
+          <span class="civa-t-icon"><svg width="20" height="20" viewBox="0 0 24 24"><path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2Zm0 0a2 2 0 0 1-2-2v-9c0-1.1.9-2 2-2h2"/><path d="M18 14h-8"/><path d="M15 18h-5"/><path d="M10 6h8v4h-8V6Z"/></svg></span>
+          <span class="civa-t-title" id="civa-tile-news-lbl">News</span>
+          <span class="civa-t-desc" id="civa-tile-news-desc">Latest updates &amp; announcements.</span>
         </button>
 
-      </div><!-- /tile-grid -->
+      </div><!-- /civa-tile-grid -->
     </div>
 
     <!-- CHAT SCREEN -->
-    <div id="chat-screen" style="display:none">
-      <div id="chat-messages">
-        <div class="date-divider" id="today-divider">Today</div>
+    <div id="civa-chat-screen" style="display:none">
+      <div id="civa-chat-messages">
+        <div class="civa-date-divider" id="civa-today-divider">Today</div>
       </div>
     </div>
 
-  </div><!-- /chat-body -->
+  </div><!-- /civa-chat-body -->
 
   <!-- FOOTER -->
-  <div id="chat-footer">
-    <div id="suggested-questions" style="display:none">
-      <div class="sq-chip" data-query="Product Section">Products</div>
-      <div class="sq-chip" data-query="Career at C-DOT">Career</div>
-      <div class="sq-chip" data-query="Board Members">Board Members</div>
-      <div class="sq-chip" data-query="Awards and Achievements">Awards &amp; Accolades</div>
-      <div class="sq-chip" data-query="Consultancy">Consultation</div>
-      <div class="sq-chip" data-query="About C-DOT">About C-DOT</div>
-      <div class="sq-chip" data-query="Mission & Vision">Mission &amp; Vision</div>
+  <div id="civa-chat-footer">
+    <div id="civa-suggested-questions" style="display:none">
+      <div class="civa-sq-chip" data-query="Product Section">Products</div>
+      <div class="civa-sq-chip" data-query="Career at C-DOT">Career</div>
+      <div class="civa-sq-chip" data-query="Board Members">Board Members</div>
+      <div class="civa-sq-chip" data-query="Awards and Accolades">Awards &amp; Accolades</div>
+      <div class="civa-sq-chip" data-query="Consultancy">Consultancy</div>
+      <div class="civa-sq-chip" data-query="About C-DOT">About C-DOT</div>
+      <div class="civa-sq-chip" data-query="Mission & Vision">Mission &amp; Vision</div>
     </div>
-    <div class="input-row">
-      <input type="text" id="user-input" placeholder="Ask me anything…" autocomplete="off">
-      <button class="input-btn" id="mic-btn" title="Voice input">
+    <div class="civa-input-row">
+      <input type="text" id="civa-user-input" placeholder="Ask me …" autocomplete="off" maxlength="2000">
+      <button class="civa-input-btn" id="civa-mic-btn" title="Voice input">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
       </button>
-      <button class="input-btn" id="send-btn" title="Send">
+      <button class="civa-input-btn" id="civa-send-btn" title="Send">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
       </button>
     </div>
-    <div class="footer-brand">Powered by <strong>C-DOT</strong> · CIVA v2.0</div>
+    <div class="civa-footer-brand" id="civa-footer-brand">Powered by <strong>C-DOT</strong> · CIVA v2.0</div>
   </div>
 
   <!-- Feedback popup -->
-  <div id="feedback-popup">
-    <div class="fb-header">
-      <div class="fb-title" id="fb-title">📝 Share your feedback</div>
-      <button class="fb-close" onclick="closeFeedback()">×</button>
+  <div id="civa-feedback-popup">
+    <div class="civa-fb-header">
+      <div class="civa-fb-title" id="civa-fb-title">📝 Share your feedback</div>
+      <button class="civa-fb-close" onclick="closeFeedback()">×</button>
     </div>
-    <p style="font-size:12px;color:var(--text-3);margin-bottom:10px" id="fb-sub">Help us improve CIVA with your thoughts.</p>
-    <input type="hidden" id="fb-question"><input type="hidden" id="fb-answer"><input type="hidden" id="fb-msgid">
-    <textarea id="feedback-text" placeholder="Describe the issue or suggestion…"></textarea>
-    <button id="submit-feedback" disabled onclick="submitFeedback()">Submit Feedback</button>
+    <p style="font-size:12px;color:var(--civa-text-3);margin-bottom:10px" id="civa-fb-sub">Help us improve CIVA with your thoughts.</p>
+    <input type="hidden" id="civa-fb-question"><input type="hidden" id="civa-fb-answer"><input type="hidden" id="civa-fb-msgid">
+    <textarea id="civa-feedback-text" placeholder="Describe the issue or suggestion…"></textarea>
+    <div id="civa-fb-lang-warn" style="display:none;font-size:11px;color:#c0392b;margin:-4px 0 6px;"></div>
+    <button id="civa-submit-feedback" disabled onclick="submitFeedback()">Submit Feedback</button>
   </div>
 
-</div><!-- /chatbot -->
+</div><!-- /civa-chatbot -->
 
 <!-- Alert overlay -->
-<div id="alert-overlay" style="display:none">
-  <div class="alert-box">
-    <span class="alert-icon" id="alert-icon">ℹ️</span>
-    <div class="alert-title" id="alert-title">Notice</div>
-    <div class="alert-msg" id="alert-msg"></div>
-    <div class="alert-btns">
-      <button class="alert-btn alert-cancel" id="alert-cancel" style="display:none" onclick="alertResolve(false)">Cancel</button>
-      <button class="alert-btn alert-ok" onclick="alertResolve(true)">OK</button>
+<div id="civa-alert-overlay" style="display:none">
+  <div class="civa-alert-box">
+    <span class="civa-alert-icon" id="civa-alert-icon">ℹ️</span>
+    <div class="civa-alert-title" id="civa-alert-title">Notice</div>
+    <div class="civa-alert-msg" id="civa-alert-msg"></div>
+    <div class="civa-alert-btns">
+      <button class="civa-alert-btn civa-alert-cancel" id="civa-alert-cancel" style="display:none" onclick="alertResolve(false)">Cancel</button>
+      <button class="civa-alert-btn civa-alert-ok" id="civa-alert-ok" onclick="alertResolve(true)">OK</button>
     </div>
   </div>
 </div>
 
-<script src="assets/js/chatbot_js/script.js"></script>
-</body>
-</html>
+<script src="assets/js/chatbot_js/script.v2.js"></script>
