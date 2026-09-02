@@ -127,7 +127,7 @@
 .civa-bubble li{margin-bottom:3px}
 .civa-streaming-cursor::after{content:'▋';animation:civa-blink .7s infinite;margin-left:2px;color:var(--civa-brand)}
 @keyframes civa-blink{0%,100%{opacity:1}50%{opacity:0}}
-.civa-read-more-btn{display:inline-block;margin-top:6px;font-size:12px;font-weight:600;color:var(--civa-brand);cursor:pointer;border:none;background:none;padding:0;text-decoration:underline;text-underline-offset:2px;}
+.civa-read-more-btn{display:block;margin-top:6px;font-size:12px;font-weight:600;color:var(--civa-brand);cursor:pointer;border:none;background:none;padding:0;text-decoration:underline;text-underline-offset:2px;}
 .civa-bubble-meta{display:flex;align-items:center;gap:6px;margin-top:7px;padding-top:6px;border-top:1px solid rgba(0,0,0,.06);}
 .civa-user .civa-bubble-meta{border-top-color:rgba(255,255,255,.2)}
 .civa-meta-time{font-size:10px;color:var(--civa-text-3);white-space:nowrap}

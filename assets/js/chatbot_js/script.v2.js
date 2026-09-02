@@ -188,12 +188,21 @@ const getThreadId = () => {
 };
 const getToken = () => localStorage.getItem('authToken');
 
+const getCsrfToken = () => {
+  const match = document.cookie.match(/(?:^|;\s*)csrftoken=([^;]+)/);
+  return match ? decodeURIComponent(match[1]) : '';
+};
+
 async function authenticateAndStoreToken() {
   try {
     const fd = new FormData();
     fd.append('email','admin@cdot.in');
     fd.append('password','admin');
-    const r = await fetch('http://chatbot..cdot.in/api/auth-token/', { method:'POST', body:fd });
+    const r = await fetch('api/auth-token/', {
+      method:'POST',
+      headers:{ 'X-CSRFToken': getCsrfToken() },
+      body:fd
+    });
     if (r.ok) {
       const d = await r.json();
       localStorage.setItem('authToken', d.access_token);
@@ -296,6 +305,15 @@ function applyTranslations() {
 /* ═══════════════════════════════════════════════════════════
    ALERT SYSTEM
 ═══════════════════════════════════════════════════════════ */
+function _closeAlertOverlay(v, res) {
+  document.getElementById('civa-alert-overlay').style.display = 'none';
+  // Return focus to the chat input so the stray Enter/Space that may have
+  // dismissed this dialog doesn't get swallowed by whatever element (e.g. a
+  // message action button) last held focus.
+  const input = document.getElementById('civa-user-input');
+  if (input) input.focus();
+  res(v);
+}
 function cdotAlert(msg, title='Notice', icon='ℹ️') {
   return new Promise(res => {
     document.getElementById('civa-alert-msg').textContent = msg;
@@ -304,7 +322,8 @@ function cdotAlert(msg, title='Notice', icon='ℹ️') {
     document.getElementById('civa-alert-cancel').style.display = 'none';
     const okBtn = document.getElementById('civa-alert-ok'); if (okBtn) okBtn.textContent = ct().alertOk;
     document.getElementById('civa-alert-overlay').style.display = 'flex';
-    alertResolve = v => { document.getElementById('civa-alert-overlay').style.display='none'; res(v); };
+    if (okBtn) okBtn.focus();
+    alertResolve = v => _closeAlertOverlay(v, res);
   });
 }
 function cdotConfirm(msg, title='Confirm', icon='⚠️') {
@@ -317,9 +336,26 @@ function cdotConfirm(msg, title='Confirm', icon='⚠️') {
     cancelBtn.style.display = 'inline-block';
     const okBtn = document.getElementById('civa-alert-ok'); if (okBtn) okBtn.textContent = ct().alertOk;
     document.getElementById('civa-alert-overlay').style.display = 'flex';
-    alertResolve = v => { document.getElementById('civa-alert-overlay').style.display='none'; res(v); };
+    if (okBtn) okBtn.focus();
+    alertResolve = v => _closeAlertOverlay(v, res);
   });
 }
+/* Intercept Enter/Escape in the capture phase while the overlay is open so a
+   button elsewhere in the page that still holds focus (e.g. the copy/like
+   icon that was just clicked) can't re-fire its own click from the same
+   keystroke — only the alert's own OK/Cancel button reacts. */
+document.addEventListener('keydown', e => {
+  const overlay = document.getElementById('civa-alert-overlay');
+  if (!overlay || overlay.style.display !== 'flex') return;
+  if (e.key === 'Enter') {
+    e.preventDefault(); e.stopPropagation();
+    document.getElementById('civa-alert-ok')?.click();
+  } else if (e.key === 'Escape') {
+    e.preventDefault(); e.stopPropagation();
+    const cancelBtn = document.getElementById('civa-alert-cancel');
+    (cancelBtn && cancelBtn.style.display !== 'none' ? cancelBtn : document.getElementById('civa-alert-ok'))?.click();
+  }
+}, true);
 
 /* ═══════════════════════════════════════════════════════════
    CHAT VISIBILITY
@@ -345,6 +381,16 @@ function toggleChat() {
   // On mobile hide the launcher while chat is open so it doesn't overlap
   const launcher = document.getElementById('civa-chat-launcher');
   if (launcher) launcher.classList.toggle('civa-launcher-hidden', chatOpen);
+  if (chatOpen) {
+    // A previously-set scrollTop can go stale while minimised (the panel
+    // sits at display:none across a tab switch, and the viewport/layout can
+    // change in the background) so re-pin to bottom on every reopen rather
+    // than trusting the value left over from before it was hidden.
+    requestAnimationFrame(() => {
+      const wrap = document.getElementById('civa-chat-messages');
+      if (wrap) wrap.scrollTop = wrap.scrollHeight;
+    });
+  }
 }
 function toggleMaximize() {
   isMaximized = !isMaximized;
@@ -387,7 +433,7 @@ async function resetThreadIdAPI() {
   let token = getToken();
   if (!token) token = await authenticateAndStoreToken();
   if (token && threadId) {
-    await fetch(`http://chatbot..cdot.in/api/clear-chat-history?thread_id=${threadId}`,{
+    await fetch(`api/clear-chat-history?thread_id=${threadId}`,{
       method:'GET', headers:{Authorization:`Bearer ${token}`}
     });
     localStorage.removeItem('authToken');
@@ -441,9 +487,9 @@ async function sendQuery(q) {
     let token = getToken();
     if (!token) token = await authenticateAndStoreToken();
     const threadId = getThreadId();
-    const response = await fetch('http://chatbot..cdot.in/api/chatbot/', {
+    const response = await fetch('api/chatbot/', {
       method:'POST',
-      headers: { Authorization:`Bearer ${token}`, 'Content-Type':'application/json' },
+      headers: { Authorization:`Bearer ${token}`, 'Content-Type':'application/json', 'X-CSRFToken': getCsrfToken() },
       body: JSON.stringify({ human_text: q, thread_id: threadId })
     });
     removeTyping(typingId);
@@ -493,7 +539,7 @@ function appendMsg(sender, rawContent, query='', msgId=null, ts=null, skipHistor
   const av = document.createElement('div');
   av.className = 'civa-msg-avatar ' + (sender==='user' ? 'civa-user-av' : '');
   av.innerHTML = sender==='bot'
-    ? '<img src="assets/img/chatbot_img/bot.jpeg" alt="CIVA">'
+    ? '<img src="../assets/img/chatbot_img/bot.jpeg" alt="CIVA">'
     : '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>';
   const bub = document.createElement('div');
   bub.className = 'civa-bubble';
@@ -520,7 +566,7 @@ function appendStreamingBubble(msgId) {
   row.className = 'civa-msg-row civa-bot';
   const av = document.createElement('div');
   av.className = 'civa-msg-avatar';
-  av.innerHTML = '<img src="assets/img/chatbot_img/bot.jpeg" alt="CIVA">';
+  av.innerHTML = '<img src="../assets/img/chatbot_img/bot.jpeg" alt="CIVA">';
   const bub = document.createElement('div');
   bub.className = 'civa-bubble';
   bub.setAttribute('data-id', msgId);
@@ -686,6 +732,23 @@ function parseMarkdown(raw) {
   // Step 3: Normalize <br/> tags from bot API into newlines so markdown can process them
   msg = msg.replace(/<br\s*\/?>/gi, '\n');
 
+  // Step 3.5: Extract links → placeholders BEFORE emphasis/bold parsing.
+  // URLs routinely contain underscores/asterisks (query params, filenames);
+  // running the emphasis regexes on raw text would consume characters
+  // spanning into/across a URL and truncate or split the resulting <a> tag.
+  const LINK_STYLE = 'color:var(--civa-brand);text-decoration:underline;text-underline-offset:2px;word-break:break-all';
+  const links = [];
+  msg = msg.replace(/\[([^\]]+)\]\((https?:\/\/[^)]+)\)/g, (_, text, url) => {
+    const i = links.length;
+    links.push(`<a href="${url}" target="_blank" rel="noopener noreferrer" style="${LINK_STYLE}">${text}</a>`);
+    return `\x02LNK${i}\x03`;
+  });
+  msg = msg.replace(/(^|[\s\n(,;])(https?:\/\/[^\s<)"'\]]+)/g, (_, pre, url) => {
+    const i = links.length;
+    links.push(`<a href="${url}" target="_blank" rel="noopener noreferrer" style="${LINK_STYLE}">${url}</a>`);
+    return `${pre}\x02LNK${i}\x03`;
+  });
+
   // Step 4: Apply markdown patterns
   msg = msg.replace(/^#### (.+)$/gm, '<h5 style="font-size:12.5px;font-weight:700;color:var(--civa-brand-dark);margin:7px 0 3px">$1</h5>');
   msg = msg.replace(/^### (.+)$/gm,  '<h4 style="font-size:13px;font-weight:700;color:var(--civa-brand-dark);margin:8px 0 4px">$1</h4>');
@@ -712,13 +775,6 @@ function parseMarkdown(raw) {
     '<code style="background:rgba(0,86,167,.1);border-radius:4px;padding:1px 5px;font-size:12px;font-family:monospace;word-break:break-all">$1</code>'
   );
 
-  // Step 5: Links — URL must begin with https?:// (prevents javascript: injection)
-  const LINK_STYLE = 'color:var(--civa-brand);text-decoration:underline;text-underline-offset:2px;word-break:break-all';
-  msg = msg.replace(/\[([^\]]+)\]\((https?:\/\/[^)]+)\)/g, `<a href="$2" target="_blank" rel="noopener noreferrer" style="${LINK_STYLE}">$1</a>`);
-  msg = msg.replace(/href="(https?:\/\/[^"]+)"/g, (m, u) => `href="${u.replace(/https?/g,'PROTO')}"`);
-  msg = msg.replace(/(^|[\s\n(,;])(https?:\/\/[^\s<)"'\]]+)/g, (_, pre, url) => `${pre}<a href="${url}" target="_blank" rel="noopener noreferrer" style="${LINK_STYLE}">${url}</a>`);
-  msg = msg.replace(/href="([^"]+PROTO[^"]+)"/g, (_, u) => `href="${u.replace(/PROTO/g,'https')}"`);
-
   // Step 6: Blockquote
   msg = msg.replace(/^>\s?(.+)$/gm, '<blockquote style="border-left:3px solid var(--civa-accent);padding:4px 10px;margin:4px 0;color:var(--civa-text-2);font-style:italic;background:rgba(0,194,224,.05);border-radius:0 6px 6px 0">$1</blockquote>');
 
@@ -727,8 +783,9 @@ function parseMarkdown(raw) {
   msg = msg.replace(/(<\/(?:h[2-5]|ul|ol|pre|hr|blockquote)>)<br>/g, '$1');
   msg = msg.replace(/<br>(<(?:ul|ol|pre|h[2-5]|blockquote))/g, '$1');
 
-  // Step 8: Restore fenced code blocks
+  // Step 8: Restore fenced code blocks and links
   msg = msg.replace(/\x02BLK(\d+)\x03/g, (_, i) => codeBlocks[parseInt(i)]);
+  msg = msg.replace(/\x02LNK(\d+)\x03/g, (_, i) => links[parseInt(i)]);
 
   return msg;
 }
@@ -747,7 +804,7 @@ function appendTyping() {
   row.className = 'civa-msg-row civa-bot'; row.id = id;
   const av = document.createElement('div');
   av.className = 'civa-msg-avatar';
-  av.innerHTML = '<img src="assets/img/chatbot_img/bot.jpeg" alt="CIVA">';
+  av.innerHTML = '<img src="../assets/img/chatbot_img/bot.jpeg" alt="CIVA">';
   const bub = document.createElement('div');
   bub.className = 'civa-bubble';
   bub.innerHTML = '<div class="civa-typing-bubble"><span></span><span></span><span></span></div>';
@@ -774,7 +831,7 @@ function setInputLock(locked) {
   });
 }
 function hasDevanagari(text) {
-  return /[ऀ-ॿ]/.test(text);
+  return /[\u0900-\u097f]/.test(text);
 }
 function sanitizeInput(text) {
   // Strip HTML tags and script-injectable patterns from user input
@@ -1003,9 +1060,9 @@ async function submitLikeDislike(question, answer, rating, messageId) {
   if (!token) token = await authenticateAndStoreToken();
   const threadId = getThreadId();
   try {
-    await fetch('http://chatbot..cdot.in/api/submit-feedback/', {
+    await fetch('api/submit-feedback/', {
       method:'POST',
-      headers:{ 'Content-Type':'application/json', Authorization:`Bearer ${token}` },
+      headers:{ 'Content-Type':'application/json', Authorization:`Bearer ${token}`, 'X-CSRFToken': getCsrfToken() },
       body: JSON.stringify({ question, answer, feedback_type:rating, feedback:'', thread_id:threadId })
     });
   } catch(e) { console.error('Feedback API error:', e); }
@@ -1047,9 +1104,9 @@ function submitFeedback() {
   const answer = document.getElementById('civa-fb-answer').value;
   const threadId = getThreadId();
   const token = getToken();
-  fetch('http://chatbot..cdot.in/api/submit-feedback/', {
+  fetch('api/submit-feedback/', {
     method:'POST',
-    headers:{ 'Content-Type':'application/json', Authorization:`Bearer ${token}` },
+    headers:{ 'Content-Type':'application/json', Authorization:`Bearer ${token}`, 'X-CSRFToken': getCsrfToken() },
     body: JSON.stringify({ question, answer, feedback_type:0, feedback:feedbackText, thread_id:threadId })
   }).catch(e => console.error('Feedback submit error:', e));
   cdotAlert(ct().feedbackThankYou, ct().feedbackReceivedTitle,'🙏');
