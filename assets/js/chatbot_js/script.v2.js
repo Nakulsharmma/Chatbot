@@ -164,7 +164,11 @@ let selectionMode = false;
 /* Language control:
    - Parent (window.lang) controls chatbot by default.
    - If user manually toggles chatbot language, override mode activates (chatbot self-controlled).
-   - Override is cleared on chat reset → chatbot follows parent again. */
+   - Override is cleared on chat reset → chatbot follows parent again.
+   - window.lang is bootstrapped here from the host page's data-lang attribute
+     (set server-side via PHP) rather than an inline <script> in index.html;
+     the parent-sync poller below still reads/writes the same global afterward. */
+window.lang = window.lang || document.getElementById('civa-chat-launcher')?.dataset.lang;
 const CIVA_LANG_KEY            = 'civa_lang';
 const CIVA_LANG_OVERRIDE_KEY   = 'civa_lang_override';
 const CIVA_LAST_PARENT_LANG_KEY = 'civa_last_parent_lang';
@@ -1353,6 +1357,27 @@ setInterval(() => {
     el.textContent = calcTimeLapse(+el.dataset.ts);
   });
 }, 30000);
+
+/* ═══════════════════════════════════════════════════════════
+   HEADER / FOOTER / POPUP BUTTON HANDLERS (migrated from inline onclick)
+═══════════════════════════════════════════════════════════ */
+document.getElementById('civa-chat-label').addEventListener('click', toggleChat);
+document.getElementById('civa-chat-icon').addEventListener('click', toggleChat);
+document.getElementById('civa-lang-toggle-btn').addEventListener('click', toggleLanguage);
+document.getElementById('civa-back-btn').addEventListener('click', showWelcome);
+document.getElementById('civa-maximize-btn').addEventListener('click', toggleMaximize);
+document.getElementById('civa-export-btn').addEventListener('click', toggleExportMenu);
+document.getElementById('civa-btn-export-pdf').addEventListener('click', exportChatAsPDF);
+document.getElementById('civa-btn-export-sel').addEventListener('click', startSelectiveExport);
+document.getElementById('civa-minimize-btn').addEventListener('click', toggleChat);
+document.getElementById('civa-close-btn').addEventListener('click', clearAndClose);
+document.getElementById('civa-sel-btn-all').addEventListener('click', selectAll);
+document.getElementById('civa-sel-btn-cancel').addEventListener('click', cancelSelection);
+document.getElementById('civa-sel-btn-export').addEventListener('click', exportSelected);
+document.querySelector('.civa-fb-close').addEventListener('click', closeFeedback);
+document.getElementById('civa-submit-feedback').addEventListener('click', submitFeedback);
+document.getElementById('civa-alert-cancel').addEventListener('click', () => alertResolve(false));
+document.getElementById('civa-alert-ok').addEventListener('click', () => alertResolve(true));
 
 /* ═══════════════════════════════════════════════════════════
    INIT

@@ -1,21 +1,19 @@
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://images.unsplash.com; connect-src 'self' http://192.168.172.44:8001; font-src 'self'; frame-src 'none'; object-src 'none'; base-uri 'self'; form-action 'self';">
 <link rel="stylesheet" href="../assets/css/chatbot_css/style.css">
-<script>window.lang = '<?php echo $lang; ?>';</script>
 
 
 <!-- ── CHAT LAUNCHER ────────────────────────── -->
-<div id="civa-chat-launcher">
-  <div id="civa-chat-label" onclick="toggleChat()">
+<div id="civa-chat-launcher" data-lang="<?php echo $lang; ?>">
+  <div id="civa-chat-label">
     <div class="civa-cl-title" id="civa-cl-title">Chat with CIVA</div>
     <div class="civa-cl-sub" id="civa-cl-sub">Your Telecom Guide</div>
   </div>
-  <div id="civa-chat-icon" onclick="toggleChat()">
+  <div id="civa-chat-icon">
     <img src="../assets/img/chatbot_img/bot.jpeg" alt="CIVA">
   </div>
 </div>
 
 <!-- ── CHATBOT ─────────────────────────────── -->
-<div id="civa-chatbot" class="civa-hidden" style="display:none">
+<div id="civa-chatbot" class="civa-hidden">
 
   <!-- HEADER -->
   <div id="civa-chat-header">
@@ -25,33 +23,33 @@
       <div class="civa-header-subtitle"><span class="civa-status-dot"></span><span id="civa-hdr-sub">CDOT intelligent virtual assistant</span></div>
     </div>
     <div class="civa-header-actions">
-      <button class="civa-h-btn" id="civa-lang-toggle-btn" title="Switch Language" onclick="toggleLanguage()" style="width:auto;padding:0 8px;font-size:11px;font-weight:700;letter-spacing:.3px;border-radius:8px;">
+      <button class="civa-h-btn" id="civa-lang-toggle-btn" title="Switch Language">
         <span id="civa-lang-label">हिंदी</span>
       </button>
-      <button class="civa-h-btn" id="civa-back-btn" style="display:none" title="Back" onclick="showWelcome()">
+      <button class="civa-h-btn" id="civa-back-btn" title="Back">
         <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
       </button>
-      <button class="civa-h-btn" id="civa-maximize-btn" title="Maximize" onclick="toggleMaximize()">
+      <button class="civa-h-btn" id="civa-maximize-btn" title="Maximize">
         <svg viewBox="0 0 24 24"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
       </button>
-      <div id="civa-export-btn-wrap" style="display:none;position:relative">
-        <button class="civa-h-btn" id="civa-export-btn" title="Export" onclick="toggleExportMenu(event)">
+      <div id="civa-export-btn-wrap">
+        <button class="civa-h-btn" id="civa-export-btn" title="Export">
           <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
         </button>
         <div id="civa-export-menu">
-          <div id="civa-export-options-lbl" style="padding:8px 12px 4px;font-size:10px;font-weight:700;color:var(--civa-text-3);letter-spacing:.5px;text-transform:uppercase;border-bottom:1px solid var(--civa-border)">Export Options</div>
+          <div id="civa-export-options-lbl" class="civa-export-options-lbl">Export Options</div>
           <div class="civa-export-section-label" id="civa-lbl-export-full">💬 Export Chat</div>
-          <button class="civa-export-opt-btn" onclick="exportChatAsPDF()" id="civa-btn-export-pdf">📄 Export Chat</button>
-          <div style="border-top:1px solid var(--civa-border)">
+          <button class="civa-export-opt-btn" id="civa-btn-export-pdf">📄 Export Chat</button>
+          <div class="civa-export-divider">
             <div class="civa-export-section-label" id="civa-lbl-export-sel">📄 User + CIVA Messages</div>
-            <button class="civa-export-opt-btn" onclick="startSelectiveExport()" id="civa-btn-export-sel">Select Messages to Export</button>
+            <button class="civa-export-opt-btn" id="civa-btn-export-sel">Select Messages to Export</button>
           </div>
         </div>
       </div>
-      <button class="civa-h-btn" id="civa-minimize-btn" title="Minimize" onclick="toggleChat()">
+      <button class="civa-h-btn" id="civa-minimize-btn" title="Minimize">
         <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/></svg>
       </button>
-      <button class="civa-h-btn" id="civa-close-btn" title="Close" onclick="clearAndClose()">
+      <button class="civa-h-btn" id="civa-close-btn" title="Close">
         <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
       </button>
     </div>
@@ -60,9 +58,9 @@
   <!-- Selection mode bar -->
   <div id="civa-selection-header">
     <span class="civa-sel-info" id="civa-sel-count">0 selected</span>
-    <button class="civa-sel-btn civa-secondary" id="civa-sel-btn-all" onclick="selectAll()">Select All</button>
-    <button class="civa-sel-btn civa-secondary" id="civa-sel-btn-cancel" onclick="cancelSelection()">Cancel</button>
-    <button class="civa-sel-btn" id="civa-sel-btn-export" onclick="exportSelected()">Export</button>
+    <button class="civa-sel-btn civa-secondary" id="civa-sel-btn-all">Select All</button>
+    <button class="civa-sel-btn civa-secondary" id="civa-sel-btn-cancel">Cancel</button>
+    <button class="civa-sel-btn" id="civa-sel-btn-export">Export</button>
   </div>
 
   <!-- BODY -->
@@ -144,7 +142,7 @@
     </div>
 
     <!-- CHAT SCREEN -->
-    <div id="civa-chat-screen" style="display:none">
+    <div id="civa-chat-screen">
       <div id="civa-chat-messages">
         <div class="civa-date-divider" id="civa-today-divider">Today</div>
       </div>
@@ -154,7 +152,7 @@
 
   <!-- FOOTER -->
   <div id="civa-chat-footer">
-    <div id="civa-suggested-questions" style="display:none">
+    <div id="civa-suggested-questions">
       <div class="civa-sq-chip" data-query="Product Section">Products</div>
       <div class="civa-sq-chip" data-query="Career at C-DOT">Career</div>
       <div class="civa-sq-chip" data-query="Board Members">Board Members</div>
@@ -179,26 +177,26 @@
   <div id="civa-feedback-popup">
     <div class="civa-fb-header">
       <div class="civa-fb-title" id="civa-fb-title">📝 Share your feedback</div>
-      <button class="civa-fb-close" onclick="closeFeedback()">×</button>
+      <button class="civa-fb-close">×</button>
     </div>
-    <p style="font-size:12px;color:var(--civa-text-3);margin-bottom:10px" id="civa-fb-sub">Help us improve CIVA with your thoughts.</p>
+    <p id="civa-fb-sub">Help us improve CIVA with your thoughts.</p>
     <input type="hidden" id="civa-fb-question"><input type="hidden" id="civa-fb-answer"><input type="hidden" id="civa-fb-msgid">
     <textarea id="civa-feedback-text" placeholder="Describe the issue or suggestion…"></textarea>
-    <div id="civa-fb-lang-warn" style="display:none;font-size:11px;color:#c0392b;margin:-4px 0 6px;"></div>
-    <button id="civa-submit-feedback" disabled onclick="submitFeedback()">Submit Feedback</button>
+    <div id="civa-fb-lang-warn"></div>
+    <button id="civa-submit-feedback" disabled>Submit Feedback</button>
   </div>
 
 </div><!-- /civa-chatbot -->
 
 <!-- Alert overlay -->
-<div id="civa-alert-overlay" style="display:none">
+<div id="civa-alert-overlay">
   <div class="civa-alert-box">
     <span class="civa-alert-icon" id="civa-alert-icon">ℹ️</span>
     <div class="civa-alert-title" id="civa-alert-title">Notice</div>
     <div class="civa-alert-msg" id="civa-alert-msg"></div>
     <div class="civa-alert-btns">
-      <button class="civa-alert-btn civa-alert-cancel" id="civa-alert-cancel" style="display:none" onclick="alertResolve(false)">Cancel</button>
-      <button class="civa-alert-btn civa-alert-ok" id="civa-alert-ok" onclick="alertResolve(true)">OK</button>
+      <button class="civa-alert-btn civa-alert-cancel" id="civa-alert-cancel">Cancel</button>
+      <button class="civa-alert-btn civa-alert-ok" id="civa-alert-ok">OK</button>
     </div>
   </div>
 </div>
